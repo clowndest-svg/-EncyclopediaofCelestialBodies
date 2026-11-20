@@ -137,7 +137,81 @@ section('    <!-- 标签 2：彗星与地貌 -->','    <!-- 标签 3：光学与
         </p>
       </div>
     </div>''')
-# Expand planet impact shader from 6 slots to 16 slots + cumulative lava/scorch stacking
+# Expand planet impact shader from 6 slots to 16 slots + Solar Smash 3D volumetric carving & jagged hole discard
+replace('''    const PLANET_VERT = `
+      varying vec3 vNormalWorld;
+      varying vec3 vLocalPos;
+      varying vec3 vWorldPos;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        vLocalPos = normalize(position);
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vWorldPos = wp.xyz;
+        vNormalWorld = normalize(mat3(modelMatrix) * normal);
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }
+    `;''','''    const PLANET_VERT = `
+      varying vec3 vNormalWorld;
+      varying vec3 vLocalPos;
+      varying vec3 vWorldPos;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        vLocalPos = normalize(position);
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vWorldPos = wp.xyz;
+        vNormalWorld = normalize(mat3(modelMatrix) * normal);
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }
+    `;
+    const PLANET_CARVE_VERT = `
+      uniform int uPlanetType;
+      uniform vec3 uImpactPoints[16];
+      uniform float uImpactRadii[16];
+      varying vec3 vNormalWorld;
+      varying vec3 vLocalPos;
+      varying vec3 vWorldPos;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        vec3 p = normalize(position);
+        vLocalPos = p;
+        float carve = 0.0;
+        if (uPlanetType != 0 && uPlanetType != 5 && uPlanetType != 6 && uPlanetType != 7 && uPlanetType != 8) {
+          for (int i = 0; i < 16; i++) {
+            float rad = uImpactRadii[i];
+            if (rad > 0.001) {
+              float d = acos(clamp(dot(p, normalize(uImpactPoints[i])), -1.0, 1.0));
+              if (d < rad * 1.48) {
+                float bowl = smoothstep(rad * 1.04, rad * 0.12, d);
+                float rimB = smoothstep(rad * 1.45, rad * 1.08, d) * smoothstep(rad * 0.78, rad * 1.08, d);
+                carve -= bowl * min(0.24, rad * 0.62);
+                carve += rimB * min(0.042, rad * 0.14);
+              }
+            }
+          }
+        }
+        vec3 disp = position + normal * (length(position) * carve);
+        vec4 wp = modelMatrix * vec4(disp, 1.0);
+        vWorldPos = wp.xyz;
+        vNormalWorld = normalize(mat3(modelMatrix) * normal);
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }
+    `;''')
+replace('''      const mat = new THREE.ShaderMaterial({
+        vertexShader: PLANET_VERT,
+        fragmentShader: PLANET_FRAG,
+        uniforms
+      });
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, segments), mat);''','''      const mat = new THREE.ShaderMaterial({
+        vertexShader: PLANET_CARVE_VERT,
+        fragmentShader: PLANET_FRAG,
+        uniforms,
+        side: THREE.DoubleSide
+      });
+      const segs = Math.max(segments, 84);
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, segs, Math.round(segs * 0.75)), mat);''')
 replace('uniform vec3 uImpactPoints[6];\n      uniform float uImpactRadii[6];\n      uniform float uImpactHeat[6];','uniform vec3 uImpactPoints[16];\n      uniform float uImpactRadii[16];\n      uniform float uImpactHeat[16];')
 replace('''        for (int i = 0; i < 6; i++) {
           float rad = uImpactRadii[i];
@@ -158,23 +232,32 @@ replace('''        for (int i = 0; i < 6; i++) {
         if (craterEmissive > 0.01) {
           vec3 lavaCol = mix(vec3(1.0, 0.22, 0.02), vec3(1.0, 0.88, 0.45), clamp(craterEmissive * 0.75, 0.0, 1.0));
           emissive += lavaCol * min(craterEmissive * 1.8, 2.6);
-        }''','''        for (int i = 0; i < 16; i++) {
+        }''','''        bool isSolidBody = (uPlanetType != 0 && uPlanetType != 5 && uPlanetType != 6 && uPlanetType != 7 && uPlanetType != 8);
+        for (int i = 0; i < 16; i++) {
           float rad = uImpactRadii[i];
           if (rad > 0.001) {
             vec3 cDir = normalize(uImpactPoints[i]);
             float d = acos(clamp(dot(p, cDir), -1.0, 1.0));
-            if (d < rad * 2.45) {
+            float jagNoise = fbm(p * 14.0 + cDir * 3.1);
+            float jagRad = rad * (0.78 + 0.44 * jagNoise);
+            if (isSolidBody && rad > 0.13 && d < jagRad * 0.68) discard;
+            if (d < rad * 2.5) {
               float crackNoise = fbm(p * 28.0);
               float rayNoise = fbm(p * 11.0 + cDir * 5.0);
-              float core = smoothstep(rad * 1.12, rad * 0.12, d);
-              float rim = smoothstep(rad * 1.68, rad * 1.02, d) * smoothstep(rad * 0.62, rad * 1.02, d);
+              float core = smoothstep(jagRad * 1.15, jagRad * 0.50, d);
+              float lipHot = (isSolidBody && rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
+              float rim = smoothstep(jagRad * 1.70, jagRad * 1.02, d) * smoothstep(jagRad * 0.66, jagRad * 1.02, d);
               float rays = smoothstep(0.55, 0.78, rayNoise) * smoothstep(rad * 2.4, rad * 0.9, d) * 0.42;
-              col = mix(col, vec3(0.05, 0.04, 0.045), clamp(core * 0.95 + rim * 0.65 + rays, 0.0, 1.0));
-              col += vec3(0.28, 0.22, 0.18) * rim * 0.5;
-              float lava = (core * 1.05 + smoothstep(0.42, 0.70, crackNoise) * smoothstep(rad * 1.95, rad * 0.25, d) * 0.85) * uImpactHeat[i];
+              col = mix(col, vec3(0.05, 0.04, 0.045), clamp(core * 0.95 + rim * 0.70 + rays, 0.0, 1.0));
+              col += vec3(0.28, 0.22, 0.18) * rim * 0.55;
+              float lava = (core * 1.05 + lipHot + smoothstep(0.42, 0.70, crackNoise) * smoothstep(rad * 2.0, rad * 0.25, d) * 0.90) * uImpactHeat[i];
               craterEmissive += lava;
             }
           }
+        }
+        if (!gl_FrontFacing) {
+          gl_FragColor = vec4(vec3(1.0, 0.36, 0.06) * (0.9 + 0.5 * fbm(p * 18.0 + uTime * 0.3)), 1.0);
+          return;
         }
         if (uDamage > 0.08) {
           float gCrack = smoothstep(0.54, 0.72, fbm(p * 12.0 + vec3(uTime * 0.03)));

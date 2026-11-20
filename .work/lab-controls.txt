@@ -15,7 +15,12 @@
 </div>
 <div id="lab-monster-params" class="dynamics-box hidden">
   <div><div class="dynamics-row"><label for="lab-monster-scale">怪物 / 舰队体型倍率</label><output id="lab-monster-scale-value">1.2× 巨兽尺度</output></div><input id="lab-monster-scale" class="cosmic-slider" type="range" min="0.6" max="2.4" step="0.1" value="1.2"></div>
-  <div><div class="dynamics-row"><label for="lab-monster-power">破坏力等级（5+ 可爆星）</label><output id="lab-monster-power-value">Lv.3 灭世级</output></div><input id="lab-monster-power" class="cosmic-slider" type="range" min="1" max="6" step="1" value="3"></div>
+  <div><div class="dynamics-row"><label for="lab-monster-power">破坏力等级（Lv.5+ 可爆星）</label><output id="lab-monster-power-value">Lv.4 裂壳级</output></div><input id="lab-monster-power" class="cosmic-slider" type="range" min="1" max="6" step="1" value="4"></div>
+</div>
+<div id="lab-smash-box" class="dynamics-box smash-meter-box">
+  <div class="dynamics-row"><span>目标星体完整度（<strong id="smash-target-label">地球</strong>）</span><output id="smash-integrity-val">100%</output></div>
+  <div class="smash-bar-track"><div id="smash-bar-fill" class="smash-bar-fill" style="width:100%"></div></div>
+  <label class="lab-checkbox" style="margin-top:6px"><input id="lab-auto-bust" type="checkbox"> <span>💥 <strong>一键爆星模式</strong>（所有标有「💥 可爆星」的武器与怪兽一击粉碎星球）</span></label>
 </div>
 <p id="lab-physical-note" class="lab-model-note"></p>
 <section class="dynamics-box lab-report"><h3 id="lab-phase">等待实验</h3><div id="lab-report-values"></div><p>动能、大气与喷射物使用简化物理模型；坑径是标度估计。冲击波、烟尘、坑缘按可读性放大，不是灾害预测或武器工程模拟。</p></section>

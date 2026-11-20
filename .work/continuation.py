@@ -5,8 +5,9 @@ def apply(s, root, work):
         nonlocal s
         assert old in s, old[:120]
         s=s.replace(old,new,1)
+    glb_src = (work/'glb-loader.js').read_text(encoding='utf-8') + '\n' if (work/'glb-loader.js').exists() else ''
     monsters_src = (work/'monsters.js').read_text(encoding='utf-8') + '\n' if (work/'monsters.js').exists() else ''
-    replace('    // 尺度分组容器',(work/'motion.js').read_text(encoding='utf-8')+'\n'+monsters_src+(work/'lab.js').read_text(encoding='utf-8')+'\n    // 尺度分组容器')
+    replace('    // 尺度分组容器',(work/'motion.js').read_text(encoding='utf-8')+'\n'+glb_src+monsters_src+(work/'lab.js').read_text(encoding='utf-8')+'\n    // 尺度分组容器')
     replace('  </style>','\n'+(work/'continuation.css').read_text(encoding='utf-8')+'\n  </style>')
     replace('<section class="dynamics-box" aria-label="引力与轨道设置">',(work/'motion-panel.txt').read_text(encoding='utf-8')+'\n<section class="dynamics-box" aria-label="引力与轨道设置">')
     replace('<div class="grid grid-cols-2 gap-1.5" id="experiment-selector">',(work/'lab-filters.txt').read_text(encoding='utf-8')+'\n<div class="grid grid-cols-2 gap-1.5" id="experiment-selector">')
@@ -14,7 +15,7 @@ def apply(s, root, work):
     replace('<button id="transport-home"','<button id="transport-frame" title="切换整体行进与随动参考">外部参考</button>\n      <button id="transport-home"')
     replace('function spawnProjectile({ startPos, targetPos, targetBody = null','function legacySpawnProjectile({ startPos, targetPos, targetBody = null')
     replace('function executeExoticExperiment(expType, body, customTargetWorldPos = null)','function legacyExecuteExoticExperiment(expType, body, customTargetWorldPos = null)')
-    replace('        buildL5CosmicWeb();\n        bindUI();','        buildL5CosmicWeb();\n        initMotion();\n        bindUI();')
+    replace('        buildL5CosmicWeb();\n        bindUI();','        buildL5CosmicWeb();\n        initMotion();\n        if(typeof preloadMonsterModels==="function")preloadMonsterModels();\n        bindUI();')
     replace('      const rawDt = Math.min(clock.getDelta(), 0.05);','      const actualFrameDt=clock.getDelta();\n      const rawDt = Math.min(actualFrameDt, 0.05);')
     replace('      fpsTimer += rawDt;','      fpsTimer += actualFrameDt;')
     replace('      for (const b of celestialBodies) {','      updateMotion(dt);\n      for (const b of celestialBodies) {')

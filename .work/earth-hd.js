@@ -6,6 +6,8 @@
       uniform sampler2D uEarthMap;
       uniform float uUseTex;
       uniform float uTime;
+      uniform vec3 uImpactPoints[16];
+      uniform float uImpactRadii[16];
       varying vec3 vNormalWorld;
       varying vec3 vLocalPos;
       varying vec3 vWorldPos;
@@ -44,8 +46,23 @@
         float r1 = ridgeNoise(p * 14.0 + vec3(2.1, -1.3, 0.7));
         float r2 = ridgeNoise(p * 30.0 - vec3(1.4, 2.7, -0.9));
         float landElev = (1.0 - isOcean) * (0.009 + lum * 0.016 + mtnBelt * (0.024 + r1 * 0.028 + r2 * 0.012) + r1 * 0.010);
+        // Solar Smash 风格 3D 实时几何挖空与隆起撞击坑缘！
+        float carveDisp = 0.0;
+        for (int i = 0; i < 16; i++) {
+          float rad = uImpactRadii[i];
+          if (rad > 0.001) {
+            float d = acos(clamp(dot(p, normalize(uImpactPoints[i])), -1.0, 1.0));
+            float jag = rad * (0.86 + 0.28 * r1);
+            if (d < jag * 1.48) {
+              float bowl = smoothstep(jag * 1.04, jag * 0.12, d);
+              float rimBump = smoothstep(jag * 1.45, jag * 1.08, d) * smoothstep(jag * 0.78, jag * 1.08, d);
+              carveDisp -= bowl * min(0.24, rad * 0.62);
+              carveDisp += rimBump * min(0.045, rad * 0.14);
+            }
+          }
+        }
         vElev = landElev;
-        vec3 displaced = position + normal * (length(position) * landElev);
+        vec3 displaced = position + normal * (length(position) * (landElev + carveDisp));
         vec4 wp = modelMatrix * vec4(displaced, 1.0);
         vWorldPos = wp.xyz;
         vNormalWorld = normalize(mat3(modelMatrix) * normal);
@@ -233,25 +250,35 @@
         float rim = pow(1.0 - max(dot(N, V), 0.0), 3.0);
         emissive += vec3(0.18, 0.60, 1.0) * rim * (0.30 + 0.58 * diffuse);
 
-        // 16 槽位实时撞击坑与叠加熔岩裂纹
+        // 16 槽位 Solar Smash 级 3D 凿穿挖空 + 焦黑裂缘 + 炽热熔岩裂谷
         float craterEmissive = 0.0;
         for (int i = 0; i < 16; i++) {
           float rad = uImpactRadii[i];
           if (rad > 0.001) {
             vec3 cDir = normalize(uImpactPoints[i]);
             float d = acos(clamp(dot(p, cDir), -1.0, 1.0));
-            if (d < rad * 2.45) {
+            float jagNoise = fbm(p * 14.0 + cDir * 3.1);
+            float jagRad = rad * (0.78 + 0.44 * jagNoise);
+            // 重击/大坑直接穿透地壳挖出参差不齐的立体缺口，露出星球内部的炽热地幔与白热内核！
+            if (rad > 0.13 && d < jagRad * 0.68) discard;
+            if (d < rad * 2.55) {
               float crackNoise = fbm(p * 28.0);
               float rayNoise = fbm(p * 11.0 + cDir * 5.0);
-              float core = smoothstep(rad * 1.12, rad * 0.12, d);
-              float rimC = smoothstep(rad * 1.68, rad * 1.02, d) * smoothstep(rad * 0.62, rad * 1.02, d);
-              float rays = smoothstep(0.55, 0.78, rayNoise) * smoothstep(rad * 2.4, rad * 0.9, d) * 0.42;
-              col = mix(col, vec3(0.05, 0.04, 0.045), clamp(core * 0.95 + rimC * 0.65 + rays, 0.0, 1.0));
-              col += vec3(0.28, 0.22, 0.18) * rimC * 0.5;
-              float lava = (core * 1.05 + smoothstep(0.42, 0.70, crackNoise) * smoothstep(rad * 1.95, rad * 0.25, d) * 0.85) * uImpactHeat[i];
+              float core = smoothstep(jagRad * 1.15, jagRad * 0.55, d);
+              float lipHot = (rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
+              float rimC = smoothstep(jagRad * 1.72, jagRad * 1.02, d) * smoothstep(jagRad * 0.68, jagRad * 1.02, d);
+              float rays = smoothstep(0.54, 0.78, rayNoise) * smoothstep(rad * 2.45, rad * 0.92, d) * 0.45;
+              col = mix(col, vec3(0.05, 0.04, 0.045), clamp(core * 0.95 + rimC * 0.72 + rays, 0.0, 1.0));
+              col += vec3(0.32, 0.24, 0.18) * rimC * 0.55;
+              float lava = (core * 1.05 + lipHot + smoothstep(0.42, 0.70, crackNoise) * smoothstep(rad * 2.05, rad * 0.25, d) * 0.95) * uImpactHeat[i];
               craterEmissive += lava;
             }
           }
+        }
+        if (!gl_FrontFacing) {
+          // 缺口内侧呈现炽热熔岩地壳断面
+          gl_FragColor = vec4(vec3(1.0, 0.36, 0.06) * (0.9 + 0.5 * fbm(p * 18.0 + uTime * 0.3)), 1.0);
+          return;
         }
         if (uDamage > 0.08) {
           float gCrack = smoothstep(0.54, 0.72, fbm(p * 12.0 + vec3(uTime * 0.03)));
@@ -372,7 +399,8 @@
       body.mesh.material = new THREE.ShaderMaterial({
         vertexShader: EARTH_HD_VERT,
         fragmentShader: EARTH_HD_FRAG,
-        uniforms: body.uniforms
+        uniforms: body.uniforms,
+        side: THREE.DoubleSide
       });
       if (highGeo && body.scaleKey === 'L0') addPolarAuroras(body);
     }

@@ -89,7 +89,7 @@
       return velocity.normalize();
     }
     function disposeTree(object) {
-      object.traverse(o=>{ if(o.geometry)o.geometry.dispose(); if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>m.dispose());} });
+      object.traverse(o=>{ if(o.userData?.sharedGLB)return; if(o.geometry)o.geometry.dispose(); if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>m.dispose());} });
       object.removeFromParent();
     }
     function makeGlowTexture() {

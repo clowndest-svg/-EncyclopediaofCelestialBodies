@@ -114,7 +114,15 @@
       if(body.atmoMesh)body.atmoMesh.material.uniforms.uIntensity.value=Math.max(0,body.atmoPct/100)*.85;
       body.uniforms.uDamage.value=1-body.integrity/100;
       body.uniforms.uHeatGlow.value=Math.min(1.5,Math.max(body.uniforms.uHeatGlow.value,(1-body.integrity/100)*.95));
+      if(typeof ensurePlanetInterior==='function')ensurePlanetInterior(body);
       ensureStackedVisuals(body,planet);
+      if(typeof syncSmashMeter==='function')syncSmashMeter(body);
+      const isBuster=typeof PLANET_BUSTER_IDS!=='undefined'&&PLANET_BUSTER_IDS.has(type);
+      const bigImpact=type==='asteroid'&&state.astDiamKm>=60;
+      if(planet.solid&&!MONSTER_IDS.has(type)&&((monsterLab.autoBust&&(isBuster||bigImpact))||body.integrity<=10)){
+        const bustCol=type==='antimatter'?0xe879f9:type==='photoid'?0x60a5fa:type==='dyson'?0xfbbf24:0xff5a1f;
+        if(typeof triggerPlanetShatter==='function')triggerPlanetShatter(body,bustCol);
+      }
       document.getElementById('stat-last-energy').textContent=`${ENCYCLOPEDIA[body.id]?.name||body.id} · ${deposited.toExponential(2)} J (累计 ${body.stackedHits} 次)`;
       document.getElementById('stat-last-mt').textContent=`当量 ${(deposited/4.184e15).toExponential(2)} Mt TNT · ${report.airburst?'空爆':planet.solid?'地表叠加熔蚀':'云层沉积'}`;
       appendLog(`[叠加 #${body.stackedHits}] ${EXPERIMENTS.find(e=>e[0]===type)?.[2]||type} · ${(deposited/4.184e15).toExponential(2)} Mt · ${report.airburst?'空爆 '+(report.burstAltitude/1000).toFixed(1)+' km':report.craterMeters?'撞击坑 '+(report.craterMeters/1000).toFixed(1)+' km':'高能沉积'}`,'amber');
@@ -141,7 +149,8 @@
     }
     function craterScar(body,normal,physical) {
       if(!physical.planet.solid||lab.surface==='ocean'||physical.craterMeters<=0)return;
-      const angular=THREE.MathUtils.clamp(physical.craterMeters/(2*physical.planet.radius)*4.6,.042,.72);
+      if(typeof ensurePlanetInterior==='function')ensurePlanetInterior(body);
+      const angular=THREE.MathUtils.clamp(physical.craterMeters/(2*physical.planet.radius)*5.2,.055,.78);
       const pts=body.uniforms.uImpactPoints.value,rads=body.uniforms.uImpactRadii.value,heats=body.uniforms.uImpactHeat.value,maxSlots=pts.length;
       let merged=-1;
       for(let i=0;i<maxSlots;i++){
@@ -233,7 +242,7 @@
       if(typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type)){spawnMonsterExperiment(type,body,point);return;}
       if(lab.effects.length+lab.projectiles.length+activeExoticEffects.length>=(document.body.dataset.layout==='mobile'?12:24)){showToast('当前并发实验较多，请稍候片刻','amber');return;}
       if(!body||body.isDestroyed){showToast('请先选择一个完整的天体','amber');return;}
-      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻艺术演出，不是已验证的物理现象','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 科幻演出';document.getElementById('lab-report-values').textContent='此演出不提供实测能量或真实破坏预测。';if(type==='foil')flattenBodyTo2D(body);else legacyExecuteExoticExperiment(type,body,point);return;}
+      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻爆星演出，支持一键复原','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 💥 爆星演出';document.getElementById('lab-report-values').textContent='高能科幻爆星演出：可随时点击“单目标复原”还原。';if(type==='foil')flattenBodyTo2D(body);else{legacyExecuteExoticExperiment(type,body,point);if(monsterLab.autoBust&&PLANET_PHYSICS[body.id]?.solid)setTimeout(()=>{if(!body.isDestroyed&&!body.shatterGroup)triggerPlanetShatter(body,type==='singularity'?0xa855f7:0x38bdf8);},1800);}return;}
       if(type==='tidal'){tidalEncounter(body);return;}
       if(['nuclear','antimatter','laser','dyson','grb','photoid'].includes(type)){spawnRadiation(body,type,point);return;}
       const center=body.mesh.getWorldPosition(new THREE.Vector3()),radial=camera.position.clone().sub(center).normalize(),side=new THREE.Vector3(0,1,0).cross(radial).normalize();
@@ -310,6 +319,7 @@
       const targets=body?[body]:celestialBodies;
       targets.forEach(b=>{b.stackedHits=0;b.stackedEnergy=0;if(b.ashShroud){disposeTree(b.ashShroud);b.ashShroud=null;}if(b.debrisRing){disposeTree(b.debrisRing);b.debrisRing=null;}});
       if(!body){lab.lastReport=null;lab.reports=[];document.getElementById('lab-report-values').replaceChildren();document.getElementById('lab-phase').textContent='等待实验';}
+      syncSmashMeter(body||getActiveLabTarget());
     }
     function updateLabParameters(type=state.selectedExperiment) {
       const isMonster=typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type);
@@ -322,13 +332,28 @@
       const materialSelect=document.getElementById('lab-material');materialSelect.disabled=['kinetic','comet'].includes(type);materialSelect.value=type==='kinetic'?'iron':type==='comet'?'ice':lab.material;
       document.getElementById('val-ast-vel').textContent=state.astVelKms+' km/s';
       const body=getActiveLabTarget(),physics=scientificImpact(selectedSettings(type),body?.id||'earth');
+      if(typeof syncSmashMeter==='function')syncSmashMeter(body);
       document.getElementById('val-ast-diam').textContent=state.astDiamKm<1?(state.astDiamKm*1000).toFixed(0)+' m':state.astDiamKm.toFixed(2)+' km';
       const monsterEst=isMonster?(1.6e24*Math.pow(10,(monsterLab.power-1)*.95)*(.65+monsterLab.scale*.45)):0;
       document.getElementById('val-est-mt').textContent=((isMonster?monsterEst:impact?physics.initialEnergy:energyForType(type))/4.184e15).toExponential(2)+' Mt TNT';
       document.getElementById('lab-physical-note').textContent=isMonster?(MONSTER_NOTES[type]||'科幻/玄幻巨兽与舰队毁灭演出，支持体型/破坏力调节与 3 连发叠加，Lv.5+ 破坏力可将固体行星彻底粉碎。'):impact?`${physics.planet.solid?'固体表面 · 支持最多 16 处熔岩坑与尘埃环叠加':'气态目标，无岩石撞击坑'}；${physics.planet.atmosphere&&lab.atmosphere?'指数大气 + 阻力 + 等离子烧蚀 + 碎裂近似':'无大气减速'}。`:['singularity','foil','vacuum'].includes(type)?'科幻 / 假说的艺术演出，不对应经过验证的物理模型。':type==='tidal'?'点质量潮汐比例与放大的形变示意，不是流体解。':'理想能量沉积模型。支持连续多次发射，观察热融裂纹与冲击波叠加。';
     }
+    function syncSmashMeter(body=getActiveLabTarget()) {
+      const lbl=document.getElementById('smash-target-label'),val=document.getElementById('smash-integrity-val'),bar=document.getElementById('smash-bar-fill');
+      if(!lbl||!val||!bar)return;
+      if(!body){lbl.textContent='无目标';val.textContent='--';bar.style.width='0%';return;}
+      lbl.textContent=ENCYCLOPEDIA[body.id]?.name||body.id;
+      const pct=body.shatterGroup?0:Math.max(0,Math.round(body.integrity));
+      val.textContent=body.shatterGroup?'💥 已爆星':pct+'%';
+      bar.style.width=pct+'%';
+    }
     function bindLabUI() {
-      const selector=document.getElementById('experiment-selector');selector.innerHTML=EXPERIMENTS.map(([id,icon,name,desc,category])=>`<button data-exp="${id}" data-category="${category}" class="exp-btn glass-btn ${id===state.selectedExperiment?'active':''} rounded-xl p-2 text-left"><div class="text-xs font-semibold text-white">${icon} ${name}</div><div class="text-[10px] text-slate-400 mt-0.5">${desc}</div></button>`).join('');
+      const selector=document.getElementById('experiment-selector');selector.innerHTML=EXPERIMENTS.map(([id,icon,name,desc,category])=>{
+        const isBust=typeof PLANET_BUSTER_IDS!=='undefined'&&PLANET_BUSTER_IDS.has(id);
+        const isCarve=typeof CARVE_HEAVY_IDS!=='undefined'&&CARVE_HEAVY_IDS.has(id);
+        const badge=isBust?'<span class="tier-pill tier-bust">💥 可爆星</span>':isCarve?'<span class="tier-pill tier-carve">☄ 挖空</span>':'<span class="tier-pill tier-surf">⚡ 毁伤</span>';
+        return `<button data-exp="${id}" data-category="${category}" class="exp-btn glass-btn ${id===state.selectedExperiment?'active':''} rounded-xl p-2 text-left"><div class="text-xs font-semibold text-white"><span>${icon} ${name}</span>${badge}</div><div class="text-[10px] text-slate-400 mt-0.5">${desc}</div></button>`;
+      }).join('');
       selector.querySelectorAll('button').forEach(b=>b.onclick=()=>{state.selectedExperiment=b.dataset.exp;selector.querySelectorAll('button').forEach(el=>el.classList.toggle('active',el===b));if(state.selectedExperiment==='airburst'){state.astDiamKm=.02;state.astVelKms=20;document.getElementById('slider-ast-diam').value=.02;document.getElementById('slider-ast-vel').value=20;}updateLabParameters();});
       document.querySelectorAll('[data-lab-filter]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-lab-filter]').forEach(el=>el.setAttribute('aria-pressed',String(el===b)));selector.querySelectorAll('button').forEach(el=>el.classList.toggle('hidden',b.dataset.labFilter!=='all'&&el.dataset.category!==b.dataset.labFilter));});
       document.getElementById('slider-ast-diam').min=.02;document.getElementById('slider-ast-diam').max=100;document.getElementById('slider-ast-diam').step=.02;state.astDiamKm=10;document.getElementById('slider-ast-diam').value=10;state.astVelKms=20;document.getElementById('slider-ast-vel').value=20;
@@ -342,6 +367,8 @@
       const powerNames=['','Lv.1 灭城级','Lv.2 灭国级','Lv.3 灭世级','Lv.4 裂壳级','Lv.5 爆星级','Lv.6 终极湮灭'];
       if(mScale)mScale.oninput=e=>{monsterLab.scale=+e.target.value;document.getElementById('lab-monster-scale-value').textContent=monsterLab.scale.toFixed(1)+'× 巨兽尺度';updateLabParameters();};
       if(mPower)mPower.oninput=e=>{monsterLab.power=+e.target.value;document.getElementById('lab-monster-power-value').textContent=powerNames[monsterLab.power]||('Lv.'+monsterLab.power);updateLabParameters();};
+      const autoBust=document.getElementById('lab-auto-bust');
+      if(autoBust)autoBust.onchange=e=>{monsterLab.autoBust=e.target.checked;showToast(monsterLab.autoBust?'💥 一键爆星模式已开启：可爆星武器与怪兽将一击碎星！':'已切回常规累积破坏模式','amber');};
       const salvoBtn=document.getElementById('btn-launch-salvo');if(salvoBtn)salvoBtn.onclick=()=>launchSalvo(state.selectedExperiment,getActiveLabTarget());
-      updateLabParameters();
+      updateLabParameters();syncSmashMeter();
     }
