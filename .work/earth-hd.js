@@ -307,7 +307,7 @@
     function addPolarAuroras(body) {
       const grp = new THREE.Group();
       const auroraMat = new THREE.ShaderMaterial({
-        uniforms: { uTime: { value: 0 } },
+        uniforms: { uTime: { value: 0 }, uVfx: { value: 1.0 } },
         vertexShader: `
           varying vec2 vUv;
           uniform float uTime;
@@ -323,6 +323,7 @@
         fragmentShader: `
           varying vec2 vUv;
           uniform float uTime;
+          uniform float uVfx;
           void main() {
             float curtain = pow(0.5 + 0.5 * sin(vUv.x * 50.0 + uTime * 1.8 + sin(vUv.x * 16.0 - uTime) * 2.0), 2.2);
             float vert = smoothstep(0.0, 0.28, vUv.y) * (1.0 - smoothstep(0.32, 1.0, vUv.y));
@@ -330,9 +331,9 @@
             vec3 cyan = vec3(0.22, 0.85, 1.0);
             vec3 violet = vec3(0.68, 0.35, 1.0);
             vec3 col = mix(mix(green, cyan, smoothstep(0.2, 0.6, vUv.y)), violet, smoothstep(0.55, 0.95, vUv.y));
-            float a = curtain * vert * 0.72;
+            float a = min(1.0, curtain * vert * 0.72 * uVfx);
             if (a < 0.01) discard;
-            gl_FragColor = vec4(col, a);
+            gl_FragColor = vec4(col * (0.65 + 0.45 * uVfx), a);
           }
         `,
         transparent: true, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending

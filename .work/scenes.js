@@ -1,5 +1,5 @@
     let bhShaderMat, bhMesh, bhJetsGroup, bhDust, bhDustData, bhJetPoints;
-    let l3Points, l3M87Jet, galaxyDust, galaxyNebula, galaxyTracers=[];
+    let l3Points, l3M87Jet, galaxyDust, galaxyNebula, galaxyCoreSprite, galaxyKnots=[], galaxyTracers=[];
     let clusterNodes=[], clusterParticles=[], clusterFlow, clusterTails=[], clusterOrbits=[];
     let webNodes=[], webEdges=[], webParticles=[], webFlow, webTails=[];
     const SOFT_PARTICLE_FRAG = `
@@ -7,24 +7,24 @@
       void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;float core=exp(-r*r*19.);float halo=pow(1.-r,2.)*.26;gl_FragColor=vec4(vColor,(core+halo)*vAlpha);}
     `;
     const JET_VERT = `
-      attribute float aPhase; attribute float aSide; attribute float aSeed; uniform float uTime;
+      attribute float aPhase; attribute float aSide; attribute float aSeed; uniform float uTime; uniform float uVfx;
       varying vec3 vColor; varying float vAlpha;
-      void main(){float t=fract(aPhase+uTime*(.11+aSeed*.065));float y=4.+t*80.;float angle=aSeed*96.+t*14.-uTime*2.;float r=(.15+t*2.9)*(.25+aSeed*.75);vec3 p=vec3(cos(angle)*r,aSide*y,sin(angle)*r);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp((1.1+aSeed)*210./max(1.,-mv.z),1.,18.);vColor=mix(vec3(.73,.87,1.),vec3(.23,.48,1.),t);vAlpha=(1.-t)*.8;}
+      void main(){float t=fract(aPhase+uTime*(.14+aSeed*.085));float y=4.+t*88.;float angle=aSeed*96.+t*16.-uTime*2.6;float r=(.15+t*3.1)*(.25+aSeed*.75);vec3 p=vec3(cos(angle)*r,aSide*y,sin(angle)*r);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp((1.2+aSeed)*240.*(0.6+0.45*uVfx)/max(1.,-mv.z),1.2,22.);vColor=mix(vec3(.82,.94,1.),vec3(.25,.55,1.),t);vAlpha=min(1.,(1.-t)*.92*uVfx);}
     `;
-    function makeJets(count=1600) {
+    function makeJets(count=2400) {
       const rng=deterministicRandom(89),geo=new THREE.BufferGeometry();
       geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(count*3),3));
       for(const attr of ['aPhase','aSide','aSeed']){const a=new Float32Array(count);for(let i=0;i<count;i++)a[i]=attr==='aSide'?(i%2?1:-1):rng();geo.setAttribute(attr,new THREE.BufferAttribute(a,1));}
-      const pts=new THREE.Points(geo,new THREE.ShaderMaterial({vertexShader:JET_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));pts.frustumCulled=false;return pts;
+      const pts=new THREE.Points(geo,new THREE.ShaderMaterial({vertexShader:JET_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0},uVfx:{value:1}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));pts.frustumCulled=false;return pts;
     }
     function buildL2BlackHole() {
       const g=scaleGroups.L2;
-      bhShaderMat=new THREE.ShaderMaterial({vertexShader:BLACKHOLE_VERT,fragmentShader:BLACKHOLE_FRAG,uniforms:{uLocalCam:{value:new THREE.Vector3(0,13,64)},uTime:{value:0},uBoundRadius:{value:40},uEventRadius:{value:3.5},uDiskInner:{value:6.8},uDiskOuter:{value:28},uBrightness:{value:.76}},side:THREE.BackSide,transparent:true,depthWrite:false});
+      bhShaderMat=new THREE.ShaderMaterial({vertexShader:BLACKHOLE_VERT,fragmentShader:BLACKHOLE_FRAG,uniforms:{uLocalCam:{value:new THREE.Vector3(0,13,64)},uTime:{value:0},uBoundRadius:{value:40},uEventRadius:{value:3.5},uDiskInner:{value:6.8},uDiskOuter:{value:28},uBrightness:{value:.82}},side:THREE.BackSide,transparent:true,depthWrite:false});
       bhMesh=new THREE.Mesh(new THREE.SphereGeometry(40,48,32),bhShaderMat);bhMesh.renderOrder=2;g.add(bhMesh);
-      bhJetsGroup=new THREE.Group();bhJetPoints=makeJets();bhJetsGroup.add(bhJetPoints);g.add(bhJetsGroup);
-      const count=1800,rng=deterministicRandom(21),pos=new Float32Array(count*3),col=new Float32Array(count*3);bhDustData=[];
-      for(let i=0;i<count;i++){const r=29+rng()*9,a=rng()*Math.PI*2;bhDustData.push({r,phase:a,seed:rng(),initialR:r,initialPhase:a});const c=new THREE.Color().setRGB(.85,.38+rng()*.25,.12);c.toArray(col,i*3);}
-      const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));bhDust=glowPoints(geo,.48,.55);bhDust.frustumCulled=false;g.add(bhDust);
+      bhJetsGroup=new THREE.Group();bhJetPoints=makeJets(2400);bhJetsGroup.add(bhJetPoints);g.add(bhJetsGroup);
+      const count=2600,rng=deterministicRandom(21),pos=new Float32Array(count*3),col=new Float32Array(count*3);bhDustData=[];
+      for(let i=0;i<count;i++){const r=28+rng()*11,a=rng()*Math.PI*2;bhDustData.push({r,phase:a,seed:rng(),initialR:r,initialPhase:a});const hot=i%5===0;const c=hot?new THREE.Color().setRGB(.78,.88,1.):new THREE.Color().setRGB(.98,.46+rng()*.32,.14);c.toArray(col,i*3);}
+      const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));bhDust=glowPoints(geo,.62,.74);bhDust.frustumCulled=false;g.add(bhDust);
       [8,14,23,34].forEach((r,i)=>{const o={a:r,e:.04,inclination:.025,argument:0};layerGroup('L2','paths').add(makeLine(Array.from({length:161},(_,j)=>orbitPoint(o,j/160*Math.PI*2)),TRAJECTORY_COLOR,i===3?.28:.1));});
       for(let i=0;i<10;i++){const a=i/10*Math.PI*2,p=new THREE.Vector3(Math.cos(a)*33,0,Math.sin(a)*33);layerGroup('L2','forces').add(new THREE.ArrowHelper(p.clone().negate().normalize(),p,6,FORCE_COLOR,1,.4));}
       updateL2(0);
@@ -40,9 +40,9 @@
     }
     const GALAXY_VERT = `
       attribute vec3 color;attribute float aOmega;attribute float aSize;attribute vec3 aAxis;
-      uniform float uTime;uniform float uPixelRatio;uniform float uRing;
+      uniform float uTime;uniform float uPixelRatio;uniform float uRing;uniform float uStardust;
       varying vec3 vColor;varying float vAlpha;
-      void main(){float a=uTime*aOmega;vec3 axis=normalize(aAxis);vec3 p=position*cos(a)+cross(axis,position)*sin(a)+axis*dot(axis,position)*(1.-cos(a));float r=length(p.xz);p+=axis*sin(uTime*aOmega*2.3+position.x)*(.3+r*.015);if(uRing>.5&&r>55.)p.xz*=1.+min(.2,uTime*.0025);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aSize*uPixelRatio*280./max(1.,-mv.z),1.15,12.);vColor=color;vAlpha=.76;}
+      void main(){float a=uTime*aOmega;vec3 axis=normalize(aAxis);vec3 p=position*cos(a)+cross(axis,position)*sin(a)+axis*dot(axis,position)*(1.-cos(a));float r=length(p.xz);p+=axis*sin(uTime*aOmega*2.3+position.x)*(.3+r*.015);if(uRing>.5&&r>55.)p.xz*=1.+min(.2,uTime*.0025);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aSize*uPixelRatio*290.*(0.65+0.42*uStardust)/max(1.,-mv.z),1.15,14.);vColor=color;vAlpha=clamp(.82*uStardust,0.12,1.0);}
     `;
     function generateGalaxyData(morph) {
       const count=document.body.dataset.layout==='mobile'?50000:85000;
@@ -107,35 +107,55 @@
       if(galaxyNebula){galaxyNebula.material.map.dispose();galaxyNebula.material.map=galaxyNebulaTexture(morph);galaxyNebula.material.needsUpdate=true;}
     }
     function buildL3Galaxy() {
-      const g=scaleGroups.L3;l3Points=new THREE.Points(new THREE.BufferGeometry(),new THREE.ShaderMaterial({vertexShader:GALAXY_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0},uPixelRatio:{value:renderer.getPixelRatio()},uRing:{value:0}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(l3Points);setGalaxyData('milkyway');
-      galaxyNebula=new THREE.Mesh(new THREE.PlaneGeometry(210,210),new THREE.MeshBasicMaterial({map:galaxyNebulaTexture('milkyway'),transparent:true,opacity:.68,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,depthWrite:false}));galaxyNebula.rotation.x=-Math.PI/2;galaxyNebula.position.y=-.8;galaxyNebula.renderOrder=-1;g.add(galaxyNebula);
-      const core=glowSprite(0xffdcb0,18,.32);core.position.y=.8;g.add(core);
+      const g=scaleGroups.L3;l3Points=new THREE.Points(new THREE.BufferGeometry(),new THREE.ShaderMaterial({vertexShader:GALAXY_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0},uPixelRatio:{value:renderer.getPixelRatio()},uRing:{value:0},uStardust:{value:1}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(l3Points);setGalaxyData('milkyway');
+      galaxyNebula=new THREE.Mesh(new THREE.PlaneGeometry(216,216),new THREE.MeshBasicMaterial({map:galaxyNebulaTexture('milkyway'),transparent:true,opacity:.76,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,depthWrite:false}));galaxyNebula.rotation.x=-Math.PI/2;galaxyNebula.position.y=-.8;galaxyNebula.renderOrder=-1;g.add(galaxyNebula);
+      galaxyCoreSprite=glowSprite(0xffe2b4,26,.48);galaxyCoreSprite.position.y=.8;g.add(galaxyCoreSprite);
       const dustMat=new THREE.ShaderMaterial({vertexShader:BLACKHOLE_VERT,fragmentShader:`varying vec3 vLocalPos;uniform float uTime;uniform float uSombrero;void main(){float r=length(vLocalPos.xy);float a=atan(vLocalPos.y,vLocalPos.x);float spiral=.5+.5*sin(a*4.-log(max(r,1.))*11.-uTime*.13);float band=smoothstep(18.,35.,r)*(1.-smoothstep(79.,97.,r));float opacity=band*(uSombrero>.5?.57:pow(spiral,8.)*.20);gl_FragColor=vec4(.012,.009,.015,opacity);}`,uniforms:{uTime:{value:0},uSombrero:{value:0}},transparent:true,side:THREE.DoubleSide,depthWrite:false});
       galaxyDust=new THREE.Mesh(new THREE.RingGeometry(16,97,128),dustMat);galaxyDust.rotation.x=-Math.PI/2;galaxyDust.position.y=.9;galaxyDust.renderOrder=3;g.add(galaxyDust);
-      l3M87Jet=makeJets(800);l3M87Jet.rotation.z=-.48;l3M87Jet.visible=false;g.add(l3M87Jet);
+      l3M87Jet=makeJets(1200);l3M87Jet.rotation.z=-.48;l3M87Jet.visible=false;g.add(l3M87Jet);
+      buildGalaxyKnots();
       buildGalaxyTracers();
+    }
+    function buildGalaxyKnots() {
+      galaxyKnots.forEach(k=>disposeTree(k.sprite));galaxyKnots=[];
+      if(state.galaxyMorph==='m87')return;
+      const rng=deterministicRandom(311),arms=state.galaxyMorph==='andromeda'?2:4,pitch=state.galaxyMorph==='andromeda'?3.4:3.1;
+      for(let i=0;i<32;i++){
+        const r=state.galaxyMorph==='cartwheel'?70+(rng()-.5)*8:18+rng()*68;
+        const a=(i%arms)/arms*Math.PI*2+Math.log(Math.max(r,8)/12)*pitch+(rng()-.5)*.28;
+        const isPink=i%3!==0;
+        const sprite=glowSprite(isPink?0xf472b6:0x7dd3fc,5.5+rng()*6.5,isPink?.36:.30);
+        sprite.position.set(Math.cos(a)*r,(rng()-.5)*2.4,Math.sin(a)*r);
+        scaleGroups.L3.add(sprite);
+        galaxyKnots.push({sprite,r,phase:a,y:(rng()-.5)*2.4,baseScale:sprite.scale.x,seed:rng()*6.28});
+      }
     }
     function buildGalaxyTracers() {
       galaxyTracers.forEach(t=>{disposeTree(t.dot);disposeTree(t.path);disposeTree(t.tail);disposeTree(t.arrow);});galaxyTracers=[];
       for(let i=0;i<10;i++){
-        const r=i===5?52:14+i*7.6,phase=i*2.3,axis=state.galaxyMorph==='m87'?new THREE.Vector3(Math.sin(i),.4,Math.cos(i)).normalize():new THREE.Vector3(0,1,0);
+        const isSun=i===5;
+        const r=isSun?52:14+i*7.6,phase=i*2.3,axis=state.galaxyMorph==='m87'?new THREE.Vector3(Math.sin(i),.4,Math.cos(i)).normalize():new THREE.Vector3(0,1,0);
         const base=new THREE.Vector3(r,0,0);const point=a=>base.clone().multiplyScalar(1+.035*Math.cos(a*1.4+phase)).applyAxisAngle(axis,a).addScaledVector(axis,Math.sin(a*2.3+phase)*(.3+r*.015));
-        const dot=new THREE.Mesh(new THREE.SphereGeometry(.45,10,10),new THREE.MeshBasicMaterial({color:0xf5f8ff}));scaleGroups.L3.add(dot);
-        const path=makeLine(Array.from({length:161},(_,j)=>point(j/160*Math.PI*2)),TRAJECTORY_COLOR,.035);layerGroup('L3','paths').add(path);
-        const tail=makeLine(Array.from({length:48},(_,j)=>point(phase-j*.01)),TRAJECTORY_COLOR,.8);layerGroup('L3','paths').add(tail);
+        const dot=new THREE.Mesh(new THREE.SphereGeometry(isSun?1.05:.48,12,12),new THREE.MeshBasicMaterial({color:isSun?0xffe082:0xf5f8ff}));
+        if(isSun){const halo=glowSprite(0xffc966,11.5,.75);dot.add(halo);dot.userData.halo=halo;}
+        scaleGroups.L3.add(dot);
+        const path=makeLine(Array.from({length:161},(_,j)=>point(j/160*Math.PI*2)),isSun?0xfbbf24:TRAJECTORY_COLOR,isSun?.24:.045);layerGroup('L3','paths').add(path);
+        const len=isSun?72:48;
+        const tail=makeLine(Array.from({length:len},(_,j)=>point(phase-j*.01)),isSun?0xfde047:TRAJECTORY_COLOR,isSun?.95:.82);layerGroup('L3','paths').add(tail);
         const arrow=new THREE.ArrowHelper(new THREE.Vector3(-1,0,0),base,6,FORCE_COLOR,1,.45);layerGroup('L3','forces').add(arrow);
-        galaxyTracers.push({r,phase,axis,point,dot,path,tail,arrow,isSun:i===5,history:Array.from({length:48},()=>point(phase))});
+        galaxyTracers.push({r,phase,axis,point,dot,path,tail,arrow,isSun,len,history:Array.from({length:len},()=>point(phase))});
       }
     }
     function switchGalaxyMorph(morph) {
-      state.galaxyMorph=morph;dynamics.sceneTime.L3=0;motion.phase.L3=0;setGalaxyData(morph);buildGalaxyTracers();l3M87Jet.visible=morph==='m87';galaxyDust.visible=morph!=='m87';galaxyDust.material.uniforms.uSombrero.value=morph==='sombrero'?1:0;
+      state.galaxyMorph=morph;dynamics.sceneTime.L3=0;motion.phase.L3=0;setGalaxyData(morph);buildGalaxyKnots();buildGalaxyTracers();l3M87Jet.visible=morph==='m87';galaxyDust.visible=morph!=='m87';galaxyDust.material.uniforms.uSombrero.value=morph==='sombrero'?1:0;
       document.querySelectorAll('.gal-btn').forEach(b=>b.classList.toggle('active',b.dataset.gal===morph));
       const names={milkyway:'银河系棒旋',andromeda:'仙女座 M31',sombrero:'草帽星系 M104',m87:'室女座 M87',cartwheel:'车轮碰撞星系'};
       document.getElementById('scene-title').textContent=names[morph]+' · 恒星动力学';renderLargeScaleFacts();updateDynamicsValues();syncDynamicsUI();showToast('已切换到'+names[morph]);
     }
     function updateL3(dt) {
-      motion.phase.L3+=dt*1.85*Math.sqrt(dynamics.gravity);const time=motion.phase.L3;galaxyNebula.rotation.z=-time*.055;l3Points.material.uniforms.uTime.value=time;l3Points.material.uniforms.uPixelRatio.value=renderer.getPixelRatio();galaxyDust.material.uniforms.uTime.value=time;l3M87Jet.material.uniforms.uTime.value=time*1.3;
-      for(const t of galaxyTracers){const a=t.phase+time*8/Math.sqrt(t.r*t.r+100);t.dot.position.copy(t.point(a));if(dt>0){t.history.shift();t.history.push(t.dot.position.clone());}const attr=t.tail.geometry.attributes.position;for(let j=0;j<48;j++){const p=t.history[j];attr.setXYZ(j,p.x,p.y,p.z);}attr.needsUpdate=true;t.tail.geometry.computeBoundingSphere();t.arrow.position.copy(t.dot.position);t.arrow.setDirection(t.dot.position.clone().negate().normalize());}
+      motion.phase.L3+=dt*1.95*Math.sqrt(dynamics.gravity);const time=motion.phase.L3;galaxyNebula.rotation.z=-time*.058;l3Points.material.uniforms.uTime.value=time;l3Points.material.uniforms.uPixelRatio.value=renderer.getPixelRatio();galaxyDust.material.uniforms.uTime.value=time;l3M87Jet.material.uniforms.uTime.value=time*1.35;
+      for(const k of galaxyKnots){const a=k.phase+time*8/Math.sqrt(k.r*k.r+100);k.sprite.position.set(Math.cos(a)*k.r,k.y+Math.sin(a*2.3+k.seed)*.55,Math.sin(a)*k.r);const s=k.baseScale*(.88+.2*Math.sin(time*2.2+k.seed));k.sprite.scale.set(s,s,1);}
+      for(const t of galaxyTracers){const a=t.phase+time*8/Math.sqrt(t.r*t.r+100);t.dot.position.copy(t.point(a));if(t.dot.userData.halo){const p=10.5+2.6*Math.sin(time*3.4);t.dot.userData.halo.scale.set(p,p,1);}if(dt>0){t.history.shift();t.history.push(t.dot.position.clone());}const attr=t.tail.geometry.attributes.position;for(let j=0;j<t.len;j++){const p=t.history[j];attr.setXYZ(j,p.x,p.y,p.z);}attr.needsUpdate=true;t.tail.geometry.computeBoundingSphere();t.arrow.position.copy(t.dot.position);t.arrow.setDirection(t.dot.position.clone().negate().normalize());}
     }
     function galaxyStampTexture() {
       const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d');ctx.translate(64,64);ctx.scale(1,.58);
@@ -161,13 +181,14 @@
         for(let j=0;j<720;j++){points.push(p.clone());const a=accelerationAt(p,sources);v.addScaledVector(a,.04);p.addScaledVector(v,.08);v.addScaledVector(accelerationAt(p,sources),.04);if(p.length()<7||p.length()>126)break;}
         layerGroup('L4','paths').add(makeLine(points,TRAJECTORY_COLOR,.32));
       }
-      const flowGeo=new THREE.BufferGeometry();flowGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(640*3),3));flowGeo.setAttribute('color',new THREE.BufferAttribute(new Float32Array(640*3),3));clusterFlow=glowPoints(flowGeo,1.35,.88);clusterFlow.frustumCulled=false;g.add(clusterFlow);
-      for(let i=0;i<640;i++){
+      const flowN=1200,flowGeo=new THREE.BufferGeometry();flowGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(flowN*3),3));flowGeo.setAttribute('color',new THREE.BufferAttribute(new Float32Array(flowN*3),3));clusterFlow=glowPoints(flowGeo,1.55,.94);clusterFlow.frustumCulled=false;g.add(clusterFlow);
+      for(let i=0;i<flowN;i++){
         const node=clusterNodes[1+i%7],p=node.center.clone().multiplyScalar(.2+rng()*.85).add(new THREE.Vector3((rng()-.5)*9,(rng()-.5)*9,(rng()-.5)*9));
-        const v=p.clone().negate().normalize().multiplyScalar(2.2).add(new THREE.Vector3(-p.z,0,p.x).normalize().multiplyScalar(1.1));
-        clusterParticles.push({p,v,initial:p.clone(),initialV:v.clone()});flowGeo.attributes.color.setXYZ(i,.10,.62,.44);
+        const v=p.clone().negate().normalize().multiplyScalar(2.4).add(new THREE.Vector3(-p.z,0,p.x).normalize().multiplyScalar(1.2));
+        clusterParticles.push({p,v,initial:p.clone(),initialV:v.clone()});
+        if(i%4===0)flowGeo.attributes.color.setXYZ(i,.98,.78,.36);else if(i%2===0)flowGeo.attributes.color.setXYZ(i,.24,.82,.98);else flowGeo.attributes.color.setXYZ(i,.18,.86,.62);
       }
-      for(let i=0;i<20;i++){const p=clusterParticles[i].p,history=Array.from({length:70},()=>p.clone()),line=makeLine(history,FLOW_COLOR,.65);layerGroup('L4','paths').add(line);clusterTails.push({index:i,history,line});}
+      for(let i=0;i<40;i++){const p=clusterParticles[i].p,history=Array.from({length:76},()=>p.clone()),line=makeLine(history,i%3===0?0xfbbf24:(i%2?0x38bdf8:FLOW_COLOR),.76);layerGroup('L4','paths').add(line);clusterTails.push({index:i,history,line});}
       updateL4(0);
     }
     function updateParticleTail(tail,p) {
@@ -208,9 +229,9 @@
       while(cursor<count){const node=webNodes[cursor%webNodes.length],r=Math.pow(rng(),1.3)*7,a=rng()*6.283,ph=Math.acos(2*rng()-1);node.pos.clone().add(new THREE.Vector3(r*Math.sin(ph)*Math.cos(a),r*Math.cos(ph),r*Math.sin(ph)*Math.sin(a))).toArray(pos,cursor*3);tmp.setRGB(.9,.69,.42).multiplyScalar(.35+rng()*.5).toArray(col,cursor*3);cursor++;}
       const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));g.add(glowPoints(geo,.65,.7));
       webNodes.forEach(n=>{const glow=glowSprite(0xffd0a0,3+n.mass*.4,.62);glow.position.copy(n.pos);g.add(glow);});
-      const flowCount=900,fg=new THREE.BufferGeometry();fg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));fg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));webFlow=glowPoints(fg,1.35,.9);webFlow.frustumCulled=false;g.add(webFlow);
-      for(let i=0;i<flowCount;i++){const edge=webEdges[i%webEdges.length],t=.1+rng()*.8;webParticles.push({edge,t,initial:t,v:0,side:t<.5?-1:1});fg.attributes.color.setXYZ(i,.10,.62,.44);}
-      for(let i=0;i<22;i++){const p=webParticles[i].edge.curve.getPoint(webParticles[i].t),history=Array.from({length:55},()=>p.clone()),line=makeLine(history,FLOW_COLOR,.55);layerGroup('L5','paths').add(line);webTails.push({index:i,history,line});}
+      const flowCount=1500,fg=new THREE.BufferGeometry();fg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));fg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));webFlow=glowPoints(fg,1.55,.94);webFlow.frustumCulled=false;g.add(webFlow);
+      for(let i=0;i<flowCount;i++){const edge=webEdges[i%webEdges.length],t=.1+rng()*.8;webParticles.push({edge,t,initial:t,v:0,side:t<.5?-1:1});if(i%4===0)fg.attributes.color.setXYZ(i,.96,.72,.38);else if(i%2===0)fg.attributes.color.setXYZ(i,.38,.78,1.);else fg.attributes.color.setXYZ(i,.20,.88,.66);}
+      for(let i=0;i<40;i++){const p=webParticles[i].edge.curve.getPoint(webParticles[i].t),history=Array.from({length:64},()=>p.clone()),line=makeLine(history,i%3===0?0xfbbf24:(i%2?0x60a5fa:FLOW_COLOR),.68);layerGroup('L5','paths').add(line);webTails.push({index:i,history,line});}
       const cmb=new THREE.Mesh(new THREE.SphereGeometry(1600,32,24),new THREE.ShaderMaterial({vertexShader:PLANET_VERT,fragmentShader:CMB_FRAG,side:THREE.BackSide,transparent:true,depthTest:false,depthWrite:false}));cmb.renderOrder=-10;g.add(cmb);updateL5(0);
     }
     let webTailClock=0;

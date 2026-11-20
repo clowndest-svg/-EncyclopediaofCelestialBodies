@@ -67,15 +67,16 @@ section('    <!-- 标签 2：彗星与地貌 -->','    <!-- 标签 3：光学与
 
       <!-- 仅在 L1 太阳系显示：太阳系视角与穿行巡览 -->
       <div data-explore-scales="L1" class="space-y-2 pt-2 border-t border-slate-800/80">
-        <div class="text-[10px] uppercase tracking-wider text-amber-300/80 font-mono-tech">太阳系穿行视角</div>
+        <div class="text-[10px] uppercase tracking-wider text-amber-300/80 font-mono-tech">太阳系银河公转视角</div>
         <div class="grid grid-cols-2 gap-1.5">
-          <button data-scene-view="l1-galactic" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">✦ 银河穿行侧视</button>
+          <button data-scene-view="l1-galactic" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-amber-200 border-amber-400/35">✦ 银河螺旋跟拍</button>
+          <button data-scene-view="l1-galactic-year" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-sky-200 border-sky-400/35">🌌 银河年全景</button>
           <button data-scene-view="l1-ecliptic" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">◎ 黄道面俯瞰</button>
           <button data-scene-view="l1-inner" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">☀ 内太阳系岩质带</button>
-          <button data-scene-view="l1-outer" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">🪐 外太阳系巨行星</button>
+          <button data-scene-view="l1-outer" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200 col-span-2">🪐 外太阳系巨行星</button>
         </div>
         <p class="text-[10px] text-slate-400 leading-relaxed">
-          切换“银河/外部参考”可直观看见太阳系拖着彩色螺旋尾迹、顶着弓形激波穿行于星际视差星流之中。
+          太阳系以 230 km/s 绕银心人马座 A* 公转，黄道面倾斜 60° 形成三维螺旋轨迹；点击“银河年全景”或滚轮拉远可俯瞰整条螺旋轨道环绕银河系。
         </p>
       </div>
 
@@ -193,6 +194,148 @@ replace('      万象寰宇 · 3.0','      万象寰宇 · 星海图鉴')
 replace('COSMIC ATLAS // INITIALIZING ASTROPHYSICS ENGINE','引力、光与亿万星辰')
 replace('正在编译相对论着色器与星系粒子场...','正在准备引力模型与观测场景…')
 replace('      const count = 9000;','      const count = document.body.dataset.layout === "mobile" ? 3800 : 6500;')
+replace('const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 4000);','const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 12000);')
+replace('controls.maxDistance = 900;','controls.maxDistance = 4200;')
+replace('const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.62, 0.45, 0.72);','const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.68, 0.52, 0.56);')
+replace('starfieldMat = new THREE.PointsMaterial({ size: 1.9, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false });','starfieldMat = new THREE.PointsMaterial({ size: 2.6, map: (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const x = c.getContext("2d"); const g = x.createRadialGradient(32,32,0,32,32,32); g.addColorStop(0,"rgba(255,255,255,1)"); g.addColorStop(0.32,"rgba(255,255,255,0.85)"); g.addColorStop(0.7,"rgba(255,255,255,0.2)"); g.addColorStop(1,"rgba(255,255,255,0)"); x.fillStyle = g; x.fillRect(0,0,64,64); return new THREE.CanvasTexture(c); })(), alphaTest: 0.01, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });')
+replace('''      state.camTransition = {
+        startPos: camera.position.clone(),
+        endPos: camPos.clone(),
+        startLook: controls.target.clone(),
+        endLook: lookAt.clone(),
+        t: 0
+      };''','''      const jumpDist = camera.position.distanceTo(camPos);
+      const fastRebase = jumpDist > 900 && state.currentScale !== 'L1';
+      const rebaseStart = fastRebase ? lookAt.clone().add(camPos.clone().sub(lookAt).multiplyScalar(1.38)) : camera.position.clone();
+      const rebaseLook = fastRebase ? lookAt.clone() : controls.target.clone();
+      if (fastRebase) { camera.position.copy(rebaseStart); controls.target.copy(rebaseLook); }
+      state.camTransition = {
+        startPos: rebaseStart,
+        endPos: camPos.clone(),
+        startLook: rebaseLook,
+        endLook: lookAt.clone(),
+        t: 0
+      };''')
+replace('            <input id="slider-bloom" type="range" min="0" max="1.8" step="0.02" value="0.62" class="cosmic-slider" />','            <input id="slider-bloom" type="range" min="0" max="1.8" step="0.02" value="0.68" class="cosmic-slider" />')
+replace('              <span id="val-bloom" class="font-mono-tech text-amber-300">0.62</span>','              <span id="val-bloom" class="font-mono-tech text-amber-300">0.68</span>')
+replace('            <input id="slider-vfx" type="range" min="0.3" max="2.0" step="0.05" value="1.0" class="cosmic-slider" />\n          </div>\n        </div>','            <input id="slider-vfx" type="range" min="0.3" max="2.0" step="0.05" value="1.0" class="cosmic-slider" />\n          </div>\n          <button id="btn-reset-optics" type="button" class="glass-btn w-full py-1.5 rounded-xl text-[11px] text-slate-300">↺ 恢复光学与特效默认</button>\n        </div>')
+replace('bloomPass.strength = scaleKey === \'L0B\' ? 0.18 : parseFloat(document.getElementById(\'slider-bloom\').value);','if (typeof applyBloom === "function") applyBloom(parseFloat(document.getElementById("slider-bloom").value)); else bloomPass.strength = scaleKey === "L0B" ? 0.18 : parseFloat(document.getElementById("slider-bloom").value);')
+replace('''      document.getElementById('slider-bloom').oninput = (e) => {
+        const v = parseFloat(e.target.value);
+        bloomPass.strength = v;
+        document.getElementById('val-bloom').textContent = v.toFixed(2);
+      };
+      document.getElementById('slider-sun-glare').oninput = (e) => {
+        state.sunGlare = parseFloat(e.target.value);
+        document.getElementById('val-sun-glare').textContent = state.sunGlare.toFixed(2);
+        if (l1Sun) l1Sun.uniforms.uSunGlare.value = state.sunGlare;
+        if (sunCoronaSprite) {
+          sunCoronaSprite.material.opacity = 0.25 + state.sunGlare * 0.58;
+          const sc = 36 + state.sunGlare * 26;
+          sunCoronaSprite.scale.set(sc, sc, 1);
+        }
+      };
+      document.getElementById('slider-stardust').oninput = (e) => {
+        state.stardustBrightness = parseFloat(e.target.value);
+        document.getElementById('val-stardust').textContent = state.stardustBrightness.toFixed(2);
+        if (starfieldMat) starfieldMat.opacity = Math.min(1, 0.45 * state.stardustBrightness + 0.35);
+      };
+      document.getElementById('slider-vfx').oninput = (e) => {
+        state.vfxIntensity = parseFloat(e.target.value);
+        document.getElementById('val-vfx').textContent = state.vfxIntensity.toFixed(2);
+      };''','''      window.applyBloom = function applyBloom(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 0.68, 0, 1.8);
+        const eff = state.currentScale === 'L0B' ? Math.min(0.24, val * 0.32) : val;
+        bloomPass.strength = eff;
+        bloomPass.threshold = state.currentScale === 'L0B' ? 0.82 : THREE.MathUtils.clamp(0.84 - val * 0.32, 0.18, 0.92);
+        bloomPass.radius = 0.28 + val * 0.32;
+        renderer.toneMappingExposure = state.currentScale === 'L0B' ? 1.05 : (0.94 + val * 0.16);
+        const out = document.getElementById('val-bloom'); if (out) out.textContent = val.toFixed(2);
+      };
+      window.applySunGlare = function applySunGlare(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 0.75, 0.1, 1.6);
+        state.sunGlare = val;
+        const out = document.getElementById('val-sun-glare'); if (out) out.textContent = val.toFixed(2);
+        if (l1Sun?.uniforms?.uSunGlare) l1Sun.uniforms.uSunGlare.value = val;
+        if (sunCoronaSprite) {
+          sunCoronaSprite.material.opacity = THREE.MathUtils.clamp(0.14 + val * 0.62, 0.08, 1.0);
+          const sc = 28 + val * 36;
+          sunCoronaSprite.scale.set(sc, sc, 1);
+        }
+        if (sunPointLight) sunPointLight.intensity = 1.0 + val * 2.1;
+        if (typeof motion !== 'undefined' && motion.milkyWayL1?.userData) {
+          const ud = motion.milkyWayL1.userData;
+          if (ud.core) { const s = 175 + val * 145; ud.core.scale.set(s, s, 1); ud.core.material.opacity = THREE.MathUtils.clamp(0.45 + val * 0.45, 0.25, 1); }
+          if (ud.halo) { const s = 420 + val * 340; ud.halo.scale.set(s, s, 1); ud.halo.material.opacity = THREE.MathUtils.clamp(0.18 + val * 0.32, 0.10, 0.85); }
+        }
+        if (typeof bhShaderMat !== 'undefined' && bhShaderMat?.uniforms?.uBrightness) bhShaderMat.uniforms.uBrightness.value = 0.38 + val * 0.58;
+        if (typeof galaxyCoreSprite !== 'undefined' && galaxyCoreSprite) { const s = 16 + val * 18; galaxyCoreSprite.scale.set(s, s, 1); galaxyCoreSprite.material.opacity = THREE.MathUtils.clamp(0.20 + val * 0.38, 0.12, 0.95); }
+      };
+      window.applyStardust = function applyStardust(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 1.0, 0.2, 2.0);
+        state.stardustBrightness = val;
+        const out = document.getElementById('val-stardust'); if (out) out.textContent = val.toFixed(2);
+        const norm = (val - 0.2) / 1.8;
+        if (starfieldMat) {
+          starfieldMat.opacity = THREE.MathUtils.clamp(0.06 + norm * 0.94, 0.05, 1.0);
+          starfieldMat.size = 0.8 + norm * 2.5;
+        }
+        if (typeof motion !== 'undefined') {
+          Object.values(motion.parallax || {}).forEach(f => {
+            if (!f) return;
+            if (f.stars?.material) { f.stars.material.opacity = THREE.MathUtils.clamp(0.10 + norm * 0.85, 0.06, 1.0); f.stars.material.size = 1.1 + norm * 2.2; }
+            if (f.streaks?.material) f.streaks.material.opacity = THREE.MathUtils.clamp(0.06 + norm * 0.55, 0.04, 0.85);
+          });
+          if (motion.milkyWayL1?.userData?.stars?.material) {
+            const m = motion.milkyWayL1.userData.stars.material;
+            m.opacity = THREE.MathUtils.clamp(0.18 + norm * 0.80, 0.12, 1.0);
+            m.size = 4.2 + norm * 8.2;
+          }
+          if (motion.kuiperBelt?.material) motion.kuiperBelt.material.opacity = THREE.MathUtils.clamp(0.06 + norm * 0.45, 0.04, 0.72);
+        }
+        if (typeof l3Points !== 'undefined' && l3Points?.material?.uniforms?.uStardust) l3Points.material.uniforms.uStardust.value = 0.28 + norm * 1.45;
+        if (typeof galaxyNebula !== 'undefined' && galaxyNebula?.material) galaxyNebula.material.opacity = THREE.MathUtils.clamp(0.18 + norm * 0.82, 0.12, 1.0);
+        if (typeof clusterFlow !== 'undefined' && clusterFlow?.material) clusterFlow.material.opacity = THREE.MathUtils.clamp(0.25 + norm * 0.75, 0.18, 1.0);
+        if (typeof webFlow !== 'undefined' && webFlow?.material) webFlow.material.opacity = THREE.MathUtils.clamp(0.25 + norm * 0.75, 0.18, 1.0);
+      };
+      window.applyVfxIntensity = function applyVfxIntensity(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 1.0, 0.3, 2.0);
+        state.vfxIntensity = val;
+        const out = document.getElementById('val-vfx'); if (out) out.textContent = val.toFixed(2);
+        if (typeof motion !== 'undefined') {
+          if (motion.bowShock?.userData?.mat?.uniforms?.uVfx) motion.bowShock.userData.mat.uniforms.uVfx.value = val;
+          (motion.planetHalos || []).forEach(h => {
+            if (!h.sprite) return;
+            const sc = h.baseScale * (0.55 + val * 0.55);
+            h.sprite.scale.set(sc, sc, 1);
+            h.sprite.material.opacity = THREE.MathUtils.clamp(h.baseOpacity * (0.45 + val * 0.62), 0.12, 1.0);
+          });
+          if (motion.galacticRibbon?.material) motion.galacticRibbon.material.opacity = THREE.MathUtils.clamp(0.42 + val * 0.48, 0.15, 1.0);
+          if (motion.milkyWayL1?.userData?.galFullHelix?.material) motion.milkyWayL1.userData.galFullHelix.material.opacity = THREE.MathUtils.clamp(0.18 + val * 0.24, 0.08, 0.85);
+        }
+        if (typeof bhJetPoints !== 'undefined' && bhJetPoints?.material?.uniforms?.uVfx) bhJetPoints.material.uniforms.uVfx.value = val;
+        if (typeof l3M87Jet !== 'undefined' && l3M87Jet?.material?.uniforms?.uVfx) l3M87Jet.material.uniforms.uVfx.value = val;
+        if (typeof l0AuroraGroup !== 'undefined' && l0AuroraGroup?.userData?.mat?.uniforms?.uVfx) l0AuroraGroup.userData.mat.uniforms.uVfx.value = val;
+        if (typeof activeExplosions !== 'undefined') activeExplosions.forEach(ex => { if (ex.group) ex.group.scale.setScalar(0.65 + val * 0.42); });
+        if (typeof lab !== 'undefined' && lab.effects) lab.effects.forEach(fx => {
+          if (fx.flash?.material) fx.flash.material.opacity = THREE.MathUtils.clamp(0.4 + val * 0.45, 0.15, 1.0);
+          if (fx.ring?.material) fx.ring.material.opacity = THREE.MathUtils.clamp(0.35 + val * 0.50, 0.15, 1.0);
+        });
+      };
+      window.resetOptics = function resetOptics() {
+        const defs = [['slider-bloom', 0.68, applyBloom], ['slider-sun-glare', 0.75, applySunGlare], ['slider-stardust', 1.0, applyStardust], ['slider-vfx', 1.0, applyVfxIntensity]];
+        defs.forEach(([id, v, fn]) => { const el = document.getElementById(id); if (el) el.value = String(v); fn(v); });
+      };
+      document.getElementById('slider-bloom').oninput = (e) => applyBloom(parseFloat(e.target.value));
+      document.getElementById('slider-sun-glare').oninput = (e) => applySunGlare(parseFloat(e.target.value));
+      document.getElementById('slider-stardust').oninput = (e) => applyStardust(parseFloat(e.target.value));
+      document.getElementById('slider-vfx').oninput = (e) => applyVfxIntensity(parseFloat(e.target.value));
+      const btnResetOptics = document.getElementById('btn-reset-optics');
+      if (btnResetOptics) btnResetOptics.onclick = () => { resetOptics(); showToast('已恢复光学与特效默认参数'); };
+      applyBloom(parseFloat(document.getElementById('slider-bloom').value));
+      applySunGlare(parseFloat(document.getElementById('slider-sun-glare').value));
+      applyStardust(parseFloat(document.getElementById('slider-stardust').value));
+      applyVfxIntensity(parseFloat(document.getElementById('slider-vfx').value));''')
 replace('      const kbCount = 40000;','      const kbCount = document.body.dataset.layout === "mobile" ? 10000 : 22000;')
 replace("      L1:  { name: 'L1 太阳系', ruler: '标尺: 1 AU ≈ 1.496×10⁸ km', camPos: [0, 75, 165]", "      L1:  { name: 'L1 太阳系', ruler: '1 AU = 1.496 亿 km · 比例压缩', camPos: [0, 175, 315]")
 replace('camPos: [0, 12, 52]', 'camPos: [0, 15, 70]')
@@ -275,7 +418,7 @@ section('    // 响应式窗口缩放','    // =================================
 ''')
 replace("        status.textContent = '正在构建 380,000+ 星系与宇宙纤维网粒子...';", "        status.textContent = '正在构建差速恒星、引力节点和宇宙纤维…';")
 replace("        status.textContent = '万象寰宇 3.0 已就绪';", "        status.textContent = '观测台已就绪 · 引力与轨迹已启用';")
-replace('      celestialBodies.forEach(resetBody);','      resetDynamics();\n      celestialBodies.forEach(resetBody);')
+replace('      celestialBodies.forEach(resetBody);','      if (typeof resetOptics === "function") resetOptics();\n      resetDynamics();\n      celestialBodies.forEach(resetBody);')
 replace('      const pointerDownPos', '      const pointerDownPos') if '      const pointerDownPos' in s else None
 replace('    const pointerDownPos = new THREE.Vector2();','    const pointerDownPos = new THREE.Vector2();\n    const activePointers = new Set();\n    let wasMultiTouch = false;')
 replace('      pointerDownPos.set(e.clientX, e.clientY);','      activePointers.add(e.pointerId);\n      if(activePointers.size>1)wasMultiTouch=true;\n      else {wasMultiTouch=false;pointerDownPos.set(e.clientX,e.clientY);}')
@@ -321,6 +464,7 @@ replace('        animate();','''        clearTimeout(startupWatch);
             dust:bhDustData.slice(0,2).map(p=>[p.r,p.phase]),galaxyTime:l3Points.material.uniforms.uTime.value,
             cluster:clusterParticles.slice(0,3).map(p=>p.p.toArray()),web:webParticles.slice(0,3).map(p=>p.t),probes:dynamics.probes.map(p=>({key:p.key,position:p.position.toArray()})),
             renderer:{calls:renderer.info.render.calls,points:renderer.info.render.points,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures},
+            optics:{bloomStrength:bloomPass.strength,bloomThreshold:bloomPass.threshold,exposure:renderer.toneMappingExposure,sunGlare:l1Sun?.uniforms?.uSunGlare?.value,sunLight:sunPointLight?.intensity,starOpacity:starfieldMat?.opacity,starSize:starfieldMat?.size,mwStarOpacity:motion?.milkyWayL1?.userData?.stars?.material?.opacity,vfx:state.vfxIntensity,bowVfx:motion?.bowShock?.userData?.mat?.uniforms?.uVfx?.value,jetVfx:bhJetPoints?.material?.uniforms?.uVfx?.value,camDist:camera.position.length()},
             layout:document.body.dataset.layout,projectiles:activeProjectiles.length
           })
         };

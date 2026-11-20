@@ -98,6 +98,7 @@
       const root=document.getElementById('body-labels');root.replaceChildren();dynamics.labelsDOM=[];
       const candidates=celestialBodies.filter(b=>b.scaleKey===state.currentScale&&b.id!=='moon');
       candidates.forEach(body=>{const el=document.createElement('span');el.className='body-label';el.textContent=ENCYCLOPEDIA[body.id]?.name||body.id;root.appendChild(el);dynamics.labelsDOM.push({el,body});});
+      if(state.currentScale==='L1'&&motion.frame==='external'&&motion.sgrALabel){const el=document.createElement('span');el.className='body-label';el.style.borderColor='rgba(251,191,36,0.55)';el.style.color='#fde68a';el.textContent='人马座 A* · 银河系中心';root.appendChild(el);dynamics.labelsDOM.push({el,object:motion.sgrALabel,priority:true});}
       if(state.currentScale==='L4')clusterNodes.slice(0,6).forEach(node=>{const el=document.createElement('span');el.className='body-label';el.textContent=node.name;root.appendChild(el);dynamics.labelsDOM.push({el,position:node.center});});
     }
     function updateLabels() {
@@ -141,9 +142,37 @@
       document.getElementById('transport-speed').onclick=()=>{const speeds=[.5,1,2,5];state.timeScale=speeds[(speeds.indexOf(state.timeScale)+1)%speeds.length];document.getElementById('slider-time-scale').value=state.timeScale;document.getElementById('val-time-scale').textContent=state.timeScale.toFixed(1)+'x';syncDynamicsUI();};
       document.getElementById('transport-home').onclick=frameOverview;
       document.querySelectorAll('[data-scene-view]').forEach(b=>b.onclick=()=>{
-        const c=frameCenter();state.lockedBody=null;lockRingGroup.visible=false;document.getElementById('btn-unlock-cam').classList.add('hidden');
+        const v=b.dataset.sceneView;
+        state.lockedBody=null;lockRingGroup.visible=false;document.getElementById('btn-unlock-cam').classList.add('hidden');
+        if(v==='l1-galactic'){
+          if(motion.frame!=='external')setReferenceFrame('external');
+          motion.galacticOverview=false;
+          const {cam,look}=l1VortexCamera();
+          startCamTransition(cam,look);
+          return;
+        }
+        if(v==='l1-galactic-year'){
+          if(motion.frame!=='external')setReferenceFrame('external');
+          motion.galacticOverview=true;
+          const k=innerWidth<innerHeight?1.45:1;
+          startCamTransition(new THREE.Vector3(0,2950*k,1320*k),new THREE.Vector3(0,0,0));
+          showToast('银河年全景：太阳系每 2.25 亿年绕人马座 A* 公转一周');
+          return;
+        }
+        if(state.currentScale==='L1'&&motion.frame==='external'&&['l1-ecliptic','l1-inner','l1-outer'].includes(v)){
+          motion.galacticOverview=false;
+          const gf=galacticFrameAt(motion.years);
+          const k=innerWidth<innerHeight?1.35:1;
+          let cam;
+          if(v==='l1-ecliptic')cam=gf.pos.clone().addScaledVector(gf.Ey,390*k).addScaledVector(gf.Ez,48*k);
+          else if(v==='l1-inner')cam=gf.pos.clone().addScaledVector(gf.Ey,82*k).addScaledVector(gf.Ez,118*k).addScaledVector(gf.Ex,35*k);
+          else cam=gf.pos.clone().addScaledVector(gf.Ey,210*k).addScaledVector(gf.Ez,330*k).addScaledVector(gf.Ex,180*k);
+          startCamTransition(cam,gf.pos.clone());
+          return;
+        }
+        motion.galacticOverview=false;
+        const c=frameCenter();
         const views={
-          'l1-galactic':[[245,155,515],[-45,-105,15]],
           'l1-ecliptic':[[0,380,42],[0,0,0]],
           'l1-inner':[[0,72,115],[0,0,0]],
           'l1-outer':[[220,175,330],[0,0,0]],
@@ -154,7 +183,7 @@
           'l3-edge':[[0,24,225],[0,0,0]],
           'l4-attractor':[[0,48,95],[0,0,0]],
           'l5-overview':[[0,155,315],[0,0,0]]
-        }[b.dataset.sceneView];
+        }[v];
         if(views)startCamTransition(c.clone().add(fittedCameraPosition(views[0])),c.clone().add(new THREE.Vector3(...views[1])));
       });
       const goL1=document.getElementById('btn-jump-l1');if(goL1)goL1.onclick=()=>switchScale('L1');

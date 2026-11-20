@@ -1030,15 +1030,16 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
 
       <!-- 仅在 L1 太阳系显示：太阳系视角与穿行巡览 -->
       <div data-explore-scales="L1" class="space-y-2 pt-2 border-t border-slate-800/80">
-        <div class="text-[10px] uppercase tracking-wider text-amber-300/80 font-mono-tech">太阳系穿行视角</div>
+        <div class="text-[10px] uppercase tracking-wider text-amber-300/80 font-mono-tech">太阳系银河公转视角</div>
         <div class="grid grid-cols-2 gap-1.5">
-          <button data-scene-view="l1-galactic" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">✦ 银河穿行侧视</button>
+          <button data-scene-view="l1-galactic" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-amber-200 border-amber-400/35">✦ 银河螺旋跟拍</button>
+          <button data-scene-view="l1-galactic-year" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-sky-200 border-sky-400/35">🌌 银河年全景</button>
           <button data-scene-view="l1-ecliptic" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">◎ 黄道面俯瞰</button>
           <button data-scene-view="l1-inner" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">☀ 内太阳系岩质带</button>
-          <button data-scene-view="l1-outer" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200">🪐 外太阳系巨行星</button>
+          <button data-scene-view="l1-outer" class="glass-btn rounded-xl py-2 px-2 text-[11px] text-slate-200 col-span-2">🪐 外太阳系巨行星</button>
         </div>
         <p class="text-[10px] text-slate-400 leading-relaxed">
-          切换“银河/外部参考”可直观看见太阳系拖着彩色螺旋尾迹、顶着弓形激波穿行于星际视差星流之中。
+          太阳系以 230 km/s 绕银心人马座 A* 公转，黄道面倾斜 60° 形成三维螺旋轨迹；点击“银河年全景”或滚轮拉远可俯瞰整条螺旋轨道环绕银河系。
         </p>
       </div>
 
@@ -1106,11 +1107,11 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
   <h3>运动参考系</h3>
   <div class="layer-controls"><button data-reference="external" aria-pressed="true">外部 / 银河参考</button><button data-reference="local" aria-pressed="false">随动 / 共动参考</button></div>
   <p id="reference-explanation"></p>
-  <div class="motion-options"><label><input id="motion-follow" type="checkbox" checked> 镜头跟随整体位移</label><label><input id="motion-stream" type="checkbox" checked> 显示星际穿行视差风流与弓形激波</label><label><input id="motion-guides" type="checkbox" checked> 显示随动椭圆参考轨道</label><label><input id="motion-nbody" type="checkbox" checked> 太阳系行星相互引力</label></div>
-  <div class="dynamics-row"><label for="motion-days">太阳系轨道速度</label><output id="motion-clock">42 天 / 模拟秒</output></div>
-  <input id="motion-days" class="cosmic-slider" type="range" min="1" max="180" value="42" aria-label="每模拟秒推进的太阳系天数">
+  <div class="motion-options"><label><input id="motion-follow" type="checkbox" checked> 镜头跟随整体位移</label><label><input id="motion-stream" type="checkbox" checked> 显示星际穿行视差风流与弓形激波</label><label><input id="motion-guides" type="checkbox"> 显示随动椭圆参考轨道与柯伊伯带</label><label><input id="motion-nbody" type="checkbox" checked> 太阳系行星相互引力</label></div>
+  <div class="dynamics-row"><label for="motion-days">太阳系轨道速度</label><output id="motion-clock">55 天 / 模拟秒</output></div>
+  <input id="motion-days" class="cosmic-slider" type="range" min="1" max="180" value="55" aria-label="每模拟秒推进的太阳系天数">
   <div class="dynamics-row"><label for="motion-history">螺旋轨迹跨度</label><select id="motion-history"><option value="4">紧凑（短窗）</option><option value="12" selected>标准（全八星螺旋）</option><option value="24">超长（巨行星多圈螺旋）</option></select></div>
-  <p class="motion-note">内行星公转快（0.24–1.88 年），外侧巨行星公转慢（木星 12 年、土星 29 年、天王星 84 年、海王星 165 年）；系统按各行星周期自适应延展螺旋尾迹，以便同时看清全部八大行星绕移动太阳的三维螺旋运动。</p>
+  <p class="motion-note">太阳系以约 230 km/s 绕银心人马座 A* 公转（黄道面相对前进方向倾斜约 60°），每 2.25–2.5 亿年绕行银河一周；可拉远镜头或点击“银河年全景”俯瞰整条螺旋轨道如何环绕银河系。</p>
 </section>
 
 <section class="dynamics-box" aria-label="引力与轨道设置">
@@ -1148,9 +1149,9 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
           <div>
             <div class="flex justify-between text-xs mb-1">
               <span class="text-slate-300">Unreal Bloom 辉光强度</span>
-              <span id="val-bloom" class="font-mono-tech text-amber-300">0.62</span>
+              <span id="val-bloom" class="font-mono-tech text-amber-300">0.68</span>
             </div>
-            <input id="slider-bloom" type="range" min="0" max="1.8" step="0.02" value="0.62" class="cosmic-slider" />
+            <input id="slider-bloom" type="range" min="0" max="1.8" step="0.02" value="0.68" class="cosmic-slider" />
           </div>
 
           <div>
@@ -1176,6 +1177,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
             </div>
             <input id="slider-vfx" type="range" min="0.3" max="2.0" step="0.05" value="1.0" class="cosmic-slider" />
           </div>
+          <button id="btn-reset-optics" type="button" class="glass-btn w-full py-1.5 rounded-xl text-[11px] text-slate-300">↺ 恢复光学与特效默认</button>
         </div>
 
         <div class="p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-[11px] text-slate-400 space-y-1">
@@ -1985,7 +1987,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x02040a);
 
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 4000);
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 12000);
     camera.position.set(0, 75, 165);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
@@ -1999,7 +2001,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
     const composer = new EffectComposer(renderer);
     const renderPass = new RenderPass(scene, camera);
     composer.addPass(renderPass);
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.62, 0.45, 0.72);
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.68, 0.52, 0.56);
     composer.addPass(bloomPass);
     const outputPass = new OutputPass();
     composer.addPass(outputPass);
@@ -2009,7 +2011,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
     controls.enableDamping = true;
     controls.dampingFactor = 0.065;
     controls.minDistance = 4;
-    controls.maxDistance = 900;
+    controls.maxDistance = 4200;
 
     // 全局仿真参数
     const state = {
@@ -2203,11 +2205,28 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
 
     const AU_KM=149597870.7, YEAR_SECONDS=31557600, SOLAR_GM=4*Math.PI*Math.PI;
     const SOLAR_ELEMENTS={mercury:[.3871,.2056,1.6601e-7,7],venus:[.7233,.0068,2.4478e-6,3.39],earth:[1,.0167,3.0035e-6,0],mars:[1.5237,.0934,3.2272e-7,1.85],jupiter:[5.2028,.0489,.0009543,1.30],saturn:[9.5388,.0565,.0002857,2.49],uranus:[19.1914,.0472,.00004365,.77],neptune:[30.0611,.0086,.00005149,1.77]};
-    const PLANET_TRAIL_COLORS={sun:0xffe49c,mercury:0xcbd5e1,venus:0xf6c478,earth:0x42ccff,mars:0xf97362,jupiter:0xf59e0b,saturn:0xfde047,uranus:0x67e8f9,neptune:0x60a5fa};
-    const PLANET_HELIX_SPAN={sun:18,mercury:.95,venus:1.9,earth:3.2,mars:5.5,jupiter:18,saturn:34,uranus:62,neptune:95};
-    const motion={frame:'external',follow:true,guides:true,nbody:true,stream:true,daysPerSecond:42,historyYears:12,roots:{},solar:[],histories:[],years:0,lunarDays:0,lastHistory:0,phase:{L2:0,L3:0},webScale:1,webGyr:0,clusterLines:[],labClock:false,parallax:{},bowShock:null,webGrid:null};
+    const PLANET_TRAIL_COLORS={sun:0xffe49c,mercury:0xe2e8f0,venus:0xf8c978,earth:0x38d0ff,mars:0xff5a43,jupiter:0xff9c38,saturn:0xffe066,uranus:0x2ee8d4,neptune:0x3b82f6};
+    const PLANET_HELIX_SPAN={sun:36,mercury:3.2,venus:5.5,earth:9.5,mars:14.5,jupiter:28,saturn:44,uranus:72,neptune:105};
+    const GAL_R=1280, GAL_OMEGA=0.042, ECLIPTIC_TILT=THREE.MathUtils.degToRad(60);
+    const motion={frame:'external',follow:true,guides:false,nbody:true,stream:true,daysPerSecond:55,historyYears:12,roots:{},solar:[],histories:[],years:0,lunarDays:0,lastHistory:0,phase:{L2:0,L3:0},webScale:1,webGyr:0,clusterLines:[],labClock:false,parallax:{},bowShock:null,webGrid:null,milkyWayL1:null,sgrALabel:null,galacticOverview:false,galacticRibbon:null,planetHalos:[],kuiperBelt:null};
     const GALACTIC_DIRECTION=new THREE.Vector3(.494109,.86229,-.11095).normalize();
     const SOLAR_TRAVEL_AU_YEAR=230*YEAR_SECONDS/AU_KM;
+
+    function galacticFrameAt(years) {
+      const theta=years*GAL_OMEGA, c=Math.cos(theta), s=Math.sin(theta);
+      const pos=new THREE.Vector3(GAL_R*c,0,-GAL_R*s);
+      const R=new THREE.Vector3(c,0,-s);         // 径向向外
+      const T=new THREE.Vector3(-s,0,-c);        // 前进切向（逆时针绕银心）
+      const U=new THREE.Vector3(0,1,0);          // 银道北极
+      const ct=Math.cos(ECLIPTIC_TILT), st=Math.sin(ECLIPTIC_TILT);
+      const Ex=R.clone();
+      const Ey=U.clone().multiplyScalar(ct).addScaledVector(T,st).normalize();
+      const Ez=U.clone().multiplyScalar(st).addScaledVector(T,-ct).normalize();
+      const m=new THREE.Matrix4().makeBasis(Ex,Ey,Ez);
+      const quat=new THREE.Quaternion().setFromRotationMatrix(m);
+      return {theta,pos,R,T,U,Ex,Ey,Ez,quat};
+    }
+
     function gravitationalStep(states,h,gm=SOLAR_GM,mutual=true,softening=1e-10) {
       const accelerations=()=>states.map((b,i)=>{const a=new THREE.Vector3();for(let j=0;j<states.length;j++)if(i!==j&&(mutual||states[j].id==='sun'||b.id==='sun')){const d=states[j].p.clone().sub(b.p),r2=d.lengthSq()+softening;a.addScaledVector(d,gm*states[j].mass/(r2*Math.sqrt(r2)));}return a;});
       let acc=accelerations();states.forEach((b,i)=>{b.v.addScaledVector(acc[i],h*.5);b.p.addScaledVector(b.v,h);});
@@ -2229,16 +2248,79 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
     function simulationToWorld(v,key=state.currentScale){simulationRoot(key).updateWorldMatrix(true,false);return simulationRoot(key).localToWorld(v.clone());}
     function travelAt(years,key='L1') {
       if(motion.frame==='local')return new THREE.Vector3();
-      const pitch=key==='L1'?SOLAR_TRAVEL_AU_YEAR*.72:SOLAR_TRAVEL_AU_YEAR*2.4;
-      const travel=GALACTIC_DIRECTION.clone().multiplyScalar(pitch*years);
+      if(key==='L1')return galacticFrameAt(years).pos;
+      const travel=GALACTIC_DIRECTION.clone().multiplyScalar(SOLAR_TRAVEL_AU_YEAR*2.4*years);
       if(key==='L0'){const angle=years*Math.PI*2;travel.add(new THREE.Vector3((Math.cos(angle)-1)*175,0,Math.sin(angle)*175));}
       return travel;
     }
-    function makeHistoryLine(key,color=TRAJECTORY_COLOR,opacity=.72,count=512) {
+    function makeHistoryLine(key,color=TRAJECTORY_COLOR,opacity=.8,count=420) {
       const line=makeLine(Array.from({length:count},()=>new THREE.Vector3()),color,opacity);
-      const colors=new Float32Array(count*3),c=new THREE.Color(color);for(let i=0;i<count;i++)c.clone().multiplyScalar(.08+.92*Math.pow(i/(count-1),1.45)).toArray(colors,i*3);
+      const colors=new Float32Array(count*3),c=new THREE.Color(color);for(let i=0;i<count;i++)c.clone().multiplyScalar(.08+.92*Math.pow(i/(count-1),1.35)).toArray(colors,i*3);
       line.geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));line.material.vertexColors=true;line.frustumCulled=false;scaleGroups[key].add(line);line.userData.realHistory=true;return line;
     }
+
+    // 构建 L1 场景中真实可见的 3D 银河系旋臂与人马座 A* 银心（对标银河年穿行奇观）
+    function buildL1MilkyWay() {
+      const grp=new THREE.Group(), mobile=document.body.dataset.layout==='mobile', rng=deterministicRandom(2026);
+      const count=mobile?9000:22000, pos=new Float32Array(count*3), col=new Float32Array(count*3);
+      const cCore=new THREE.Color(0xffdfa0), cArm=new THREE.Color(0x9bc5ff), cOuter=new THREE.Color(0x6d84d8), cPink=new THREE.Color(0xf48fb1);
+      for(let i=0;i<count;i++){
+        let x,y,z,c;
+        if(i<count*.16){
+          // 银心核球
+          const r=Math.pow(rng(),1.5)*210, a=rng()*6.283, ph=Math.acos(2*rng()-1);
+          x=r*Math.sin(ph)*Math.cos(a)*1.25; y=r*Math.cos(ph)*.48; z=r*Math.sin(ph)*Math.sin(a)*.85;
+          c=cCore.clone().multiplyScalar(.75+rng()*.5);
+        }else{
+          // 2 条主旋臂 + 2 条次旋臂（与视频中恢弘发光星河旋臂一致）
+          const primary=i%4<2, armIdx=primary?(i%2):(i%2+.5);
+          const r=140+Math.pow(rng(),.82)*1020;
+          const twist=Math.log(r/110)*2.65;
+          const spread=(primary?26:48)+r*.045;
+          const ang=armIdx*Math.PI+twist+(rng()-.5)*(spread/Math.max(120,r))*2.8;
+          x=Math.cos(ang)*r; z=-Math.sin(ang)*r;
+          y=(rng()-.5)*(18+55*Math.exp(-r/320));
+          const t=Math.min(1,(r-140)/980);
+          c=cCore.clone().lerp(cArm,Math.min(1,t*1.6)).lerp(cOuter,Math.max(0,t-.5)*1.5);
+          if(i%37===0)c.copy(cPink);
+          c.multiplyScalar(primary?(.62+rng()*.58):(.35+rng()*.45));
+        }
+        pos[i*3]=x; pos[i*3+1]=y; pos[i*3+2]=z;
+        c.toArray(col,i*3);
+      }
+      const geo=new THREE.BufferGeometry();
+      geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+      geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+      const stars=glowPoints(geo,mobile?7.5:9.5,.92);
+      stars.frustumCulled=false;
+      grp.add(stars);
+      // 人马座 A* 炽热金色银心辉光
+      const coreGlow1=glowSprite(0xfff1c4,360,.95), coreGlow2=glowSprite(0xffa938,720,.46);
+      grp.add(coreGlow1,coreGlow2);
+      // 太阳系 2.25 亿年银河公转轨道参考细环（半径 GAL_R）+ 360° 淡金编织螺旋轨
+      const ringPts=[];for(let i=0;i<=256;i++){const a=i/256*Math.PI*2;ringPts.push(new THREE.Vector3(Math.cos(a)*GAL_R,0,-Math.sin(a)*GAL_R));}
+      const galRing=makeLine(ringPts,0xffc970,.24);
+      grp.add(galRing);
+      const fullHelixPts=[];
+      for(let i=0;i<=720;i++){const f=i/720,a=f*Math.PI*2,ph=f*Math.PI*2*56,rad=58;const cx=Math.cos(a)*GAL_R,cz=-Math.sin(a)*GAL_R,rx=Math.cos(a),rz=-Math.sin(a);fullHelixPts.push(new THREE.Vector3(cx+rx*Math.cos(ph)*rad,Math.sin(ph)*rad*.9,cz+rz*Math.cos(ph)*rad));}
+      const galFullHelix=makeLine(fullHelixPts,0xfbbf24,.36);
+      grp.add(galFullHelix);
+      // 银河年全景可见的巨型编织螺旋光带（太阳系身后绵延的 160° 银道螺旋尾迹）
+      const ribN=512, ribGeo=new THREE.BufferGeometry();
+      ribGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(ribN*3),3));
+      const ribCol=new Float32Array(ribN*3), rc=new THREE.Color(0xffbe6b);
+      for(let i=0;i<ribN;i++)rc.clone().multiplyScalar(.08+.92*Math.pow(i/(ribN-1),1.4)).toArray(ribCol,i*3);
+      ribGeo.setAttribute('color',new THREE.BufferAttribute(ribCol,3));
+      const ribbon=new THREE.Line(ribGeo,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.82,blending:THREE.AdditiveBlending,depthWrite:false}));
+      ribbon.frustumCulled=false;
+      grp.add(ribbon);
+      motion.galacticRibbon=ribbon;
+      motion.sgrALabel=new THREE.Object3D();motion.sgrALabel.position.set(0,95,0);grp.add(motion.sgrALabel);
+      grp.userData={stars,core:coreGlow1,halo:coreGlow2,coreGlow1,coreGlow2,galRing,galFullHelix};
+      scaleGroups.L1.add(grp);
+      return grp;
+    }
+
     function buildParallaxField(key,boxSize,starCount,streakCount,streakLen,seed,tintA,tintB) {
       const rng=deterministicRandom(seed),group=new THREE.Group();
       const base=new Float32Array(starCount*3),pos=new Float32Array(starCount*3),col=new Float32Array(starCount*3),cA=new THREE.Color(tintA),cB=new THREE.Color(tintB);
@@ -2256,10 +2338,10 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
           const x=(rng()-.5)*boxSize,y=(rng()-.5)*boxSize,z=(rng()-.5)*boxSize;
           streakBase[i*3]=x;streakBase[i*3+1]=y;streakBase[i*3+2]=z;
           const c=cA.clone().lerp(cB,rng());
-          c.clone().multiplyScalar(.75).toArray(sCol,i*6);c.clone().multiplyScalar(.05).toArray(sCol,i*6+3);
+          c.clone().multiplyScalar(.72).toArray(sCol,i*6);c.clone().multiplyScalar(.04).toArray(sCol,i*6+3);
         }
         const sGeo=new THREE.BufferGeometry();sGeo.setAttribute('position',new THREE.BufferAttribute(sPos,3));sGeo.setAttribute('color',new THREE.BufferAttribute(sCol,3));
-        streaks=new THREE.LineSegments(sGeo,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.36,blending:THREE.AdditiveBlending,depthWrite:false}));
+        streaks=new THREE.LineSegments(sGeo,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.28,blending:THREE.AdditiveBlending,depthWrite:false}));
         streaks.frustumCulled=false;group.add(streaks);
       }
       scaleGroups[key].add(group);
@@ -2289,16 +2371,19 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
       const grp=new THREE.Group();
       const mat=new THREE.ShaderMaterial({
         vertexShader:`varying vec3 vN,vV,vP;void main(){vP=normalize(position);vN=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`,
-        fragmentShader:`varying vec3 vN,vV,vP;uniform float uTime;void main(){float front=smoothstep(.35,.95,vP.y);float edge=pow(1.-abs(dot(vN,vV)),6.0);float arc=exp(-pow((vP.y-.54)/.045,2.))*.11;float ripple=.88+.12*sin(vP.y*32.-uTime*2.8);float a=front*(edge*.18+arc)*ripple;if(a<.006)discard;vec3 col=mix(vec3(.32,.72,1.),vec3(.88,.96,1.),edge);gl_FragColor=vec4(col,a*.38);}`,
-        uniforms:{uTime:{value:0}},transparent:true,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending
+        fragmentShader:`varying vec3 vN,vV,vP;uniform float uTime,uVfx;void main(){float front=smoothstep(.42,.95,vP.y);float edge=pow(1.-abs(dot(vN,vV)),6.2);float arc=exp(-pow((vP.y-.58)/.04,2.))*.09;float ripple=.88+.12*sin(vP.y*30.-uTime*2.8);float a=front*(edge*.15+arc)*ripple*uVfx;if(a<.006)discard;vec3 col=mix(vec3(.32,.72,1.),vec3(.88,.96,1.),edge);gl_FragColor=vec4(col,min(.55,a*.35));}`,
+        uniforms:{uTime:{value:0},uVfx:{value:1}},transparent:true,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending
       });
-      const dome=new THREE.Mesh(new THREE.SphereGeometry(238,48,28,0,Math.PI*2,0,Math.PI*.42),mat);
-      dome.scale.set(1.04,.64,1.04);
+      const dome=new THREE.Mesh(new THREE.SphereGeometry(225,48,28,0,Math.PI*2,0,Math.PI*.38),mat);
+      dome.scale.set(1.02,.56,1.02);
       grp.add(dome);
-      grp.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),GALACTIC_DIRECTION);
+      // 在 L1 本地坐标系中，太阳前进切向 T = (0, sin60°, -cos60°)
+      const localForward=new THREE.Vector3(0,Math.sin(ECLIPTIC_TILT),-Math.cos(ECLIPTIC_TILT)).normalize();
+      grp.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),localForward);
       grp.userData.mat=mat;
       return grp;
     }
+
     function solarSample(t,states=motion.solar){return {t,p:states.map(b=>b.p.clone())};}
     function initSolarPhysics() {
       const bodies=celestialBodies.filter(b=>b.scaleKey==='L1'&&b.id!=='moon');
@@ -2307,6 +2392,14 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
         const [a,e,mass,inclination]=SOLAR_ELEMENTS[body.id],orbit={a,e,inclination:inclination*Math.PI/180,argument:body.orbit.argument};
         const p=orbitPoint(orbit,body.orbit.mean),v=orbitalVelocity(orbit,body.orbit.mean,SOLAR_GM);
         return {id:body.id,body,mass,p,v,orbit,initialMean:body.orbit.mean};
+      });
+      // 为八大行星增添电影级柔光晕轮，让太阳系在深空中色彩鲜明如宝石
+      motion.solar.forEach(b=>{
+        if(b.id!=='sun'){
+          const halo=glowSprite(PLANET_TRAIL_COLORS[b.id]||0x93c5fd,b.body.radius*4.4,.42);
+          b.body.meshGroup.add(halo);
+          motion.planetHalos.push(halo);
+        }
       });
       const center=new THREE.Vector3(),velocity=new THREE.Vector3(),mass=motion.solar.reduce((s,b)=>s+b.mass,0);
       motion.solar.forEach(b=>{center.addScaledVector(b.p,b.mass/mass);velocity.addScaledVector(b.v,b.mass/mass);});
@@ -2317,14 +2410,24 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
       const span=Math.min(10,motion.historyYears),copy=motion.solar.map(b=>({id:b.id,mass:b.mass,p:b.p.clone(),v:b.v.clone()})),samples=[solarSample(motion.years,copy)],interval=span/260;
       for(let i=1;i<=260;i++){const n=Math.max(1,Math.min(18,Math.ceil(interval*365.25))),h=-interval/n;for(let k=0;k<n;k++)gravitationalStep(copy,h,SOLAR_GM*dynamics.gravity,motion.nbody);samples.push(solarSample(motion.years-i*interval,copy));}
       motion.histories=samples.reverse();motion.lastHistory=motion.years;
-      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.95:b.id==='sun'?.85:.74,384);});
+      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.96:b.id==='sun'?.88:.82,420);});
       renderSolarHistory();
     }
     function renderSolarState() {
-      const sun=motion.solar[0],root=simulationRoot('L1'),reflex=motion.frame==='external'?sun.p.clone().multiplyScalar(46):new THREE.Vector3();
-      root.position.copy(travelAt(motion.years));
-      if(motion.forwardArrow)motion.forwardArrow.visible=motion.frame==='external';
-      if(motion.bowShock)motion.bowShock.visible=motion.frame==='external'&&motion.stream;
+      const sun=motion.solar[0],root=simulationRoot('L1'),ext=motion.frame==='external';
+      const reflex=ext?sun.p.clone().multiplyScalar(46):new THREE.Vector3();
+      const gf=galacticFrameAt(motion.years);
+      if(ext){root.position.copy(gf.pos);root.quaternion.copy(gf.quat);}
+      else{root.position.set(0,0,0);root.quaternion.identity();}
+      if(motion.milkyWayL1){
+        motion.milkyWayL1.visible=ext;
+        const wideView=ext&&(motion.galacticOverview||camera.position.distanceTo(gf.pos)>980);
+        if(motion.milkyWayL1.userData?.galFullHelix)motion.milkyWayL1.userData.galFullHelix.visible=wideView&&dynamics.trails;
+        if(motion.galacticRibbon)motion.galacticRibbon.visible=wideView&&dynamics.trails;
+      }
+      if(motion.forwardArrow)motion.forwardArrow.visible=ext;
+      if(motion.bowShock)motion.bowShock.visible=ext&&motion.stream&&!motion.galacticOverview;
+      if(motion.kuiperBelt)motion.kuiperBelt.visible=!ext||motion.guides;
       if(sunCoronaSprite)sunCoronaSprite.position.copy(reflex);if(sunPointLight)sunPointLight.position.copy(reflex);
       motion.solar.forEach(b=>{
         if(b.id==='sun')b.body.meshGroup.position.copy(reflex);
@@ -2336,26 +2439,49 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
       root.updateWorldMatrix(true,true);
       const sunWorld=l1Sun.mesh.getWorldPosition(new THREE.Vector3());
       celestialBodies.filter(b=>b.scaleKey==='L1').forEach(b=>{b.uniforms.uSunPos.value.copy(sunWorld);if(b.cloudsMesh)b.cloudsMesh.material.uniforms.uSunPos.value.copy(sunWorld);if(b.atmoMesh)b.atmoMesh.material.uniforms.uSunPos.value.copy(sunWorld);});
-      updateParallaxField(motion.parallax.L1,root.position,GALACTIC_DIRECTION,motion.frame==='external'&&motion.stream);
+      updateParallaxField(motion.parallax.L1,gf.pos,gf.T,ext&&motion.stream&&!motion.galacticOverview);
     }
     function renderSolarHistory() {
       if(!motion.solar.length)return;
-      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=384;
+      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=420,ext=motion.frame==='external';
       const samples=motion.histories.concat(solarSample(motion.years));
+      // 更新银河年大尺度编织光带（远景/银河年全景下沿太阳身后 150° 银道圆弧延伸）
+      if(motion.galacticRibbon&&motion.galacticRibbon.visible){
+        if(ext&&dynamics.trails){
+          const rAttr=motion.galacticRibbon.geometry.attributes.position, rn=rAttr.count, arcSpan=2.65/GAL_OMEGA;
+          for(let i=0;i<rn;i++){
+            const u=i/(rn-1), t=motion.years-(1-u)*arcSpan, gf=galacticFrameAt(t);
+            const swirl=t*3.8, rad=32*(1-u*.15);
+            const p=gf.pos.clone().addScaledVector(gf.Ex,Math.cos(swirl)*rad).addScaledVector(gf.Ez,Math.sin(swirl)*rad);
+            rAttr.setXYZ(i,p.x,p.y,p.z);
+          }
+          rAttr.needsUpdate=true;
+        }
+      }
       motion.solar.forEach((b,index)=>{
         const attr=b.historyLine.geometry.attributes.position;
-        const isOuter=['jupiter','saturn','uranus','neptune'].includes(b.id);
-        if(motion.frame==='external'&&isOuter&&b.orbit){
-          // 外侧巨行星公转周期长达 12–165 年，按各自周期比例展示真实开普勒三维螺旋曲线，避免短窗内呈直线
-          const span=(PLANET_HELIX_SPAN[b.id]||24)*Math.max(.35,scaleFactor);
+        if(ext&&b.orbit){
+          // 沿弯曲银河公转大圆实时绘制丝滑高精度 3D 螺旋轨道（内外八大行星皆为优美三维螺旋）
+          const span=(PLANET_HELIX_SPAN[b.id]||12)*Math.max(.35,scaleFactor);
           const omega=Math.sqrt(SOLAR_GM*dynamics.gravity/Math.pow(b.orbit.a,3));
           const curRel=b.p.clone().sub(sunNow.p),curMean=b.body.orbit.mean;
           const exactCur=mapSolarAU(curRel),keplerCur=mapSolarAU(orbitPoint(b.orbit,curMean));
           const offset=exactCur.sub(keplerCur);
           for(let i=0;i<N;i++){
             const u=i/(N-1),dtBack=(1-u)*span,t=motion.years-dtBack;
-            const pos=mapSolarAU(orbitPoint(b.orbit,curMean-omega*dtBack)).addScaledVector(offset,u).add(travelAt(t,'L1'));
-            attr.setXYZ(i,pos.x,pos.y,pos.z);
+            const gf=galacticFrameAt(t);
+            const localP=mapSolarAU(orbitPoint(b.orbit,curMean-omega*dtBack)).addScaledVector(offset,u);
+            const worldP=gf.pos.clone().addScaledVector(gf.Ex,localP.x).addScaledVector(gf.Ey,localP.y).addScaledVector(gf.Ez,localP.z);
+            attr.setXYZ(i,worldP.x,worldP.y,worldP.z);
+          }
+          attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,N);b.historyLine.visible=dynamics.trails;
+          return;
+        }
+        if(ext&&b.id==='sun'){
+          const span=36*Math.max(.4,scaleFactor);
+          for(let i=0;i<N;i++){
+            const u=i/(N-1), t=motion.years-(1-u)*span, gf=galacticFrameAt(t);
+            attr.setXYZ(i,gf.pos.x,gf.pos.y,gf.pos.z);
           }
           attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,N);b.historyLine.visible=dynamics.trails;
           return;
@@ -2367,10 +2493,9 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
         for(let i=0;i<count;i++){
           const s=slice[Math.min(slice.length-1,Math.floor(i*(slice.length-1)/Math.max(1,count-1)))],sun=s.p[0];
           const pos=b.id==='sun'?new THREE.Vector3():mapSolarAU(s.p[index].clone().sub(sun));
-          if(motion.frame==='external')pos.add(travelAt(s.t,'L1')).addScaledVector(sun,46);
           attr.setXYZ(i,pos.x,pos.y,pos.z);
         }
-        attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,count);b.historyLine.visible=dynamics.trails&&(motion.frame==='external'||b.id!=='sun');
+        attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,count);b.historyLine.visible=dynamics.trails&&b.id!=='sun';
       });
     }
     function physicalMomentum(){const out=new THREE.Vector3();motion.solar.forEach(b=>out.addScaledVector(b.v,b.mass));return out;}
@@ -2379,6 +2504,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
       for(let i=0;i<n;i++)gravitationalStep(motion.solar,h,SOLAR_GM*dynamics.gravity,motion.nbody);
       motion.years+=years;
       if(motion.bowShock?.userData?.mat)motion.bowShock.userData.mat.uniforms.uTime.value=dynamics.time;
+      if(motion.milkyWayL1?.userData?.stars)motion.milkyWayL1.userData.stars.rotation.y=motion.years*GAL_OMEGA*.22;
       const histSpan=Math.min(10,motion.historyYears);
       if(motion.years-motion.lastHistory>=histSpan/260){motion.histories.push(solarSample(motion.years));while(motion.histories.length>340||motion.histories[0].t<motion.years-histSpan)motion.histories.shift();motion.lastHistory=motion.years;}
       renderSolarState();renderSolarHistory();
@@ -2395,7 +2521,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
       l0Moon.orbit.mean=.65+motion.lunarDays/27.32166*Math.PI*2;l0Moon.mesh.rotation.y=-Math.atan2(l0Moon.meshGroup.position.z,l0Moon.meshGroup.position.x);
       l0Moon.orbitPath.visible=dynamics.trails&&motion.guides;l0Moon.orbitWake.visible=false;
       for(const body of [l0Earth,l0Moon]){
-        const attr=body.historyLine.geometry.attributes.position;for(let i=0;i<220;i++){const day=motion.lunarDays-65*(219-i)/219,pos=lunarPositionAt(day,body.id);pos.add(travelAt(day/365.25,'L0'));attr.setXYZ(i,pos.x,pos.y,pos.z);}attr.needsUpdate=true;body.historyLine.geometry.setDrawRange(0,220);body.historyLine.visible=dynamics.trails&&(motion.frame==='external'||body.id==='moon');
+        const attr=body.historyLine.geometry.attributes.position;for(let i=0;i<240;i++){const day=motion.lunarDays-78*(239-i)/239,pos=lunarPositionAt(day,body.id);pos.add(travelAt(day/365.25,'L0'));attr.setXYZ(i,pos.x,pos.y,pos.z);}attr.needsUpdate=true;body.historyLine.geometry.setDrawRange(0,240);body.historyLine.visible=dynamics.trails&&(motion.frame==='external'||body.id==='moon');
       }
       simulationRoot('L0').updateWorldMatrix(true,true);
       const sunLocal=motion.l0SunLocal||new THREE.Vector3(160,45,90);
@@ -2403,40 +2529,54 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
       updateParallaxField(motion.parallax.L0,posNow,velDir.lengthSq()?velDir:GALACTIC_DIRECTION,motion.frame==='external'&&motion.stream);
     }
     function frameCenter(key=state.currentScale){return motion.roots[key]?.position.clone()||new THREE.Vector3();}
+    function l1VortexCamera(gf=galacticFrameAt(motion.years)) {
+      const k=innerWidth<innerHeight?Math.min(1.65,1/Math.sqrt(innerWidth/innerHeight)*1.08):1;
+      const cam=gf.pos.clone().addScaledVector(gf.R,265*k).addScaledVector(gf.T,-315*k).addScaledVector(gf.U,188*k);
+      const look=gf.pos.clone().addScaledVector(gf.R,-22).addScaledVector(gf.T,-42).addScaledVector(gf.U,10);
+      return {cam,look};
+    }
     function frameOverview() {
       state.lockedBody=null;lockRingGroup.visible=false;document.getElementById('btn-unlock-cam').classList.add('hidden');
-      motion.l0SunLocal=null;if(l0Earth?.cloudsMesh)l0Earth.cloudsMesh.material.uniforms.uOpacity.value=Math.max(0,l0Earth.atmoPct/100);
+      motion.l0SunLocal=null;motion.galacticOverview=false;
+      if(l0Earth?.cloudsMesh)l0Earth.cloudsMesh.material.uniforms.uOpacity.value=Math.max(0,l0Earth.atmoPct/100);
       const key=state.currentScale,center=frameCenter(key);
-      if(key==='L1'&&motion.frame==='external')startCamTransition(center.clone().add(fittedCameraPosition([235,160,525])),center.clone().add(new THREE.Vector3(-45,-105,15)));
-      else if(key==='L0'&&motion.frame==='external')startCamTransition(center.clone().add(fittedCameraPosition([100,120,265])),center.clone().add(new THREE.Vector3(-32,-24,-20)));
+      if(key==='L1'&&motion.frame==='external'){
+        const {cam,look}=l1VortexCamera();
+        startCamTransition(cam,look);
+      }else if(key==='L0'&&motion.frame==='external')startCamTransition(center.clone().add(fittedCameraPosition([100,120,265])),center.clone().add(new THREE.Vector3(-32,-24,-20)));
       else{const meta=SCALE_META[key];startCamTransition(center.clone().add(fittedCameraPosition(meta.camPos)),center.clone().add(new THREE.Vector3(...meta.target)));}
     }
     function setReferenceFrame(frame) {
-      const old=frameCenter();motion.frame=frame;
+      const old=frameCenter();motion.frame=frame;motion.galacticOverview=false;
       renderSolarState();renderSolarHistory();renderLunar(0);simulationRoot('L5').scale.setScalar(frame==='external'?motion.webScale:1);
       const delta=frameCenter().sub(old);camera.position.add(delta);controls.target.add(delta);if(state.lockedBody)state.lockedBody.mesh.getWorldPosition(state.lastTrackedWorldPos);
       syncMotionUI();updateSceneGuide();frameOverview();
     }
     function initMotion() {
       for(const key of ['L0','L1','L5']){const root=new THREE.Group();const group=scaleGroups[key];[...group.children].forEach(child=>root.add(child));group.add(root);motion.roots[key]=root;}
+      // 记录 L1 柯伊伯带引用以便在银河螺旋视图中保持背景澄澈
+      motion.kuiperBelt=simulationRoot('L1').children.find(c=>c.isPoints&&c.userData?.rotSpeed);
+      if(motion.kuiperBelt)motion.kuiperBelt.material.opacity=.28;
       const mobile=document.body.dataset.layout==='mobile';
-      motion.parallax.L1=buildParallaxField('L1',1200,mobile?900:1800,mobile?120:260,34,401,0x93c5fd,0xfef08a);
+      motion.milkyWayL1=buildL1MilkyWay();
+      motion.parallax.L1=buildParallaxField('L1',1200,mobile?700:1400,mobile?90:180,30,401,0x93c5fd,0xfef08a);
       motion.parallax.L0=buildParallaxField('L0',680,mobile?600:1200,mobile?80:160,18,402,0x7dd3fc,0xe2e8f0);
       motion.parallax.L3=buildParallaxField('L3',520,mobile?400:800,mobile?60:110,14,403,0x93c5fd,0xd8b4fe);
       motion.bowShock=buildHeliosphereBowShock();simulationRoot('L1').add(motion.bowShock);
       initSolarPhysics();
-      motion.forwardArrow=new THREE.ArrowHelper(GALACTIC_DIRECTION,new THREE.Vector3(),82,0x93d5ff,7,3);simulationRoot('L1').add(motion.forwardArrow);
-      motion.forwardLabel=new THREE.Object3D();motion.forwardLabel.position.copy(GALACTIC_DIRECTION).multiplyScalar(92);simulationRoot('L1').add(motion.forwardLabel);
-      l0Earth.historyLine=makeHistoryLine('L0',0x38bdf8,.85);l0Moon.historyLine=makeHistoryLine('L0',0xfbbf24,.88);
+      const localForward=new THREE.Vector3(0,Math.sin(ECLIPTIC_TILT),-Math.cos(ECLIPTIC_TILT)).normalize();
+      motion.forwardArrow=new THREE.ArrowHelper(localForward,new THREE.Vector3(),95,0xffe49c,9,4);simulationRoot('L1').add(motion.forwardArrow);
+      motion.forwardLabel=new THREE.Object3D();motion.forwardLabel.position.copy(localForward).multiplyScalar(108);simulationRoot('L1').add(motion.forwardLabel);
+      l0Earth.historyLine=makeHistoryLine('L0',0x38bdf8,.88,240);l0Moon.historyLine=makeHistoryLine('L0',0xfbbf24,.92,240);
       const bary=new THREE.Mesh(new THREE.RingGeometry(1.1,1.55,32),new THREE.MeshBasicMaterial({color:0xfbbf24,side:THREE.DoubleSide,transparent:true,opacity:.6}));bary.rotation.x=-Math.PI/2;simulationRoot('L0').add(bary);
       renderLunar(0);
-      const webRings=new THREE.Group();for(const r of [90,145]){const ring=new THREE.Mesh(new THREE.RingGeometry(r,r+.7,96),new THREE.MeshBasicMaterial({color:0x60a5fa,transparent:true,opacity:.22,side:THREE.DoubleSide,depthWrite:false}));ring.rotation.x=-Math.PI/2;webRings.add(ring);}simulationRoot('L5').add(webRings);motion.webGrid=webRings;
+      const webRings=new THREE.Group();for(const r of [90,145]){const ring=new THREE.Mesh(new THREE.RingGeometry(r,r+.7,96),new THREE.MeshBasicMaterial({color:0x60a5fa,transparent:true,opacity:.24,side:THREE.DoubleSide,depthWrite:false}));ring.rotation.x=-Math.PI/2;webRings.add(ring);}simulationRoot('L5').add(webRings);motion.webGrid=webRings;
       webTails.forEach(t=>{scaleGroups.L5.add(t.line);t.scaleHistory=Array(t.history.length).fill(1);});
-      clusterNodes.forEach((n,i)=>{n.initialCenter=n.center.clone();n.velocity=n.center.clone().negate().normalize().multiplyScalar(i?1.35:0).add(new THREE.Vector3(-n.center.z,0,n.center.x).normalize().multiplyScalar(i?.72:0));n.initialVelocity=n.velocity.clone();n.history=Array.from({length:120},()=>n.center.clone());n.line=makeHistoryLine('L4',0x38bdf8,.52,120);});
+      clusterNodes.forEach((n,i)=>{n.initialCenter=n.center.clone();n.velocity=n.center.clone().negate().normalize().multiplyScalar(i?1.35:0).add(new THREE.Vector3(-n.center.z,0,n.center.x).normalize().multiplyScalar(i?.72:0));n.initialVelocity=n.velocity.clone();n.history=Array.from({length:120},()=>n.center.clone());n.line=makeHistoryLine('L4',0x38bdf8,.56,120);});
       const momentum=new THREE.Vector3();clusterNodes.slice(1).forEach(n=>momentum.addScaledVector(n.velocity,n.mass));clusterNodes[0].velocity.copy(momentum).multiplyScalar(-1/clusterNodes[0].mass);clusterNodes[0].initialVelocity.copy(clusterNodes[0].velocity);
       scaleGroups.L4.children.forEach(o=>{if(o.isPoints&&o!==clusterFlow){o.userData.clusterBackground=true;o.userData.basePositions=o.geometry.attributes.position.array.slice();}if(o.isSprite){let nearest=0,min=Infinity;clusterNodes.forEach((n,i)=>{const d=o.position.distanceTo(n.center);if(d<min){min=d;nearest=i;}});o.userData.clusterNode=nearest;o.userData.initialPosition=o.position.clone();}});
       const paths=dynamics.paths.L4;if(paths)[...paths.children].filter(o=>!clusterTails.some(t=>t.line===o)).forEach(disposeTree);
-      motion.blackTrails=Array.from({length:16},(_,i)=>({index:i*11,history:Array.from({length:75},()=>new THREE.Vector3()),line:makeHistoryLine('L2',0xfbbf24,.58,75)}));
+      motion.blackTrails=Array.from({length:24},(_,i)=>({index:i*11,history:Array.from({length:80},()=>new THREE.Vector3()),line:makeHistoryLine('L2',i%3?0xffb85c:0x7dd3fc,.68,80)}));
       motion.phase.L2=motion.phase.L3=0;
     }
     function updateClusterCenters(dt) {
@@ -2462,18 +2602,27 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
     }
     function updateProbeHistory(p,dt) {
       if(p.sample>.04){p.sample=0;p.history.shift();p.history.push(p.position.clone());p.historyTime.shift();p.historyTime.push(p.key==='L0'?motion.lunarDays/365.25:motion.years);p.historyScale.shift();p.historyScale.push(motion.webScale);}
-      const attr=p.line.geometry.attributes.position;p.history.forEach((v,i)=>{const q=v.clone();if(motion.frame==='external'&&['L0','L1'].includes(p.key))q.add(travelAt(p.historyTime[i],p.key));if(motion.frame==='external'&&p.key==='L5')q.multiplyScalar(p.historyScale[i]);attr.setXYZ(i,q.x,q.y,q.z);});attr.needsUpdate=true;p.line.geometry.computeBoundingSphere();
+      const attr=p.line.geometry.attributes.position;p.history.forEach((v,i)=>{let q=v.clone();if(motion.frame==='external'&&p.key==='L1'){const gf=galacticFrameAt(p.historyTime[i]);q=gf.pos.clone().addScaledVector(gf.Ex,v.x).addScaledVector(gf.Ey,v.y).addScaledVector(gf.Ez,v.z);}else if(motion.frame==='external'&&p.key==='L0')q.add(travelAt(p.historyTime[i],'L0'));if(motion.frame==='external'&&p.key==='L5')q.multiplyScalar(p.historyScale[i]);attr.setXYZ(i,q.x,q.y,q.z);});attr.needsUpdate=true;p.line.geometry.computeBoundingSphere();
     }
     function updateMotion(dt) {
       motion.labClock=typeof lab!=='undefined'&&(lab.projectiles.length>0||lab.effects.length>0||activeExoticEffects.some(e=>['dyson','singularity','vacuum'].includes(e.type)));
-      const key=state.currentScale,old=frameCenter(key);
+      const key=state.currentScale,old=frameCenter(key),oldTheta=motion.years*GAL_OMEGA;
       if(key==='L1')advanceSolar(dt);if(key==='L0')renderLunar(dt);if(key==='L4')updateClusterCenters(dt);if(key==='L5')advanceCosmology(dt);
       if(key==='L3'){const drift=new THREE.Vector3(motion.phase.L3*22,motion.phase.L3*7,-motion.phase.L3*11);updateParallaxField(motion.parallax.L3,drift,new THREE.Vector3(.85,.27,-.43),motion.stream);}
-      const delta=frameCenter(key).sub(old);
-      if(motion.follow&&!state.lockedBody){camera.position.add(delta);controls.target.add(delta);if(state.camTransition)for(const field of ['startPos','endPos','startLook','endLook'])state.camTransition[field].add(delta);}
+      if(key==='L1'&&motion.frame==='external'){
+        const farFromSun=camera.position.distanceTo(frameCenter('L1'))>980;
+        if(motion.follow&&!state.lockedBody&&!motion.galacticOverview&&!farFromSun){
+          const dTheta=motion.years*GAL_OMEGA-oldTheta, yAxis=new THREE.Vector3(0,1,0);
+          camera.position.applyAxisAngle(yAxis,dTheta);controls.target.applyAxisAngle(yAxis,dTheta);
+          if(state.camTransition)for(const field of ['startPos','endPos','startLook','endLook'])state.camTransition[field].applyAxisAngle(yAxis,dTheta);
+        }
+      }else{
+        const delta=frameCenter(key).sub(old);
+        if(motion.follow&&!state.lockedBody){camera.position.add(delta);controls.target.add(delta);if(state.camTransition)for(const field of ['startPos','endPos','startLook','endLook'])state.camTransition[field].add(delta);}
+      }
     }
     function resetMotion() {
-      motion.years=motion.lunarDays=0;motion.phase.L2=motion.phase.L3=0;motion.webScale=1;motion.webGyr=0;
+      motion.years=motion.lunarDays=0;motion.phase.L2=motion.phase.L3=0;motion.webScale=1;motion.webGyr=0;motion.galacticOverview=false;
       motion.blackTrails?.forEach(t=>{t.started=false;t.history.forEach(p=>p.set(0,0,0));});
       motion.solar.forEach(b=>{b.p.copy(b.initialP);b.v.copy(b.initialV);});seedSolarHistory();renderSolarState();renderLunar(0);simulationRoot('L5').scale.setScalar(1);
       clusterNodes.forEach(n=>{n.center.copy(n.initialCenter);n.velocity.copy(n.initialVelocity);n.history.forEach(p=>p.copy(n.center));});webTails.forEach(t=>t.scaleHistory.fill(1));updateClusterCenters(0);frameOverview();
@@ -2485,7 +2634,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
       document.getElementById('transport-frame').textContent=supported?(motion.frame==='external'?'银河/外部参考':'日心/共动参考'):({L2:'黑洞参考',L3:'星系参考',L4:'团质心'})[state.currentScale]||'地表参考';
       document.getElementById('motion-nbody').checked=motion.nbody;document.getElementById('motion-follow').checked=motion.follow;document.getElementById('motion-guides').checked=motion.guides;
       const streamCb=document.getElementById('motion-stream');if(streamCb)streamCb.checked=motion.stream;
-      const explanations={L0:'外部参考显示地月系绕共同质心旋转并随地球穿行太阳风与深空视差星场；跟随参考显示地月相对运动。',L1:'银河参考叠加太阳约 230 km/s 的银河公转穿行与星际视差星流，呈现螺旋前进轨迹与日球层弓形激波；日心参考保留经典椭圆轨道。',L2:'黑洞观测采用黑洞局部参考系；吸积尘埃与等离子体沿螺旋轨道加速落向视界，两极喷射高能相对论喷流。',L3:'星系以核区为参考：恒星与示踪星群差速绕核旋转并伴随星系际穿行视差，太阳位置高亮标示。',L4:'星系团节点在相互引力下位移，星系群与高亮物质流沿引力势阱汇聚向巨引源。',L5:'外部参考显示物理空间随 ΛCDM 尺度因子膨胀（见参考环扩大）；共动参考固定网格尺度，突出物质沿纤维汇聚。'};
+      const explanations={L0:'外部参考显示地月系绕共同质心旋转并沿绕日轨道穿行太阳风与深空视差星场；跟随参考显示地月相对运动。',L1:'银河参考展示太阳系以约 230 km/s（82.8 万 km/h）绕银心人马座 A* 公转、黄道面倾角 60° 拖曳八大行星三维螺旋穿行的真实宇宙图景；点击“银河年全景”可鸟瞰整座银河公转大圆。',L2:'黑洞观测采用黑洞局部参考系；24 条吸积等离子流线沿螺旋加速落向视界，两极喷射高能相对论喷流。',L3:'星系以核区为参考：恒星与玫瑰红诞星团块差速绕核旋转，太阳位置高亮标示并带星系际穿行视差。',L4:'星系团节点在相互引力下位移，星系群与 40 条高亮物质河流沿引力势阱汇聚向巨引源。',L5:'外部参考显示物理空间随 ΛCDM 尺度因子膨胀（见参考环扩大）；共动参考固定网格尺度，突出物质沿纤维汇聚。'};
       document.getElementById('reference-explanation').textContent=explanations[state.currentScale];
       document.getElementById('motion-clock').textContent=motion.labClock?'实验时钟：80 秒 / 模拟秒':state.currentScale==='L1'?`轨道时钟：${motion.daysPerSecond} 天 / 模拟秒`:state.currentScale==='L0'?'地月时钟：4.5 天 / 模拟秒':state.currentScale==='L5'?`宇宙膨胀 a(t) = ${motion.webScale.toFixed(2)}`:'当前尺度采用独立加速时钟';
     }
@@ -2496,7 +2645,7 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
     }
     function bindMotionUI() {
       document.querySelectorAll('[data-reference]').forEach(b=>b.onclick=()=>setReferenceFrame(b.dataset.reference));document.getElementById('transport-frame').onclick=()=>setReferenceFrame(motion.frame==='external'?'local':'external');
-      document.getElementById('motion-nbody').onchange=e=>{motion.nbody=e.target.checked;};document.getElementById('motion-follow').onchange=e=>{motion.follow=e.target.checked;};document.getElementById('motion-guides').onchange=e=>{motion.guides=e.target.checked;syncDynamicsUI();};
+      document.getElementById('motion-nbody').onchange=e=>{motion.nbody=e.target.checked;};document.getElementById('motion-follow').onchange=e=>{motion.follow=e.target.checked;};document.getElementById('motion-guides').onchange=e=>{motion.guides=e.target.checked;renderSolarState();syncDynamicsUI();};
       const streamCb=document.getElementById('motion-stream');if(streamCb)streamCb.onchange=e=>{motion.stream=e.target.checked;renderSolarState();renderLunar(0);};
       document.getElementById('motion-days').value=motion.daysPerSecond;
       document.getElementById('motion-days').oninput=e=>{motion.daysPerSecond=+e.target.value;syncMotionUI();};document.getElementById('motion-history').onchange=e=>{motion.historyYears=+e.target.value;seedSolarHistory();};syncMotionUI();frameOverview();
@@ -4314,7 +4463,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
     function addPolarAuroras(body) {
       const grp = new THREE.Group();
       const auroraMat = new THREE.ShaderMaterial({
-        uniforms: { uTime: { value: 0 } },
+        uniforms: { uTime: { value: 0 }, uVfx: { value: 1.0 } },
         vertexShader: `
           varying vec2 vUv;
           uniform float uTime;
@@ -4330,6 +4479,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
         fragmentShader: `
           varying vec2 vUv;
           uniform float uTime;
+          uniform float uVfx;
           void main() {
             float curtain = pow(0.5 + 0.5 * sin(vUv.x * 50.0 + uTime * 1.8 + sin(vUv.x * 16.0 - uTime) * 2.0), 2.2);
             float vert = smoothstep(0.0, 0.28, vUv.y) * (1.0 - smoothstep(0.32, 1.0, vUv.y));
@@ -4337,9 +4487,9 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
             vec3 cyan = vec3(0.22, 0.85, 1.0);
             vec3 violet = vec3(0.68, 0.35, 1.0);
             vec3 col = mix(mix(green, cyan, smoothstep(0.2, 0.6, vUv.y)), violet, smoothstep(0.55, 0.95, vUv.y));
-            float a = curtain * vert * 0.72;
+            float a = min(1.0, curtain * vert * 0.72 * uVfx);
             if (a < 0.01) discard;
-            gl_FragColor = vec4(col, a);
+            gl_FragColor = vec4(col * (0.65 + 0.45 * uVfx), a);
           }
         `,
         transparent: true, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
@@ -4564,7 +4714,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
       }
       geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-      starfieldMat = new THREE.PointsMaterial({ size: 1.9, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false });
+      starfieldMat = new THREE.PointsMaterial({ size: 2.6, map: (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const x = c.getContext("2d"); const g = x.createRadialGradient(32,32,0,32,32,32); g.addColorStop(0,"rgba(255,255,255,1)"); g.addColorStop(0.32,"rgba(255,255,255,0.85)"); g.addColorStop(0.7,"rgba(255,255,255,0.2)"); g.addColorStop(1,"rgba(255,255,255,0)"); x.fillStyle = g; x.fillRect(0,0,64,64); return new THREE.CanvasTexture(c); })(), alphaTest: 0.01, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
       const stars = new THREE.Points(geo, starfieldMat);
       stars.userData.skyBackground=true;
       scene.add(stars);
@@ -5130,7 +5280,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
     // 10. 构建 L2 相对论黑洞观测站 (Gargantua / M87*)
     // =========================================================================
     let bhShaderMat, bhMesh, bhJetsGroup, bhDust, bhDustData, bhJetPoints;
-    let l3Points, l3M87Jet, galaxyDust, galaxyNebula, galaxyTracers=[];
+    let l3Points, l3M87Jet, galaxyDust, galaxyNebula, galaxyCoreSprite, galaxyKnots=[], galaxyTracers=[];
     let clusterNodes=[], clusterParticles=[], clusterFlow, clusterTails=[], clusterOrbits=[];
     let webNodes=[], webEdges=[], webParticles=[], webFlow, webTails=[];
     const SOFT_PARTICLE_FRAG = `
@@ -5138,24 +5288,24 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
       void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;float core=exp(-r*r*19.);float halo=pow(1.-r,2.)*.26;gl_FragColor=vec4(vColor,(core+halo)*vAlpha);}
     `;
     const JET_VERT = `
-      attribute float aPhase; attribute float aSide; attribute float aSeed; uniform float uTime;
+      attribute float aPhase; attribute float aSide; attribute float aSeed; uniform float uTime; uniform float uVfx;
       varying vec3 vColor; varying float vAlpha;
-      void main(){float t=fract(aPhase+uTime*(.11+aSeed*.065));float y=4.+t*80.;float angle=aSeed*96.+t*14.-uTime*2.;float r=(.15+t*2.9)*(.25+aSeed*.75);vec3 p=vec3(cos(angle)*r,aSide*y,sin(angle)*r);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp((1.1+aSeed)*210./max(1.,-mv.z),1.,18.);vColor=mix(vec3(.73,.87,1.),vec3(.23,.48,1.),t);vAlpha=(1.-t)*.8;}
+      void main(){float t=fract(aPhase+uTime*(.14+aSeed*.085));float y=4.+t*88.;float angle=aSeed*96.+t*16.-uTime*2.6;float r=(.15+t*3.1)*(.25+aSeed*.75);vec3 p=vec3(cos(angle)*r,aSide*y,sin(angle)*r);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp((1.2+aSeed)*240.*(0.6+0.45*uVfx)/max(1.,-mv.z),1.2,22.);vColor=mix(vec3(.82,.94,1.),vec3(.25,.55,1.),t);vAlpha=min(1.,(1.-t)*.92*uVfx);}
     `;
-    function makeJets(count=1600) {
+    function makeJets(count=2400) {
       const rng=deterministicRandom(89),geo=new THREE.BufferGeometry();
       geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(count*3),3));
       for(const attr of ['aPhase','aSide','aSeed']){const a=new Float32Array(count);for(let i=0;i<count;i++)a[i]=attr==='aSide'?(i%2?1:-1):rng();geo.setAttribute(attr,new THREE.BufferAttribute(a,1));}
-      const pts=new THREE.Points(geo,new THREE.ShaderMaterial({vertexShader:JET_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));pts.frustumCulled=false;return pts;
+      const pts=new THREE.Points(geo,new THREE.ShaderMaterial({vertexShader:JET_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0},uVfx:{value:1}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));pts.frustumCulled=false;return pts;
     }
     function buildL2BlackHole() {
       const g=scaleGroups.L2;
-      bhShaderMat=new THREE.ShaderMaterial({vertexShader:BLACKHOLE_VERT,fragmentShader:BLACKHOLE_FRAG,uniforms:{uLocalCam:{value:new THREE.Vector3(0,13,64)},uTime:{value:0},uBoundRadius:{value:40},uEventRadius:{value:3.5},uDiskInner:{value:6.8},uDiskOuter:{value:28},uBrightness:{value:.76}},side:THREE.BackSide,transparent:true,depthWrite:false});
+      bhShaderMat=new THREE.ShaderMaterial({vertexShader:BLACKHOLE_VERT,fragmentShader:BLACKHOLE_FRAG,uniforms:{uLocalCam:{value:new THREE.Vector3(0,13,64)},uTime:{value:0},uBoundRadius:{value:40},uEventRadius:{value:3.5},uDiskInner:{value:6.8},uDiskOuter:{value:28},uBrightness:{value:.82}},side:THREE.BackSide,transparent:true,depthWrite:false});
       bhMesh=new THREE.Mesh(new THREE.SphereGeometry(40,48,32),bhShaderMat);bhMesh.renderOrder=2;g.add(bhMesh);
-      bhJetsGroup=new THREE.Group();bhJetPoints=makeJets();bhJetsGroup.add(bhJetPoints);g.add(bhJetsGroup);
-      const count=1800,rng=deterministicRandom(21),pos=new Float32Array(count*3),col=new Float32Array(count*3);bhDustData=[];
-      for(let i=0;i<count;i++){const r=29+rng()*9,a=rng()*Math.PI*2;bhDustData.push({r,phase:a,seed:rng(),initialR:r,initialPhase:a});const c=new THREE.Color().setRGB(.85,.38+rng()*.25,.12);c.toArray(col,i*3);}
-      const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));bhDust=glowPoints(geo,.48,.55);bhDust.frustumCulled=false;g.add(bhDust);
+      bhJetsGroup=new THREE.Group();bhJetPoints=makeJets(2400);bhJetsGroup.add(bhJetPoints);g.add(bhJetsGroup);
+      const count=2600,rng=deterministicRandom(21),pos=new Float32Array(count*3),col=new Float32Array(count*3);bhDustData=[];
+      for(let i=0;i<count;i++){const r=28+rng()*11,a=rng()*Math.PI*2;bhDustData.push({r,phase:a,seed:rng(),initialR:r,initialPhase:a});const hot=i%5===0;const c=hot?new THREE.Color().setRGB(.78,.88,1.):new THREE.Color().setRGB(.98,.46+rng()*.32,.14);c.toArray(col,i*3);}
+      const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));bhDust=glowPoints(geo,.62,.74);bhDust.frustumCulled=false;g.add(bhDust);
       [8,14,23,34].forEach((r,i)=>{const o={a:r,e:.04,inclination:.025,argument:0};layerGroup('L2','paths').add(makeLine(Array.from({length:161},(_,j)=>orbitPoint(o,j/160*Math.PI*2)),TRAJECTORY_COLOR,i===3?.28:.1));});
       for(let i=0;i<10;i++){const a=i/10*Math.PI*2,p=new THREE.Vector3(Math.cos(a)*33,0,Math.sin(a)*33);layerGroup('L2','forces').add(new THREE.ArrowHelper(p.clone().negate().normalize(),p,6,FORCE_COLOR,1,.4));}
       updateL2(0);
@@ -5171,9 +5321,9 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
     }
     const GALAXY_VERT = `
       attribute vec3 color;attribute float aOmega;attribute float aSize;attribute vec3 aAxis;
-      uniform float uTime;uniform float uPixelRatio;uniform float uRing;
+      uniform float uTime;uniform float uPixelRatio;uniform float uRing;uniform float uStardust;
       varying vec3 vColor;varying float vAlpha;
-      void main(){float a=uTime*aOmega;vec3 axis=normalize(aAxis);vec3 p=position*cos(a)+cross(axis,position)*sin(a)+axis*dot(axis,position)*(1.-cos(a));float r=length(p.xz);p+=axis*sin(uTime*aOmega*2.3+position.x)*(.3+r*.015);if(uRing>.5&&r>55.)p.xz*=1.+min(.2,uTime*.0025);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aSize*uPixelRatio*280./max(1.,-mv.z),1.15,12.);vColor=color;vAlpha=.76;}
+      void main(){float a=uTime*aOmega;vec3 axis=normalize(aAxis);vec3 p=position*cos(a)+cross(axis,position)*sin(a)+axis*dot(axis,position)*(1.-cos(a));float r=length(p.xz);p+=axis*sin(uTime*aOmega*2.3+position.x)*(.3+r*.015);if(uRing>.5&&r>55.)p.xz*=1.+min(.2,uTime*.0025);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aSize*uPixelRatio*290.*(0.65+0.42*uStardust)/max(1.,-mv.z),1.15,14.);vColor=color;vAlpha=clamp(.82*uStardust,0.12,1.0);}
     `;
     function generateGalaxyData(morph) {
       const count=document.body.dataset.layout==='mobile'?50000:85000;
@@ -5238,35 +5388,55 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
       if(galaxyNebula){galaxyNebula.material.map.dispose();galaxyNebula.material.map=galaxyNebulaTexture(morph);galaxyNebula.material.needsUpdate=true;}
     }
     function buildL3Galaxy() {
-      const g=scaleGroups.L3;l3Points=new THREE.Points(new THREE.BufferGeometry(),new THREE.ShaderMaterial({vertexShader:GALAXY_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0},uPixelRatio:{value:renderer.getPixelRatio()},uRing:{value:0}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(l3Points);setGalaxyData('milkyway');
-      galaxyNebula=new THREE.Mesh(new THREE.PlaneGeometry(210,210),new THREE.MeshBasicMaterial({map:galaxyNebulaTexture('milkyway'),transparent:true,opacity:.68,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,depthWrite:false}));galaxyNebula.rotation.x=-Math.PI/2;galaxyNebula.position.y=-.8;galaxyNebula.renderOrder=-1;g.add(galaxyNebula);
-      const core=glowSprite(0xffdcb0,18,.32);core.position.y=.8;g.add(core);
+      const g=scaleGroups.L3;l3Points=new THREE.Points(new THREE.BufferGeometry(),new THREE.ShaderMaterial({vertexShader:GALAXY_VERT,fragmentShader:SOFT_PARTICLE_FRAG,uniforms:{uTime:{value:0},uPixelRatio:{value:renderer.getPixelRatio()},uRing:{value:0},uStardust:{value:1}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(l3Points);setGalaxyData('milkyway');
+      galaxyNebula=new THREE.Mesh(new THREE.PlaneGeometry(216,216),new THREE.MeshBasicMaterial({map:galaxyNebulaTexture('milkyway'),transparent:true,opacity:.76,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,depthWrite:false}));galaxyNebula.rotation.x=-Math.PI/2;galaxyNebula.position.y=-.8;galaxyNebula.renderOrder=-1;g.add(galaxyNebula);
+      galaxyCoreSprite=glowSprite(0xffe2b4,26,.48);galaxyCoreSprite.position.y=.8;g.add(galaxyCoreSprite);
       const dustMat=new THREE.ShaderMaterial({vertexShader:BLACKHOLE_VERT,fragmentShader:`varying vec3 vLocalPos;uniform float uTime;uniform float uSombrero;void main(){float r=length(vLocalPos.xy);float a=atan(vLocalPos.y,vLocalPos.x);float spiral=.5+.5*sin(a*4.-log(max(r,1.))*11.-uTime*.13);float band=smoothstep(18.,35.,r)*(1.-smoothstep(79.,97.,r));float opacity=band*(uSombrero>.5?.57:pow(spiral,8.)*.20);gl_FragColor=vec4(.012,.009,.015,opacity);}`,uniforms:{uTime:{value:0},uSombrero:{value:0}},transparent:true,side:THREE.DoubleSide,depthWrite:false});
       galaxyDust=new THREE.Mesh(new THREE.RingGeometry(16,97,128),dustMat);galaxyDust.rotation.x=-Math.PI/2;galaxyDust.position.y=.9;galaxyDust.renderOrder=3;g.add(galaxyDust);
-      l3M87Jet=makeJets(800);l3M87Jet.rotation.z=-.48;l3M87Jet.visible=false;g.add(l3M87Jet);
+      l3M87Jet=makeJets(1200);l3M87Jet.rotation.z=-.48;l3M87Jet.visible=false;g.add(l3M87Jet);
+      buildGalaxyKnots();
       buildGalaxyTracers();
+    }
+    function buildGalaxyKnots() {
+      galaxyKnots.forEach(k=>disposeTree(k.sprite));galaxyKnots=[];
+      if(state.galaxyMorph==='m87')return;
+      const rng=deterministicRandom(311),arms=state.galaxyMorph==='andromeda'?2:4,pitch=state.galaxyMorph==='andromeda'?3.4:3.1;
+      for(let i=0;i<32;i++){
+        const r=state.galaxyMorph==='cartwheel'?70+(rng()-.5)*8:18+rng()*68;
+        const a=(i%arms)/arms*Math.PI*2+Math.log(Math.max(r,8)/12)*pitch+(rng()-.5)*.28;
+        const isPink=i%3!==0;
+        const sprite=glowSprite(isPink?0xf472b6:0x7dd3fc,5.5+rng()*6.5,isPink?.36:.30);
+        sprite.position.set(Math.cos(a)*r,(rng()-.5)*2.4,Math.sin(a)*r);
+        scaleGroups.L3.add(sprite);
+        galaxyKnots.push({sprite,r,phase:a,y:(rng()-.5)*2.4,baseScale:sprite.scale.x,seed:rng()*6.28});
+      }
     }
     function buildGalaxyTracers() {
       galaxyTracers.forEach(t=>{disposeTree(t.dot);disposeTree(t.path);disposeTree(t.tail);disposeTree(t.arrow);});galaxyTracers=[];
       for(let i=0;i<10;i++){
-        const r=i===5?52:14+i*7.6,phase=i*2.3,axis=state.galaxyMorph==='m87'?new THREE.Vector3(Math.sin(i),.4,Math.cos(i)).normalize():new THREE.Vector3(0,1,0);
+        const isSun=i===5;
+        const r=isSun?52:14+i*7.6,phase=i*2.3,axis=state.galaxyMorph==='m87'?new THREE.Vector3(Math.sin(i),.4,Math.cos(i)).normalize():new THREE.Vector3(0,1,0);
         const base=new THREE.Vector3(r,0,0);const point=a=>base.clone().multiplyScalar(1+.035*Math.cos(a*1.4+phase)).applyAxisAngle(axis,a).addScaledVector(axis,Math.sin(a*2.3+phase)*(.3+r*.015));
-        const dot=new THREE.Mesh(new THREE.SphereGeometry(.45,10,10),new THREE.MeshBasicMaterial({color:0xf5f8ff}));scaleGroups.L3.add(dot);
-        const path=makeLine(Array.from({length:161},(_,j)=>point(j/160*Math.PI*2)),TRAJECTORY_COLOR,.035);layerGroup('L3','paths').add(path);
-        const tail=makeLine(Array.from({length:48},(_,j)=>point(phase-j*.01)),TRAJECTORY_COLOR,.8);layerGroup('L3','paths').add(tail);
+        const dot=new THREE.Mesh(new THREE.SphereGeometry(isSun?1.05:.48,12,12),new THREE.MeshBasicMaterial({color:isSun?0xffe082:0xf5f8ff}));
+        if(isSun){const halo=glowSprite(0xffc966,11.5,.75);dot.add(halo);dot.userData.halo=halo;}
+        scaleGroups.L3.add(dot);
+        const path=makeLine(Array.from({length:161},(_,j)=>point(j/160*Math.PI*2)),isSun?0xfbbf24:TRAJECTORY_COLOR,isSun?.24:.045);layerGroup('L3','paths').add(path);
+        const len=isSun?72:48;
+        const tail=makeLine(Array.from({length:len},(_,j)=>point(phase-j*.01)),isSun?0xfde047:TRAJECTORY_COLOR,isSun?.95:.82);layerGroup('L3','paths').add(tail);
         const arrow=new THREE.ArrowHelper(new THREE.Vector3(-1,0,0),base,6,FORCE_COLOR,1,.45);layerGroup('L3','forces').add(arrow);
-        galaxyTracers.push({r,phase,axis,point,dot,path,tail,arrow,isSun:i===5,history:Array.from({length:48},()=>point(phase))});
+        galaxyTracers.push({r,phase,axis,point,dot,path,tail,arrow,isSun,len,history:Array.from({length:len},()=>point(phase))});
       }
     }
     function switchGalaxyMorph(morph) {
-      state.galaxyMorph=morph;dynamics.sceneTime.L3=0;motion.phase.L3=0;setGalaxyData(morph);buildGalaxyTracers();l3M87Jet.visible=morph==='m87';galaxyDust.visible=morph!=='m87';galaxyDust.material.uniforms.uSombrero.value=morph==='sombrero'?1:0;
+      state.galaxyMorph=morph;dynamics.sceneTime.L3=0;motion.phase.L3=0;setGalaxyData(morph);buildGalaxyKnots();buildGalaxyTracers();l3M87Jet.visible=morph==='m87';galaxyDust.visible=morph!=='m87';galaxyDust.material.uniforms.uSombrero.value=morph==='sombrero'?1:0;
       document.querySelectorAll('.gal-btn').forEach(b=>b.classList.toggle('active',b.dataset.gal===morph));
       const names={milkyway:'银河系棒旋',andromeda:'仙女座 M31',sombrero:'草帽星系 M104',m87:'室女座 M87',cartwheel:'车轮碰撞星系'};
       document.getElementById('scene-title').textContent=names[morph]+' · 恒星动力学';renderLargeScaleFacts();updateDynamicsValues();syncDynamicsUI();showToast('已切换到'+names[morph]);
     }
     function updateL3(dt) {
-      motion.phase.L3+=dt*1.85*Math.sqrt(dynamics.gravity);const time=motion.phase.L3;galaxyNebula.rotation.z=-time*.055;l3Points.material.uniforms.uTime.value=time;l3Points.material.uniforms.uPixelRatio.value=renderer.getPixelRatio();galaxyDust.material.uniforms.uTime.value=time;l3M87Jet.material.uniforms.uTime.value=time*1.3;
-      for(const t of galaxyTracers){const a=t.phase+time*8/Math.sqrt(t.r*t.r+100);t.dot.position.copy(t.point(a));if(dt>0){t.history.shift();t.history.push(t.dot.position.clone());}const attr=t.tail.geometry.attributes.position;for(let j=0;j<48;j++){const p=t.history[j];attr.setXYZ(j,p.x,p.y,p.z);}attr.needsUpdate=true;t.tail.geometry.computeBoundingSphere();t.arrow.position.copy(t.dot.position);t.arrow.setDirection(t.dot.position.clone().negate().normalize());}
+      motion.phase.L3+=dt*1.95*Math.sqrt(dynamics.gravity);const time=motion.phase.L3;galaxyNebula.rotation.z=-time*.058;l3Points.material.uniforms.uTime.value=time;l3Points.material.uniforms.uPixelRatio.value=renderer.getPixelRatio();galaxyDust.material.uniforms.uTime.value=time;l3M87Jet.material.uniforms.uTime.value=time*1.35;
+      for(const k of galaxyKnots){const a=k.phase+time*8/Math.sqrt(k.r*k.r+100);k.sprite.position.set(Math.cos(a)*k.r,k.y+Math.sin(a*2.3+k.seed)*.55,Math.sin(a)*k.r);const s=k.baseScale*(.88+.2*Math.sin(time*2.2+k.seed));k.sprite.scale.set(s,s,1);}
+      for(const t of galaxyTracers){const a=t.phase+time*8/Math.sqrt(t.r*t.r+100);t.dot.position.copy(t.point(a));if(t.dot.userData.halo){const p=10.5+2.6*Math.sin(time*3.4);t.dot.userData.halo.scale.set(p,p,1);}if(dt>0){t.history.shift();t.history.push(t.dot.position.clone());}const attr=t.tail.geometry.attributes.position;for(let j=0;j<t.len;j++){const p=t.history[j];attr.setXYZ(j,p.x,p.y,p.z);}attr.needsUpdate=true;t.tail.geometry.computeBoundingSphere();t.arrow.position.copy(t.dot.position);t.arrow.setDirection(t.dot.position.clone().negate().normalize());}
     }
     function galaxyStampTexture() {
       const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d');ctx.translate(64,64);ctx.scale(1,.58);
@@ -5292,13 +5462,14 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
         for(let j=0;j<720;j++){points.push(p.clone());const a=accelerationAt(p,sources);v.addScaledVector(a,.04);p.addScaledVector(v,.08);v.addScaledVector(accelerationAt(p,sources),.04);if(p.length()<7||p.length()>126)break;}
         layerGroup('L4','paths').add(makeLine(points,TRAJECTORY_COLOR,.32));
       }
-      const flowGeo=new THREE.BufferGeometry();flowGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(640*3),3));flowGeo.setAttribute('color',new THREE.BufferAttribute(new Float32Array(640*3),3));clusterFlow=glowPoints(flowGeo,1.35,.88);clusterFlow.frustumCulled=false;g.add(clusterFlow);
-      for(let i=0;i<640;i++){
+      const flowN=1200,flowGeo=new THREE.BufferGeometry();flowGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(flowN*3),3));flowGeo.setAttribute('color',new THREE.BufferAttribute(new Float32Array(flowN*3),3));clusterFlow=glowPoints(flowGeo,1.55,.94);clusterFlow.frustumCulled=false;g.add(clusterFlow);
+      for(let i=0;i<flowN;i++){
         const node=clusterNodes[1+i%7],p=node.center.clone().multiplyScalar(.2+rng()*.85).add(new THREE.Vector3((rng()-.5)*9,(rng()-.5)*9,(rng()-.5)*9));
-        const v=p.clone().negate().normalize().multiplyScalar(2.2).add(new THREE.Vector3(-p.z,0,p.x).normalize().multiplyScalar(1.1));
-        clusterParticles.push({p,v,initial:p.clone(),initialV:v.clone()});flowGeo.attributes.color.setXYZ(i,.10,.62,.44);
+        const v=p.clone().negate().normalize().multiplyScalar(2.4).add(new THREE.Vector3(-p.z,0,p.x).normalize().multiplyScalar(1.2));
+        clusterParticles.push({p,v,initial:p.clone(),initialV:v.clone()});
+        if(i%4===0)flowGeo.attributes.color.setXYZ(i,.98,.78,.36);else if(i%2===0)flowGeo.attributes.color.setXYZ(i,.24,.82,.98);else flowGeo.attributes.color.setXYZ(i,.18,.86,.62);
       }
-      for(let i=0;i<20;i++){const p=clusterParticles[i].p,history=Array.from({length:70},()=>p.clone()),line=makeLine(history,FLOW_COLOR,.65);layerGroup('L4','paths').add(line);clusterTails.push({index:i,history,line});}
+      for(let i=0;i<40;i++){const p=clusterParticles[i].p,history=Array.from({length:76},()=>p.clone()),line=makeLine(history,i%3===0?0xfbbf24:(i%2?0x38bdf8:FLOW_COLOR),.76);layerGroup('L4','paths').add(line);clusterTails.push({index:i,history,line});}
       updateL4(0);
     }
     function updateParticleTail(tail,p) {
@@ -5339,9 +5510,9 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
       while(cursor<count){const node=webNodes[cursor%webNodes.length],r=Math.pow(rng(),1.3)*7,a=rng()*6.283,ph=Math.acos(2*rng()-1);node.pos.clone().add(new THREE.Vector3(r*Math.sin(ph)*Math.cos(a),r*Math.cos(ph),r*Math.sin(ph)*Math.sin(a))).toArray(pos,cursor*3);tmp.setRGB(.9,.69,.42).multiplyScalar(.35+rng()*.5).toArray(col,cursor*3);cursor++;}
       const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));g.add(glowPoints(geo,.65,.7));
       webNodes.forEach(n=>{const glow=glowSprite(0xffd0a0,3+n.mass*.4,.62);glow.position.copy(n.pos);g.add(glow);});
-      const flowCount=900,fg=new THREE.BufferGeometry();fg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));fg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));webFlow=glowPoints(fg,1.35,.9);webFlow.frustumCulled=false;g.add(webFlow);
-      for(let i=0;i<flowCount;i++){const edge=webEdges[i%webEdges.length],t=.1+rng()*.8;webParticles.push({edge,t,initial:t,v:0,side:t<.5?-1:1});fg.attributes.color.setXYZ(i,.10,.62,.44);}
-      for(let i=0;i<22;i++){const p=webParticles[i].edge.curve.getPoint(webParticles[i].t),history=Array.from({length:55},()=>p.clone()),line=makeLine(history,FLOW_COLOR,.55);layerGroup('L5','paths').add(line);webTails.push({index:i,history,line});}
+      const flowCount=1500,fg=new THREE.BufferGeometry();fg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));fg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(flowCount*3),3));webFlow=glowPoints(fg,1.55,.94);webFlow.frustumCulled=false;g.add(webFlow);
+      for(let i=0;i<flowCount;i++){const edge=webEdges[i%webEdges.length],t=.1+rng()*.8;webParticles.push({edge,t,initial:t,v:0,side:t<.5?-1:1});if(i%4===0)fg.attributes.color.setXYZ(i,.96,.72,.38);else if(i%2===0)fg.attributes.color.setXYZ(i,.38,.78,1.);else fg.attributes.color.setXYZ(i,.20,.88,.66);}
+      for(let i=0;i<40;i++){const p=webParticles[i].edge.curve.getPoint(webParticles[i].t),history=Array.from({length:64},()=>p.clone()),line=makeLine(history,i%3===0?0xfbbf24:(i%2?0x60a5fa:FLOW_COLOR),.68);layerGroup('L5','paths').add(line);webTails.push({index:i,history,line});}
       const cmb=new THREE.Mesh(new THREE.SphereGeometry(1600,32,24),new THREE.ShaderMaterial({vertexShader:PLANET_VERT,fragmentShader:CMB_FRAG,side:THREE.BackSide,transparent:true,depthTest:false,depthWrite:false}));cmb.renderOrder=-10;g.add(cmb);updateL5(0);
     }
     let webTailClock=0;
@@ -5799,6 +5970,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
     }
 
     function globalReset() {
+      if (typeof resetOptics === "function") resetOptics();
       resetLab();
       if (earthLandmarkPin) { disposeTree(earthLandmarkPin); earthLandmarkPin = null; }
       motion.l0SunLocal = null;
@@ -5825,10 +5997,15 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
     // 15. 相机缩放、尺度切换与自由绕行目标锁定
     // =========================================================================
     function startCamTransition(camPos, lookAt) {
+      const jumpDist = camera.position.distanceTo(camPos);
+      const fastRebase = jumpDist > 900 && state.currentScale !== 'L1';
+      const rebaseStart = fastRebase ? lookAt.clone().add(camPos.clone().sub(lookAt).multiplyScalar(1.38)) : camera.position.clone();
+      const rebaseLook = fastRebase ? lookAt.clone() : controls.target.clone();
+      if (fastRebase) { camera.position.copy(rebaseStart); controls.target.copy(rebaseLook); }
       state.camTransition = {
-        startPos: camera.position.clone(),
+        startPos: rebaseStart,
         endPos: camPos.clone(),
-        startLook: controls.target.clone(),
+        startLook: rebaseLook,
         endLook: lookAt.clone(),
         t: 0
       };
@@ -5849,7 +6026,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
 
       // 切换背景与光晕适配
       scene.background = new THREE.Color(scaleKey === 'L0B' ? 0x6baee8 : 0x02040a);
-      bloomPass.strength = scaleKey === 'L0B' ? 0.18 : parseFloat(document.getElementById('slider-bloom').value);
+      if (typeof applyBloom === "function") applyBloom(parseFloat(document.getElementById("slider-bloom").value)); else bloomPass.strength = scaleKey === "L0B" ? 0.18 : parseFloat(document.getElementById("slider-bloom").value);
 
       const meta = SCALE_META[scaleKey];
       document.getElementById('hud-scale-name').textContent = meta.name;
@@ -6198,6 +6375,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
       const root=document.getElementById('body-labels');root.replaceChildren();dynamics.labelsDOM=[];
       const candidates=celestialBodies.filter(b=>b.scaleKey===state.currentScale&&b.id!=='moon');
       candidates.forEach(body=>{const el=document.createElement('span');el.className='body-label';el.textContent=ENCYCLOPEDIA[body.id]?.name||body.id;root.appendChild(el);dynamics.labelsDOM.push({el,body});});
+      if(state.currentScale==='L1'&&motion.frame==='external'&&motion.sgrALabel){const el=document.createElement('span');el.className='body-label';el.style.borderColor='rgba(251,191,36,0.55)';el.style.color='#fde68a';el.textContent='人马座 A* · 银河系中心';root.appendChild(el);dynamics.labelsDOM.push({el,object:motion.sgrALabel,priority:true});}
       if(state.currentScale==='L1'&&motion.frame==='external'){const el=document.createElement('span');el.className='body-label';el.textContent='银河公转方向 · 约 230 km/s';root.appendChild(el);dynamics.labelsDOM.push({el,object:motion.forwardLabel});}
       if(state.currentScale==='L3'){const star=galaxyTracers.find(t=>t.isSun);if(star){const el=document.createElement('span');el.className='body-label';el.textContent='太阳所在区域';root.appendChild(el);dynamics.labelsDOM.push({el,object:star.dot});}}
       if(state.currentScale==='L4')clusterNodes.slice(0,6).forEach(node=>{const el=document.createElement('span');el.className='body-label';el.textContent=node.name;root.appendChild(el);dynamics.labelsDOM.push({el,position:node.center});});
@@ -6243,9 +6421,37 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
       document.getElementById('transport-speed').onclick=()=>{const speeds=[.5,1,2,5];state.timeScale=speeds[(speeds.indexOf(state.timeScale)+1)%speeds.length];document.getElementById('slider-time-scale').value=state.timeScale;document.getElementById('val-time-scale').textContent=state.timeScale.toFixed(1)+'x';syncDynamicsUI();};
       document.getElementById('transport-home').onclick=frameOverview;
       document.querySelectorAll('[data-scene-view]').forEach(b=>b.onclick=()=>{
-        const c=frameCenter();state.lockedBody=null;lockRingGroup.visible=false;document.getElementById('btn-unlock-cam').classList.add('hidden');
+        const v=b.dataset.sceneView;
+        state.lockedBody=null;lockRingGroup.visible=false;document.getElementById('btn-unlock-cam').classList.add('hidden');
+        if(v==='l1-galactic'){
+          if(motion.frame!=='external')setReferenceFrame('external');
+          motion.galacticOverview=false;
+          const {cam,look}=l1VortexCamera();
+          startCamTransition(cam,look);
+          return;
+        }
+        if(v==='l1-galactic-year'){
+          if(motion.frame!=='external')setReferenceFrame('external');
+          motion.galacticOverview=true;
+          const k=innerWidth<innerHeight?1.45:1;
+          startCamTransition(new THREE.Vector3(0,2950*k,1320*k),new THREE.Vector3(0,0,0));
+          showToast('银河年全景：太阳系每 2.25 亿年绕人马座 A* 公转一周');
+          return;
+        }
+        if(state.currentScale==='L1'&&motion.frame==='external'&&['l1-ecliptic','l1-inner','l1-outer'].includes(v)){
+          motion.galacticOverview=false;
+          const gf=galacticFrameAt(motion.years);
+          const k=innerWidth<innerHeight?1.35:1;
+          let cam;
+          if(v==='l1-ecliptic')cam=gf.pos.clone().addScaledVector(gf.Ey,390*k).addScaledVector(gf.Ez,48*k);
+          else if(v==='l1-inner')cam=gf.pos.clone().addScaledVector(gf.Ey,82*k).addScaledVector(gf.Ez,118*k).addScaledVector(gf.Ex,35*k);
+          else cam=gf.pos.clone().addScaledVector(gf.Ey,210*k).addScaledVector(gf.Ez,330*k).addScaledVector(gf.Ex,180*k);
+          startCamTransition(cam,gf.pos.clone());
+          return;
+        }
+        motion.galacticOverview=false;
+        const c=frameCenter();
         const views={
-          'l1-galactic':[[245,155,515],[-45,-105,15]],
           'l1-ecliptic':[[0,380,42],[0,0,0]],
           'l1-inner':[[0,72,115],[0,0,0]],
           'l1-outer':[[220,175,330],[0,0,0]],
@@ -6256,7 +6462,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
           'l3-edge':[[0,24,225],[0,0,0]],
           'l4-attractor':[[0,48,95],[0,0,0]],
           'l5-overview':[[0,155,315],[0,0,0]]
-        }[b.dataset.sceneView];
+        }[v];
         if(views)startCamTransition(c.clone().add(fittedCameraPosition(views[0])),c.clone().add(new THREE.Vector3(...views[1])));
       });
       const goL1=document.getElementById('btn-jump-l1');if(goL1)goL1.onclick=()=>switchScale('L1');
@@ -6475,30 +6681,99 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
         document.getElementById('btn-pause-sim').textContent = '⏸️ 暂停仿真';
         syncDynamicsUI();
       };
-      document.getElementById('slider-bloom').oninput = (e) => {
-        const v = parseFloat(e.target.value);
-        bloomPass.strength = v;
-        document.getElementById('val-bloom').textContent = v.toFixed(2);
+      window.applyBloom = function applyBloom(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 0.68, 0, 1.8);
+        const eff = state.currentScale === 'L0B' ? Math.min(0.24, val * 0.32) : val;
+        bloomPass.strength = eff;
+        bloomPass.threshold = state.currentScale === 'L0B' ? 0.82 : THREE.MathUtils.clamp(0.84 - val * 0.32, 0.18, 0.92);
+        bloomPass.radius = 0.28 + val * 0.32;
+        renderer.toneMappingExposure = state.currentScale === 'L0B' ? 1.05 : (0.94 + val * 0.16);
+        const out = document.getElementById('val-bloom'); if (out) out.textContent = val.toFixed(2);
       };
-      document.getElementById('slider-sun-glare').oninput = (e) => {
-        state.sunGlare = parseFloat(e.target.value);
-        document.getElementById('val-sun-glare').textContent = state.sunGlare.toFixed(2);
-        if (l1Sun) l1Sun.uniforms.uSunGlare.value = state.sunGlare;
+      window.applySunGlare = function applySunGlare(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 0.75, 0.1, 1.6);
+        state.sunGlare = val;
+        const out = document.getElementById('val-sun-glare'); if (out) out.textContent = val.toFixed(2);
+        if (l1Sun?.uniforms?.uSunGlare) l1Sun.uniforms.uSunGlare.value = val;
         if (sunCoronaSprite) {
-          sunCoronaSprite.material.opacity = 0.25 + state.sunGlare * 0.58;
-          const sc = 36 + state.sunGlare * 26;
+          sunCoronaSprite.material.opacity = THREE.MathUtils.clamp(0.14 + val * 0.62, 0.08, 1.0);
+          const sc = 28 + val * 36;
           sunCoronaSprite.scale.set(sc, sc, 1);
         }
+        if (sunPointLight) sunPointLight.intensity = 1.0 + val * 2.1;
+        if (typeof motion !== 'undefined' && motion.milkyWayL1?.userData) {
+          const ud = motion.milkyWayL1.userData;
+          if (ud.core) { const s = 175 + val * 145; ud.core.scale.set(s, s, 1); ud.core.material.opacity = THREE.MathUtils.clamp(0.45 + val * 0.45, 0.25, 1); }
+          if (ud.halo) { const s = 420 + val * 340; ud.halo.scale.set(s, s, 1); ud.halo.material.opacity = THREE.MathUtils.clamp(0.18 + val * 0.32, 0.10, 0.85); }
+        }
+        if (typeof bhShaderMat !== 'undefined' && bhShaderMat?.uniforms?.uBrightness) bhShaderMat.uniforms.uBrightness.value = 0.38 + val * 0.58;
+        if (typeof galaxyCoreSprite !== 'undefined' && galaxyCoreSprite) { const s = 16 + val * 18; galaxyCoreSprite.scale.set(s, s, 1); galaxyCoreSprite.material.opacity = THREE.MathUtils.clamp(0.20 + val * 0.38, 0.12, 0.95); }
       };
-      document.getElementById('slider-stardust').oninput = (e) => {
-        state.stardustBrightness = parseFloat(e.target.value);
-        document.getElementById('val-stardust').textContent = state.stardustBrightness.toFixed(2);
-        if (starfieldMat) starfieldMat.opacity = Math.min(1, 0.45 * state.stardustBrightness + 0.35);
+      window.applyStardust = function applyStardust(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 1.0, 0.2, 2.0);
+        state.stardustBrightness = val;
+        const out = document.getElementById('val-stardust'); if (out) out.textContent = val.toFixed(2);
+        const norm = (val - 0.2) / 1.8;
+        if (starfieldMat) {
+          starfieldMat.opacity = THREE.MathUtils.clamp(0.06 + norm * 0.94, 0.05, 1.0);
+          starfieldMat.size = 0.8 + norm * 2.5;
+        }
+        if (typeof motion !== 'undefined') {
+          Object.values(motion.parallax || {}).forEach(f => {
+            if (!f) return;
+            if (f.stars?.material) { f.stars.material.opacity = THREE.MathUtils.clamp(0.10 + norm * 0.85, 0.06, 1.0); f.stars.material.size = 1.1 + norm * 2.2; }
+            if (f.streaks?.material) f.streaks.material.opacity = THREE.MathUtils.clamp(0.06 + norm * 0.55, 0.04, 0.85);
+          });
+          if (motion.milkyWayL1?.userData?.stars?.material) {
+            const m = motion.milkyWayL1.userData.stars.material;
+            m.opacity = THREE.MathUtils.clamp(0.18 + norm * 0.80, 0.12, 1.0);
+            m.size = 4.2 + norm * 8.2;
+          }
+          if (motion.kuiperBelt?.material) motion.kuiperBelt.material.opacity = THREE.MathUtils.clamp(0.06 + norm * 0.45, 0.04, 0.72);
+        }
+        if (typeof l3Points !== 'undefined' && l3Points?.material?.uniforms?.uStardust) l3Points.material.uniforms.uStardust.value = 0.28 + norm * 1.45;
+        if (typeof galaxyNebula !== 'undefined' && galaxyNebula?.material) galaxyNebula.material.opacity = THREE.MathUtils.clamp(0.18 + norm * 0.82, 0.12, 1.0);
+        if (typeof clusterFlow !== 'undefined' && clusterFlow?.material) clusterFlow.material.opacity = THREE.MathUtils.clamp(0.25 + norm * 0.75, 0.18, 1.0);
+        if (typeof webFlow !== 'undefined' && webFlow?.material) webFlow.material.opacity = THREE.MathUtils.clamp(0.25 + norm * 0.75, 0.18, 1.0);
       };
-      document.getElementById('slider-vfx').oninput = (e) => {
-        state.vfxIntensity = parseFloat(e.target.value);
-        document.getElementById('val-vfx').textContent = state.vfxIntensity.toFixed(2);
+      window.applyVfxIntensity = function applyVfxIntensity(v) {
+        const val = THREE.MathUtils.clamp(Number.isFinite(v) ? v : 1.0, 0.3, 2.0);
+        state.vfxIntensity = val;
+        const out = document.getElementById('val-vfx'); if (out) out.textContent = val.toFixed(2);
+        if (typeof motion !== 'undefined') {
+          if (motion.bowShock?.userData?.mat?.uniforms?.uVfx) motion.bowShock.userData.mat.uniforms.uVfx.value = val;
+          (motion.planetHalos || []).forEach(h => {
+            if (!h.sprite) return;
+            const sc = h.baseScale * (0.55 + val * 0.55);
+            h.sprite.scale.set(sc, sc, 1);
+            h.sprite.material.opacity = THREE.MathUtils.clamp(h.baseOpacity * (0.45 + val * 0.62), 0.12, 1.0);
+          });
+          if (motion.galacticRibbon?.material) motion.galacticRibbon.material.opacity = THREE.MathUtils.clamp(0.42 + val * 0.48, 0.15, 1.0);
+          if (motion.milkyWayL1?.userData?.galFullHelix?.material) motion.milkyWayL1.userData.galFullHelix.material.opacity = THREE.MathUtils.clamp(0.18 + val * 0.24, 0.08, 0.85);
+        }
+        if (typeof bhJetPoints !== 'undefined' && bhJetPoints?.material?.uniforms?.uVfx) bhJetPoints.material.uniforms.uVfx.value = val;
+        if (typeof l3M87Jet !== 'undefined' && l3M87Jet?.material?.uniforms?.uVfx) l3M87Jet.material.uniforms.uVfx.value = val;
+        if (typeof l0AuroraGroup !== 'undefined' && l0AuroraGroup?.userData?.mat?.uniforms?.uVfx) l0AuroraGroup.userData.mat.uniforms.uVfx.value = val;
+        if (typeof activeExplosions !== 'undefined') activeExplosions.forEach(ex => { if (ex.group) ex.group.scale.setScalar(0.65 + val * 0.42); });
+        if (typeof lab !== 'undefined' && lab.effects) lab.effects.forEach(fx => {
+          if (fx.flash?.material) fx.flash.material.opacity = THREE.MathUtils.clamp(0.4 + val * 0.45, 0.15, 1.0);
+          if (fx.ring?.material) fx.ring.material.opacity = THREE.MathUtils.clamp(0.35 + val * 0.50, 0.15, 1.0);
+        });
       };
+      window.resetOptics = function resetOptics() {
+        const defs = [['slider-bloom', 0.68, applyBloom], ['slider-sun-glare', 0.75, applySunGlare], ['slider-stardust', 1.0, applyStardust], ['slider-vfx', 1.0, applyVfxIntensity]];
+        defs.forEach(([id, v, fn]) => { const el = document.getElementById(id); if (el) el.value = String(v); fn(v); });
+      };
+      document.getElementById('slider-bloom').oninput = (e) => applyBloom(parseFloat(e.target.value));
+      document.getElementById('slider-sun-glare').oninput = (e) => applySunGlare(parseFloat(e.target.value));
+      document.getElementById('slider-stardust').oninput = (e) => applyStardust(parseFloat(e.target.value));
+      document.getElementById('slider-vfx').oninput = (e) => applyVfxIntensity(parseFloat(e.target.value));
+      const btnResetOptics = document.getElementById('btn-reset-optics');
+      if (btnResetOptics) btnResetOptics.onclick = () => { resetOptics(); showToast('已恢复光学与特效默认参数'); };
+      applyBloom(parseFloat(document.getElementById('slider-bloom').value));
+      applySunGlare(parseFloat(document.getElementById('slider-sun-glare').value));
+      applyStardust(parseFloat(document.getElementById('slider-stardust').value));
+      applyVfxIntensity(parseFloat(document.getElementById('slider-vfx').value));
 
       // 全局快捷键
       window.addEventListener('keydown', (e) => {
@@ -6894,6 +7169,7 @@ function queryMemory(catalog,query){const q=normalizeQuery(query);let items=cata
             dust:bhDustData.slice(0,2).map(p=>[p.r,p.phase]),galaxyTime:l3Points.material.uniforms.uTime.value,
             cluster:clusterParticles.slice(0,3).map(p=>p.p.toArray()),web:webParticles.slice(0,3).map(p=>p.t),probes:dynamics.probes.map(p=>({key:p.key,position:p.position.toArray()})),
             renderer:{calls:renderer.info.render.calls,points:renderer.info.render.points,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures},
+            optics:{bloomStrength:bloomPass.strength,bloomThreshold:bloomPass.threshold,exposure:renderer.toneMappingExposure,sunGlare:l1Sun?.uniforms?.uSunGlare?.value,sunLight:sunPointLight?.intensity,starOpacity:starfieldMat?.opacity,starSize:starfieldMat?.size,mwStarOpacity:motion?.milkyWayL1?.userData?.stars?.material?.opacity,vfx:state.vfxIntensity,bowVfx:motion?.bowShock?.userData?.mat?.uniforms?.uVfx?.value,jetVfx:bhJetPoints?.material?.uniforms?.uVfx?.value,camDist:camera.position.length()},
             layout:document.body.dataset.layout,projectiles:lab.projectiles.length+activeProjectiles.length,effects:lab.effects.length,legacyEffects:activeExoticEffects.length,reports:lab.reports.slice(-3),frame:motion.frame,solarYears:motion.years,sunWorld:l1Sun.mesh.getWorldPosition(new THREE.Vector3()).toArray(),solar:motion.solar.map(b=>({id:b.id,p:b.p.toArray(),v:b.v.toArray(),mass:b.mass})),momentum:physicalMomentum().toArray(),clusterCenters:clusterNodes.map(n=>n.center.toArray()),webScale:motion.webScale,labClock:motion.labClock,experimentCount:EXPERIMENTS.length
           }),predictImpact:(settings,id)=>scientificImpact(settings,id)
         };
