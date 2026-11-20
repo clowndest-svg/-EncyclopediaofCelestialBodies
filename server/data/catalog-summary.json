@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "acquiredDate": "2026-11-20",
+  "totalRecords": 24228,
+  "countsByKind": {
+    "asteroid": 0,
+    "blackhole": 0,
+    "cluster": 984,
+    "comet": 0,
+    "exoplanet": 6473,
+    "galaxy": 10750,
+    "moon": 0,
+    "nebula": 363,
+    "planet": 0,
+    "star": 5658
+  },
+  "countsBySubtype": {
+    "三重星系": 26,
+    "伴星云的星团": 67,
+    "双星条目": 243,
+    "反射星云": 38,
+    "发射星云": 8,
+    "恒星": 547,
+    "新星": 3,
+    "星云": 94,
+    "星协": 61,
+    "星系": 10482,
+    "星系对": 231,
+    "星系群": 11,
+    "球状星团": 204,
+    "电离氢区": 82,
+    "疏散星团": 652,
+    "系外行星": 6473,
+    "系外行星宿主": 4834,
+    "脉冲星宿主": 6,
+    "行星宿主（亚恒星质量）": 25,
+    "行星状星云": 130,
+    "超新星遗迹": 11
+  },
+  "fieldCoverageByKind": {
+    "cluster": {
+      "angularMajorArcmin": {
+        "known": 924,
+        "missing": 60
+      },
+      "angularMinorArcmin": {
+        "known": 353,
+        "missing": 631
+      },
+      "decDeg": {
+        "known": 984,
+        "missing": 0
+      },
+      "distanceLy": {
+        "known": 0,
+        "missing": 984
+      },
+      "hostMagnitude": {
+        "known": 0,
+        "missing": 984
+      },
+      "magnitude": {
+        "known": 713,
+        "missing": 271
+      },
+      "massEarth": {
+        "known": 0,
+        "missing": 984
+      },
+      "massSolar": {
+        "known": 0,
+        "missing": 984
+      },
+      "minimumMassEarth": {
+        "known": 0,
+        "missing": 984
+      },
+      "periodDays": {
+        "known": 0,
+        "missing": 984
+      },
+      "raDeg": {
+        "known": 984,
+        "missing": 0
+      },
+      "radiusEarth": {
+        "known": 0,
+        "missing": 984
+      },
+      "radiusSolar": {
+        "known": 0,
+        "missing": 984
+      },
+      "redshift": {
+        "known": 486,
+        "missing": 498
+      },
+      "semiMajorAxisAu": {
+        "known": 0,
+        "missing": 984
+      },
+      "tempK": {
+        "known": 0,
+        "missing": 984
+      }
+    },
+    "exoplanet": {
+      "angularMajorArcmin": {
+        "known": 0,
+        "missing": 6473
+      },
+      "angularMinorArcmin": {
+        "known": 0,
+        "missing": 6473
+      },
+      "decDeg": {
+        "known": 6473,
+        "missing": 0
+      },
+      "distanceLy": {
+        "known": 6345,
+        "missing": 128
+      },
+      "hostMagnitude": {
+        "known": 6147,
+        "missing": 326
+      },
+      "magnitude": {
+        "known": 0,
+        "missing": 6473
+      },
+      "massEarth": {
+        "known": 2065,
+        "missing": 4408
+      },
+      "massEarthLowerLimit": {
+        "known": 9,
+        "missing": 6464
+      },
+      "massEarthUpperLimit": {
+        "known": 152,
+        "missing": 6321
+      },
+      "massSolar": {
+        "known": 0,
+        "missing": 6473
+      },
+      "minimumMassEarth": {
+        "known": 979,
+        "missing": 5494
+      },
+      "minimumMassEarthLowerLimit": {
+        "known": 2,
+        "missing": 6471
+      },
+      "minimumMassEarthUpperLimit": {
+        "known": 1,
+        "missing": 6472
+      },
+      "orbitalEccentricityLowerLimit": {
+        "known": 11,
+        "missing": 6462
+      },
+      "orbitalEccentricityUpperLimit": {
+        "known": 266,
+        "missing": 6207
+      },
+      "periodDays": {
+        "known": 6095,
+        "missing": 378
+      },
+      "periodDaysLowerLimit": {
+        "known": 6,
+        "missing": 6467
+      },
+      "raDeg": {
+        "known": 6473,
+        "missing": 0
+      },
+      "radiusEarth": {
+        "known": 4836,
+        "missing": 1637
+      },
+      "radiusEarthLowerLimit": {
+        "known": 5,
+        "missing": 6468
+      },
+      "radiusSolar": {
+        "known": 0,
+        "missing": 6473
+      },
+      "redshift": {
+        "known": 0,
+        "missing": 6473
+      },
+      "semiMajorAxisAu": {
+        "known": 3974,
+        "missing": 2499
+      },
+      "semiMajorAxisAuLowerLimit": {
+        "known": 4,
+        "missing": 6469
+      },
+      "tempK": {
+        "known": 1782,
+        "missing": 4691
+      },
+      "tempKUpperLimit": {
+        "known": 2,
+        "missing": 6471
+      }
+    },
+    "galaxy": {
+      "angularMajorArcmin": {
+        "known": 10750,
+        "missing": 0
+      },
+      "angularMinorArcmin": {
+        "known": 10511,
+        "missing": 239
+      },
+      "decDeg": {
+        "known": 10750,
+        "missing": 0
+      },
+      "distanceLy": {
+        "known": 0,
+        "missing": 10750
+      },
+      "hostMagnitude": {
+        "known": 0,
+        "missing": 10750
+      },
+      "magnitude": {
+        "known": 10476,
+        "missing": 274
+      },
+      "massEarth": {
+        "known": 0,
+        "missing": 10750
+      },
+      "massSolar": {
+        "known": 0,
+        "missing": 10750
+      },
+      "minimumMassEarth": {
+        "known": 0,
+        "missing": 10750
+      },
+      "periodDays": {
+        "known": 0,
+        "missing": 10750
+      },
+      "raDeg": {
+        "known": 10750,
+        "missing": 0
+      },
+      "radiusEarth": {
+        "known": 0,
+        "missing": 10750
+      },
+      "radiusSolar": {
+        "known": 0,
+        "missing": 10750
+      },
+      "redshift": {
+        "known": 10207,
+        "missing": 543
+      },
+      "semiMajorAxisAu": {
+        "known": 0,
+        "missing": 10750
+      },
+      "tempK": {
+        "known": 0,
+        "missing": 10750
+      }
+    },
+    "nebula": {
+      "angularMajorArcmin": {
+        "known": 328,
+        "missing": 35
+      },
+      "angularMinorArcmin": {
+        "known": 180,
+        "missing": 183
+      },
+      "decDeg": {
+        "known": 363,
+        "missing": 0
+      },
+      "distanceLy": {
+        "known": 0,
+        "missing": 363
+      },
+      "hostMagnitude": {
+        "known": 0,
+        "missing": 363
+      },
+      "magnitude": {
+        "known": 233,
+        "missing": 130
+      },
+      "massEarth": {
+        "known": 0,
+        "missing": 363
+      },
+      "massSolar": {
+        "known": 0,
+        "missing": 363
+      },
+      "minimumMassEarth": {
+        "known": 0,
+        "missing": 363
+      },
+      "periodDays": {
+        "known": 0,
+        "missing": 363
+      },
+      "raDeg": {
+        "known": 363,
+        "missing": 0
+      },
+      "radiusEarth": {
+        "known": 0,
+        "missing": 363
+      },
+      "radiusSolar": {
+        "known": 0,
+        "missing": 363
+      },
+      "redshift": {
+        "known": 126,
+        "missing": 237
+      },
+      "semiMajorAxisAu": {
+        "known": 0,
+        "missing": 363
+      },
+      "tempK": {
+        "known": 0,
+        "missing": 363
+      }
+    },
+    "star": {
+      "angularMajorArcmin": {
+        "known": 4,
+        "missing": 5654
+      },
+      "angularMinorArcmin": {
+        "known": 4,
+        "missing": 5654
+      },
+      "decDeg": {
+        "known": 5658,
+        "missing": 0
+      },
+      "distanceLy": {
+        "known": 4786,
+        "missing": 872
+      },
+      "hostMagnitude": {
+        "known": 0,
+        "missing": 5658
+      },
+      "magnitude": {
+        "known": 4642,
+        "missing": 1016
+      },
+      "massEarth": {
+        "known": 0,
+        "missing": 5658
+      },
+      "massSolar": {
+        "known": 4444,
+        "missing": 1214
+      },
+      "minimumMassEarth": {
+        "known": 0,
+        "missing": 5658
+      },
+      "periodDays": {
+        "known": 0,
+        "missing": 5658
+      },
+      "raDeg": {
+        "known": 5658,
+        "missing": 0
+      },
+      "radiusEarth": {
+        "known": 0,
+        "missing": 5658
+      },
+      "radiusSolar": {
+        "known": 4189,
+        "missing": 1469
+      },
+      "redshift": {
+        "known": 17,
+        "missing": 5641
+      },
+      "semiMajorAxisAu": {
+        "known": 0,
+        "missing": 5658
+      },
+      "stellarAgeGyrLowerLimit": {
+        "known": 45,
+        "missing": 5613
+      },
+      "stellarAgeGyrUpperLimit": {
+        "known": 15,
+        "missing": 5643
+      },
+      "tempK": {
+        "known": 4283,
+        "missing": 1375
+      },
+      "tempKUpperLimit": {
+        "known": 1,
+        "missing": 5657
+      }
+    }
+  },
+  "missingAnyCoordinates": 0,
+  "missingDistance": 13097,
+  "noPhysicalMeasurement": 0,
+  "galaxyVisualPresets": {
+    "elliptical": 1538,
+    "nebula": 3543,
+    "spiral": 5669
+  },
+  "coverageNote": "missing表示中心值字段未提供，不是0；某类别不适用的字段亦缺失，上/下限在独立字段统计。",
+  "validation": {
+    "passed": true,
+    "recordsChecked": 24228,
+    "uniqueIds": 24228,
+    "uniqueSummaries": 24228,
+    "limitValuedFields": 519,
+    "blankOrNullValues": 0,
+    "nonfiniteNumbers": 0,
+    "duplicateIds": 0,
+    "checks": [
+      "contract",
+      "Chinese text",
+      "type mapping",
+      "excluded types",
+      "finite numbers",
+      "coordinate ranges",
+      "unique IDs",
+      "host links",
+      "bounds vs values",
+      "minimum mass semantics",
+      "host magnitude semantics",
+      "known morphology only"
+    ]
+  }
+}

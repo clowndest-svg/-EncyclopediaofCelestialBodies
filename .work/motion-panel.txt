@@ -1,0 +1,10 @@
+<section class="dynamics-box reference-box">
+  <h3>运动参考系</h3>
+  <div class="layer-controls"><button data-reference="external" aria-pressed="true">外部 / 银河参考</button><button data-reference="local" aria-pressed="false">随动 / 共动参考</button></div>
+  <p id="reference-explanation"></p>
+  <div class="motion-options"><label><input id="motion-follow" type="checkbox" checked> 镜头跟随整体位移</label><label><input id="motion-stream" type="checkbox" checked> 显示星际穿行视差风流与弓形激波</label><label><input id="motion-guides" type="checkbox" checked> 显示随动椭圆参考轨道</label><label><input id="motion-nbody" type="checkbox" checked> 太阳系行星相互引力</label></div>
+  <div class="dynamics-row"><label for="motion-days">太阳系轨道速度</label><output id="motion-clock">42 天 / 模拟秒</output></div>
+  <input id="motion-days" class="cosmic-slider" type="range" min="1" max="180" value="42" aria-label="每模拟秒推进的太阳系天数">
+  <div class="dynamics-row"><label for="motion-history">螺旋轨迹跨度</label><select id="motion-history"><option value="4">紧凑（短窗）</option><option value="12" selected>标准（全八星螺旋）</option><option value="24">超长（巨行星多圈螺旋）</option></select></div>
+  <p class="motion-note">内行星公转快（0.24–1.88 年），外侧巨行星公转慢（木星 12 年、土星 29 年、天王星 84 年、海王星 165 年）；系统按各行星周期自适应延展螺旋尾迹，以便同时看清全部八大行星绕移动太阳的三维螺旋运动。</p>
+</section>

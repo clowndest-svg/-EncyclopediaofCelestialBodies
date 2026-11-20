@@ -1,0 +1,27 @@
+{
+  "stats": {
+    "total": 25262,
+    "kinds": {
+      "exoplanet": 6473,
+      "star": 5919,
+      "galaxy": 10801,
+      "nebula": 413,
+      "cluster": 984,
+      "planet": 444,
+      "blackhole": 150,
+      "comet": 55,
+      "moon": 14,
+      "asteroid": 9
+    },
+    "realms": {
+      "real": 24302,
+      "speculative": 384,
+      "fiction": 576
+    },
+    "version": "caadfb0083ea114d",
+    "updatedAt": "2026-11-20"
+  },
+  "fullScript": "encyclopedia-catalog.js",
+  "fallbackCount": 152,
+  "policy": "真实目录、科学设想、原创想象分别标识；未知数据不补造。"
+}

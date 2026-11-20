@@ -1,0 +1,17 @@
+      <section class="dynamics-box" aria-label="引力与轨道设置">
+        <h3>引力与运动观测</h3>
+        <p id="physics-description">开普勒椭圆轨道；显示比例与时间均已压缩。</p>
+        <div class="layer-controls">
+          <button id="btn-layer-trails" aria-pressed="true">运动轨迹</button>
+          <button id="btn-layer-gravity" aria-pressed="false">引力方向</button>
+          <button id="btn-layer-labels" aria-pressed="true">天体标注</button>
+          <button id="btn-layer-jets" class="hidden" aria-pressed="true">双极喷流</button>
+        </div>
+        <div class="dynamics-row"><label for="slider-gravity">引力强度 · 归一化 G</label><output id="val-gravity">1.00×</output></div>
+        <input id="slider-gravity" type="range" min="0.25" max="2" step="0.05" value="1" class="cosmic-slider" aria-label="引力强度" />
+        <p style="margin-top:7px;font-size:10px">改变轨道角速度、吸积速度和引力汇聚。引力方向层显示指向质心的箭头。</p>
+        <button id="btn-orbit-probe" class="glass-btn rounded-lg">释放引力探针</button>
+        <button id="btn-reset-dynamics" class="glass-btn rounded-lg">重置动力学</button>
+        <div class="trajectory-key"><span><i></i>轨道 / 历史路径</span><span><i class="force"></i>引力方向</span><span><i class="stream"></i>物质流</span></div>
+        <details style="margin-top:10px;font-size:11px"><summary style="cursor:pointer;color:#cfdeed">查看当前模型参数</summary><table id="dynamics-table"><thead><tr><th>量</th><th>数值</th></tr></thead><tbody id="dynamics-values"></tbody></table></details>
+      </section>

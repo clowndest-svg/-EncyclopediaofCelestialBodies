@@ -1,0 +1,356 @@
+{
+  "schemaVersion": 1,
+  "acquiredDate": "2026-11-20",
+  "buildScript": "server/scripts/catalog-build.py",
+  "output": "server/data/catalog-real.json",
+  "recordCount": 24228,
+  "collectionLicense": "CC-BY-SA-4.0",
+  "licenseScope": "本地转换、中文摘要及数据库编排按CC-BY-SA-4.0提供，遵守OpenNGC署名/相同方式共享；不声称重授NASA及原论文自身的权利。原始数据分别遵守来源说明。",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "modifications": [
+    "目录字段选择与单位换算",
+    "按源类型白名单过滤",
+    "稳定ID与中文规则摘要",
+    "从PS默认记录派生唯一宿主",
+    "保存质量最小值与上/下限语义"
+  ],
+  "warrantyNotice": "原始来源与本目录均按现状提供；无准确性、完整性、适用性或无第三方权利的保证；非来源机构背书。",
+  "rebuild": {
+    "offline": "python -I server/scripts/catalog-build.py",
+    "refresh": "python -I server/scripts/catalog-build.py --download",
+    "explicitInputs": "python -I server/scripts/catalog-build.py --openngc-dir ABS_PATH --nasa-dir ABS_PATH",
+    "validate": "python -I server/scripts/catalog-build.py --validate-only",
+    "requirements": "Python 3.10+，仅标准库，下载需联网；无API密钥、账号、PG或Redis。",
+    "determinism": "同一checksummed快照产生相同目录和统计字节；刷新在线快照的条数可变化。",
+    "downloadSecurity": "每源独立新建空目录；下载内容只作为数据读入，Python必须-I，脚本不放在下载目录。"
+  },
+  "sources": [
+    {
+      "id": "openngc",
+      "name": "OpenNGC",
+      "projectUrl": "https://github.com/mattiaverga/OpenNGC",
+      "requestedUrl": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/master/database/NGC.csv",
+      "downloadUrl": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/be3cd6c5498806a2fbb2f7e0452ef802dbb02be0/database_files/NGC.csv",
+      "revision": "be3cd6c5498806a2fbb2f7e0452ef802dbb02be0",
+      "localDirectory": "source-downloads/openngc-20261120-2634ec9e",
+      "dataFile": "NGC.csv",
+      "acquiredDate": "2026-11-20",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "licenseEvidenceUrl": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/master/LICENSES/CC-BY-SA-4.0.txt",
+      "licenseFile": "LICENSE-CC-BY-SA-4.0.txt",
+      "attributionEvidence": "attribution.dep5",
+      "copyright": "2023 Mattia Verga <mattia.verga@tiscali.it>",
+      "authorsNotice": "Patrick Chevalley\nChristian Dersch\nJean-Sebastien Dieu\nSebastian Godelet\nMattia Verga",
+      "sourceRowCount": 13970,
+      "includedRowCount": 12890,
+      "excludedByType": {
+        "Dup": 651,
+        "NonEx": 10,
+        "Other": 419
+      },
+      "ignoredNonSingleStarParallaxes": 1440,
+      "delimiter": ";",
+      "coordinatesEpoch": "J2000",
+      "typeMapping": {
+        "*": {
+          "kind": "star",
+          "subtype": "恒星"
+        },
+        "**": {
+          "kind": "star",
+          "subtype": "双星条目"
+        },
+        "Nova": {
+          "kind": "star",
+          "subtype": "新星"
+        },
+        "*Ass": {
+          "kind": "cluster",
+          "subtype": "星协"
+        },
+        "OCl": {
+          "kind": "cluster",
+          "subtype": "疏散星团"
+        },
+        "GCl": {
+          "kind": "cluster",
+          "subtype": "球状星团"
+        },
+        "Cl+N": {
+          "kind": "cluster",
+          "subtype": "伴星云的星团"
+        },
+        "G": {
+          "kind": "galaxy",
+          "subtype": "星系"
+        },
+        "GPair": {
+          "kind": "galaxy",
+          "subtype": "星系对"
+        },
+        "GTrpl": {
+          "kind": "galaxy",
+          "subtype": "三重星系"
+        },
+        "GGroup": {
+          "kind": "galaxy",
+          "subtype": "星系群"
+        },
+        "PN": {
+          "kind": "nebula",
+          "subtype": "行星状星云"
+        },
+        "HII": {
+          "kind": "nebula",
+          "subtype": "电离氢区"
+        },
+        "DrkN": {
+          "kind": "nebula",
+          "subtype": "暗星云"
+        },
+        "EmN": {
+          "kind": "nebula",
+          "subtype": "发射星云"
+        },
+        "Neb": {
+          "kind": "nebula",
+          "subtype": "星云"
+        },
+        "RfN": {
+          "kind": "nebula",
+          "subtype": "反射星云"
+        },
+        "SNR": {
+          "kind": "nebula",
+          "subtype": "超新星遗迹"
+        }
+      },
+      "sourceCodeMap": {
+        "1": "NASA Extragalactic Database (NED)",
+        "2": "SIMBAD",
+        "3": "HyperLEDA",
+        "4": "Harold Corwin NGC/IC Positions and Notes",
+        "5": "HEASARC mwsc",
+        "6": "HEASARC smcclustrs",
+        "7": "HEASARC lmcextobj",
+        "8": "HEASARC plnebulae",
+        "9": "HEASARC lbn",
+        "10": "HEASARC messier",
+        "11": "HEASARC lyngaclust",
+        "99": "OpenNGC revised data"
+      },
+      "downloads": [
+        {
+          "url": "https://api.github.com/repos/mattiaverga/OpenNGC/commits?path=database_files/NGC.csv&per_page=1",
+          "file": "revision.json",
+          "bytes": 3394,
+          "sha256": "80bb27b84299c4c76b9355d2d73f31251e4cc10b6a07e51280217f21aade773b",
+          "retrievedAt": "2026-11-20T05:02:06.621453+00:00"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/be3cd6c5498806a2fbb2f7e0452ef802dbb02be0/database_files/NGC.csv",
+          "file": "NGC.csv",
+          "bytes": 3942946,
+          "sha256": "54abea0b57b0a103831bfc7a8e3a99a23acfbf4bb581fcf3d8af539cbb826c84",
+          "retrievedAt": "2026-11-20T05:02:10.954541+00:00"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/master/LICENSES/CC-BY-SA-4.0.txt",
+          "file": "LICENSE-CC-BY-SA-4.0.txt",
+          "bytes": 18375,
+          "sha256": "cde7883b9050a1104f4ac19a1572aafd6e5d7323b68351aaf51fbf4beba54966",
+          "retrievedAt": "2026-11-20T05:02:11.904197+00:00"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/master/.reuse/dep5",
+          "file": "attribution.dep5",
+          "bytes": 289,
+          "sha256": "5c0d58af7da9f6f1dd20e99ed55b5dbb4c09d035f9721cad80b2eecb81097672",
+          "retrievedAt": "2026-11-20T05:02:12.773394+00:00"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/master/NGC_guide.txt",
+          "file": "NGC_guide.txt",
+          "bytes": 2935,
+          "sha256": "b7fca022985daa0f41a8bc8dd7028513e4db9ca96a2cfc380b68ff4c2e812810",
+          "retrievedAt": "2026-11-20T05:02:13.464268+00:00"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/master/AUTHORS",
+          "file": "AUTHORS.txt",
+          "bytes": 86,
+          "sha256": "57ad4fb09da7d94e90c66aea92af23f6493b29c9953ba0e85d3360b16531c011",
+          "retrievedAt": "2026-11-20T05:02:13.957504+00:00"
+        }
+      ],
+      "fetchAttempts": [
+        {
+          "url": "https://raw.githubusercontent.com/mattiaverga/OpenNGC/master/database/NGC.csv",
+          "error": "HTTP Error 404: Not Found"
+        }
+      ],
+      "limitations": [
+        "NonEx、Dup、Other及未知Type均排除；Other未必不存在，只是不足以安全归类。",
+        "星系对/三重星系/星系群为明确标记的集合条目，不等同于单个星系，可能与成员条目重叠。",
+        "**只是目录双星标记，不保证物理束缚；Cl+N主分类为星团并保留伴星云标签。",
+        "NGC的Pax可能关联前景天体；只对*与Nova的正视差直接换算，其他类型绝不推距。",
+        "星系距离大多未提供；不采用红移/哈勃定律或外部记忆补值。",
+        "形态S0、E-S0、不规则、带问号及缺失值都采用不指定形态的示意预设。",
+        "星云中心星的Cstar字段不是星云总量，不放入星云半径/星等或别名。"
+      ]
+    },
+    {
+      "id": "nasa-ps",
+      "name": "NASA Exoplanet Archive — Planetary Systems (PS)",
+      "projectUrl": "https://exoplanetarchive.ipac.caltech.edu",
+      "downloadUrl": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2Chostname%2Cdefault_flag%2Cdisc_year%2Cdiscoverymethod%2Cdisc_facility%2Cpl_orbper%2Cpl_rade%2Cpl_bmasse%2Cpl_bmassprov%2Cpl_eqt%2Cpl_orbsmax%2Cpl_orbeccen%2Cst_teff%2Cst_rad%2Cst_mass%2Cst_spectype%2Cst_age%2Csy_dist%2Cra%2Cdec%2Csy_vmag%2Csy_snum%2Cpl_controv_flag%2Chd_name%2Chip_name%2Ctic_id%2Cgaia_dr2_id%2Cgaia_dr3_id%2Cpl_refname%2Cst_refname%2Csy_refname%2Cpl_orbperlim%2Cpl_radelim%2Cpl_bmasselim%2Cpl_eqtlim%2Cpl_orbsmaxlim%2Cpl_orbeccenlim%2Cst_tefflim%2Cst_radlim%2Cst_masslim%2Cst_agelim+from+ps+where+default_flag%3D1+order+by+pl_name&format=csv",
+      "query": "select pl_name,hostname,default_flag,disc_year,discoverymethod,disc_facility,pl_orbper,pl_rade,pl_bmasse,pl_bmassprov,pl_eqt,pl_orbsmax,pl_orbeccen,st_teff,st_rad,st_mass,st_spectype,st_age,sy_dist,ra,dec,sy_vmag,sy_snum,pl_controv_flag,hd_name,hip_name,tic_id,gaia_dr2_id,gaia_dr3_id,pl_refname,st_refname,sy_refname,pl_orbperlim,pl_radelim,pl_bmasselim,pl_eqtlim,pl_orbsmaxlim,pl_orbeccenlim,st_tefflim,st_radlim,st_masslim,st_agelim from ps where default_flag=1 order by pl_name",
+      "localDirectory": "source-downloads/nasa-ps-20261120-8d675f51",
+      "dataFile": "ps-default-limits.csv",
+      "acquiredDate": "2026-11-20",
+      "sourceRowCount": 6473,
+      "includedRowCount": 6473,
+      "derivedHostCount": 4865,
+      "planetRows": 6473,
+      "uniqueHosts": 4865,
+      "controversialPlanetRows": 58,
+      "hostsWithDifferentSuppliedValues": {
+        "st_age": 14,
+        "st_mass": 145,
+        "st_rad": 178,
+        "st_teff": 164
+      },
+      "licenseStatus": "未在已检查的官方字段/致谢/DOI页面发现明确通用数据许可证；不标注公有领域或虚构CC许可。",
+      "licenseEvidenceUrls": [
+        "https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html",
+        "https://exoplanetarchive.ipac.caltech.edu/docs/doi.html",
+        "https://exoplanetarchive.ipac.caltech.edu/docs/API_PS_columns.html"
+      ],
+      "acknowledgement": "This research has made use of the NASA Exoplanet Archive, which is operated by the California Institute of Technology, under contract with the National Aeronautics and Space Administration under the Exoplanet Exploration Program.",
+      "acknowledgementUrl": "https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html",
+      "datasetDoi": "https://doi.org/10.26133/NEA12",
+      "overviewCitation": "Christiansen et al. (2025), The Planetary Science Journal",
+      "overviewDoi": "https://doi.org/10.3847/PSJ/ade3c2",
+      "citationPolicy": "公开使用时保留官方致谢、PS数据DOI及总览引用；具体文献参数的原论文链接保存在每条sources中。",
+      "downloads": [
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+column_name%2Cdatatype%2Cdescription+from+TAP_SCHEMA.columns+where+table_name%3D%27ps%27&format=csv",
+          "file": "ps-schema.csv",
+          "bytes": 18953,
+          "sha256": "56329ad11bbfea51b6dc78753c7e8ace43cf389e757b6c7c231f5f1916a70fb3",
+          "retrievedAt": "2026-11-20T05:02:21.396512+00:00"
+        },
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/docs/API_PS_columns.html",
+          "file": "ps-columns.html",
+          "bytes": 113180,
+          "sha256": "20c13ec5493887f3d901a1f62c264ab0dcc95135e1f417b79374fdd737b9c222",
+          "retrievedAt": "2026-11-20T05:02:22.040082+00:00"
+        },
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html",
+          "file": "acknowledge.html",
+          "bytes": 26728,
+          "sha256": "93e26a9a52e75d81aefd656c3a82f294dcd81a2538fe75cae73e5842abe0bc4b",
+          "retrievedAt": "2026-11-20T05:02:22.393398+00:00"
+        },
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/docs/doi.html",
+          "file": "doi.html",
+          "bytes": 38351,
+          "sha256": "69fcf83d691f601252c5e3960ae4ae863473cb9dae4a79beec807781ff002355",
+          "retrievedAt": "2026-11-20T05:02:22.896973+00:00"
+        },
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2Chostname%2Cdefault_flag%2Cdisc_year%2Cdiscoverymethod%2Cdisc_facility%2Cpl_orbper%2Cpl_rade%2Cpl_bmasse%2Cpl_bmassprov%2Cpl_eqt%2Cpl_orbsmax%2Cpl_orbeccen%2Cst_teff%2Cst_rad%2Cst_mass%2Cst_spectype%2Cst_age%2Csy_dist%2Cra%2Cdec%2Csy_vmag%2Csy_snum%2Cpl_controv_flag%2Chd_name%2Chip_name%2Ctic_id%2Cgaia_dr2_id%2Cgaia_dr3_id%2Cpl_refname%2Cst_refname%2Csy_refname+from+ps+where+default_flag%3D1+order+by+pl_name&format=csv",
+          "file": "ps-default.csv",
+          "bytes": 4284196,
+          "sha256": "4e167d2ac4355ae729e1493be951896e74cced2cd50c1ad5c26578540afc1438",
+          "retrievedAt": "2026-11-20T05:02:28.624443+00:00"
+        },
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2Chostname%2Cdefault_flag%2Cdisc_year%2Cdiscoverymethod%2Cdisc_facility%2Cpl_orbper%2Cpl_rade%2Cpl_bmasse%2Cpl_bmassprov%2Cpl_eqt%2Cpl_orbsmax%2Cpl_orbeccen%2Cst_teff%2Cst_rad%2Cst_mass%2Cst_spectype%2Cst_age%2Csy_dist%2Cra%2Cdec%2Csy_vmag%2Csy_snum%2Cpl_controv_flag%2Chd_name%2Chip_name%2Ctic_id%2Cgaia_dr2_id%2Cgaia_dr3_id%2Cpl_refname%2Cst_refname%2Csy_refname%2Cpl_orbperlim%2Cpl_radelim%2Cpl_bmasselim%2Cpl_eqtlim%2Cpl_orbsmaxlim%2Cpl_orbeccenlim%2Cst_tefflim%2Cst_radlim%2Cst_masslim%2Cst_agelim+from+ps+where+default_flag%3D1+order+by+pl_name&format=csv",
+          "file": "ps-default-limits.csv",
+          "bytes": 4392212,
+          "sha256": "ac8e01906288e60fe5916e9268c3e059f9afd82311b4198404bccc22f4da521e",
+          "retrievedAt": "2026-11-20T05:05:28.042304+00:00"
+        },
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+count%28%2A%29+as+row_count+from+ps+where+default_flag%3D1&format=csv",
+          "file": "row-count.csv",
+          "bytes": 15,
+          "sha256": "6e9a84a311f512bf47dc81beb05236deaef99c91a23f13867c767e35a5b47abf",
+          "retrievedAt": "2026-11-20T05:05:29.461639+00:00"
+        }
+      ],
+      "fetchAttempts": [],
+      "limitations": [
+        "只取ps.default_flag=1的确认行星默认参数集，不是pscomppars，也不是候选列表。",
+        "pl_controv_flag=1保留并明确标记文献争议，不当作毫无争议的确认。",
+        "Msini与上/下限单列；空字段不从非默认参数集或记忆补齐，误差区间未纳入。",
+        "宿主按hostname唯一派生；同系统多个分量名仍是不同hostname，不做未经验证的跨目录/坐标合并。",
+        "宿主恒星和系统各自选已知字段最多的一整行，平局按行星名排序；不跨恒星解逐字段拼接或平均。",
+        "kind枚举无褐矮星项，NASA宿主归star目录类；低于0.075太阳质量的已知估计单独标记亚恒星质量，不泛称主序星。",
+        "行星坐标/距离/hostMagnitude属于宿主系统，宿主V星等也可能含混合光。",
+        "以半径1.6地球半径阈值选择gas/rocky仅为示意；不声称成分、宜居性、云层或观测照片。"
+      ]
+    }
+  ],
+  "fieldDescriptions": {
+    "distanceLy": "光年；NASA sy_dist(pc) × 3.26156。OpenNGC仅对*或Nova且Pax>0使用1000/Pax(mas) × 3.26156，不从红移推距。",
+    "radiusEarth": "系外行星半径，地球半径；pl_rade，非上/下限。",
+    "massEarth": "系外行星质量，地球质量；仅pl_bmassprov=Mass或Msin(i)/sin(i)，非上/下限。",
+    "minimumMassEarth": "径向速度最小质量M·sin(i)，地球质量；pl_bmassprov=Msini，不当作真实质量。",
+    "massEstimateEarth": "来源类型未能识别的质量估计，保留massProvenance，不升级为真实质量。",
+    "radiusSolar": "宿主半径，太阳半径；st_rad，非上/下限。",
+    "massSolar": "宿主质量，太阳质量；st_mass，非上/下限。",
+    "periodDays": "公转周期，天；pl_orbper，非上/下限。",
+    "tempK": "开尔文；宿主为有效温度st_teff，行星为pl_eqt温度估计（直接成像时可能为有效温度）；tempKind区分。",
+    "magnitude": "视星等，必须连同magnitudeBand使用。OpenNGC优先V、再B/J/H/K总星等；宿主为sy_vmag，可能含系统混合光。",
+    "hostMagnitude": "行星条目的宿主系统V波段视星等sy_vmag；绝不是行星视星等。",
+    "raDeg": "赤经，J2000度；NGC的时分秒×15，NASA原字段已是度。",
+    "decDeg": "赤纬，J2000带符号度；NGC角分秒转度，NASA原字段已是度。",
+    "coordinateTarget": "NASA坐标指宿主系统位置，而非单独分辨的行星位置。",
+    "constellation": "OpenNGC的IAU星座缩写，Se1/Se2分别为巨蛇座头部/尾部；constellationName为中文。",
+    "discoveryYear": "行星发现年份disc_year；不用于猜测宿主恒星发现年份。",
+    "hostStar": "NASA hostname原始宿主名称；hostStarId连接本目录派生宿主条目。",
+    "catalog": "来源目录NGC、IC或NASA Exoplanet Archive PS。",
+    "angularMajorArcmin": "视长轴，角分；OpenNGC MajAx。",
+    "angularMinorArcmin": "视短轴，角分；OpenNGC MinAx。",
+    "positionAngleDeg": "长轴位置角，自北向东；OpenNGC PosAng。",
+    "redshift": "日心红移，无量纲；可为负，不由此推断距离。",
+    "morphology": "OpenNGC Hubble原始分类；只有明确螺旋类型或E才选择spiral/elliptical。",
+    "parallaxMas": "仅单恒星/新星条目的正视差，毫角秒；未做误差或零点校正。",
+    "distanceMethod": "标明parsec_conversion或positive_parallax_inverse。",
+    "radialVelocityKms": "OpenNGC日心径向速度，km/s，可为负。",
+    "catalogType": "OpenNGC原始Type或NASA PS行类型标记，用于审计主分类。",
+    "openngcSources": "OpenNGC逐字段来源编码原文；sourceCodeMap给出编码对应机构。",
+    "discoveryMethod": "NASA原始发现方法；discoveryMethodZh为中文规则映射。",
+    "discoveryFacility": "NASA disc_facility原文。",
+    "semiMajorAxisAu": "轨道半长轴，AU；pl_orbsmax，非上/下限。",
+    "orbitalEccentricity": "轨道偏心率，无量纲；pl_orbeccen；已知0保留。",
+    "spectralType": "宿主st_spectype原文；不据光谱/温度编造恒星演化阶段。",
+    "stellarAgeGyr": "宿主st_age，十亿年，非上/下限。",
+    "systemStarCount": "sy_snum，系统恒星数；宿主可以是分量或未分辨系统。",
+    "catalogPlanetCount": "此hostname在本次PS默认快照中的行星条目数，含标记存在文献争议者。",
+    "firstPlanetDiscoveryYear": "此宿主当前关联行星disc_year最小值，不是宿主的发现年。",
+    "derivedFromPlanetRows": "宿主的stellar/system所选默认行名称；不跨不同恒星文献平均或逐字段拼接。",
+    "hasControversialPlanets": "宿主是否关联pl_controv_flag=1的默认行。",
+    "confirmationControversial": "pl_controv_flag=1；档案默认记录并不保证没有文献争议。",
+    "massProvenance": "NASA pl_bmassprov原文，区分质量、M·sin(i)与利用倾角校正的质量。",
+    "limitFields": "任意数值字段后缀UpperLimit/LowerLimit均为边界而非测量中心值；由对应NASA *lim=1/-1生成，中心值字段同时省略。",
+    "knownMeasurementPolicy": "空、无效或非有限值省略；质量/半径/距离/温度/周期非正值省略；真实0星等/坐标/红移/偏心率保留。误差区间未纳入本目录。"
+  },
+  "visualPolicy": {
+    "allPresets": "程序化可视化示意，不是观测照片；seed=稳定ID的SHA256前32位。",
+    "galaxies": "仅单星系且明确Hubble螺旋/E分类用spiral/elliptical，其他用nebula通用示意，主分类仍为galaxy。",
+    "exoplanets": "radiusEarth>=1.6时gas，否则rocky（包括半径未知）；无真实表面/气体成分断言。",
+    "stars": "无凭据不推断光谱、演化阶段或物理双星关系；无依据不设置color。"
+  },
+  "unavailableData": [
+    "OpenNGC旧database/NGC.csv路径404；已改用官方database_files/NGC.csv，不是缺失源。",
+    "两源不覆盖太阳系行星、卫星、彗星、小行星或独立黑洞目录，本次不伪造这些类别条目。",
+    "两源未提供的距离、物理量与误差区间均不补假值；NASA明确通用许可证未能确认。"
+  ]
+}

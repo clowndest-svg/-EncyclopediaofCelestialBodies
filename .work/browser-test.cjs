@@ -1,0 +1,73 @@
+const {chromium}=require('playwright');
+const path=require('path');
+const fs=require('fs');
+const {pathToFileURL}=require('url');
+(async()=>{
+  const output=path.join(__dirname,'screenshots');fs.mkdirSync(output,{recursive:true});
+  const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',args:['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist']});
+  const context=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1});
+  await context.route(/^https?:/,route=>route.abort());
+  const page=await context.newPage();const errors=[];const results=[];
+  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text().slice(0,700));});
+  const assert=(value,name)=>{results.push({name,pass:!!value});if(!value)throw Error(name);};
+  const snapshot=()=>page.evaluate(()=>window.__atlas.snapshot());
+  const click=selector=>page.locator(selector).click();
+  await page.goto(pathToFileURL(path.join(__dirname,'..','cosmic_atlas_3_0.html')).href+'?test=1');
+  await page.waitForFunction(()=>window.__atlas,{timeout:60000});await page.waitForTimeout(1400);
+  assert((await snapshot()).scale==='L1','offline file startup');
+  await page.screenshot({path:path.join(output,'desktop-solar.png')});
+  for(const scale of ['L0','L0B','L1','L2','L3','L4','L5']){
+    await click(`.scale-btn[data-scale="${scale}"]`);await page.waitForTimeout(1200);
+    const a=await snapshot();await page.waitForTimeout(350);const b=await snapshot();
+    assert(b.sceneTime[scale]>a.sceneTime[scale],scale+' simulation advances');
+    if(scale==='L2')assert(JSON.stringify(a.dust)!==JSON.stringify(b.dust),'black hole accretion particles move');
+    if(scale==='L3')assert(a.galaxyTime!==b.galaxyTime,'galaxy shader receives moving time');
+    if(scale==='L4')assert(JSON.stringify(a.cluster)!==JSON.stringify(b.cluster),'supercluster particles move independently');
+    if(scale==='L5')assert(JSON.stringify(a.web)!==JSON.stringify(b.web),'cosmic web particles move along filaments');
+    await click('#transport-pause');const frozen=await snapshot();await page.waitForTimeout(300);const later=await snapshot();
+    assert(frozen.time===later.time&&frozen.galaxyTime===later.galaxyTime&&JSON.stringify(frozen.dust)===JSON.stringify(later.dust)&&JSON.stringify(frozen.bodies)===JSON.stringify(later.bodies)&&JSON.stringify(frozen.cluster)===JSON.stringify(later.cluster)&&JSON.stringify(frozen.web)===JSON.stringify(later.web),scale+' pause freezes physics');
+    await click('#transport-pause');
+    if(scale==='L2'||scale==='L3'||scale==='L4'||scale==='L5')await page.screenshot({path:path.join(output,`desktop-${scale}.png`)});
+  }
+  await click('.right-tab-btn[data-right-tab="explore"]');
+  for(const morph of ['milkyway','andromeda','sombrero','m87','cartwheel']){
+    await click(`.gal-btn[data-gal="${morph}"]`);await page.waitForTimeout(350);assert((await snapshot()).morph===morph,morph+' shape switch');
+    await page.screenshot({path:path.join(output,`galaxy-${morph}.png`)});
+  }
+  await click('.scale-btn[data-scale="L1"]');await click('.right-tab-btn[data-right-tab="optics"]');
+  await click('#btn-orbit-probe');const pa=(await snapshot()).probes;await page.waitForTimeout(600);const pb=(await snapshot()).probes;
+  assert(pa.length===1&&JSON.stringify(pa)!==JSON.stringify(pb),'gravity probe moves');
+  await page.locator('#slider-gravity').fill('1.8');assert((await snapshot()).gravity===1.8,'gravity slider affects model');
+  await click('#btn-reset-dynamics');assert((await snapshot()).probes.length===0,'dynamics reset clears probes');
+  await click('.right-tab-btn[data-right-tab="lab"]');await page.locator('#quick-body-list button').filter({hasText:'地球'}).click();await click('#btn-launch-exp');assert((await snapshot()).projectiles===1,'impact experiment launches');
+  await click('#transport-pause');const p1=await snapshot();await page.waitForTimeout(300);const p2=await snapshot();assert(p1.time===p2.time&&p1.projectiles===p2.projectiles,'pause also freezes experiment');await click('#transport-pause');
+  await page.waitForFunction(()=>parseInt(document.querySelector('#stat-craters').textContent)>0,null,{timeout:15000});assert(true,'targeted impact intercepts orbiting Earth');
+  await click('#btn-global-reset');assert((await snapshot()).projectiles===0,'global reset clears experiment');
+  await click('[data-layout-mode="mobile"]');assert((await snapshot()).layout==='mobile','desktop to mobile layout switch');
+  await page.setViewportSize({width:390,height:844});await page.waitForTimeout(900);await page.screenshot({path:path.join(output,'mobile-solar.png')});
+  const overflow=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,width:innerWidth}));assert(overflow.scroll===overflow.width,'mobile has no horizontal page overflow');
+  await click('#toggle-right-btn');await click('.right-tab-btn[data-right-tab="optics"]');
+  assert(await page.locator('#right-panel').evaluate(el=>!el.inert),'mobile control sheet opens');
+  await page.screenshot({path:path.join(output,'mobile-controls.png')});
+  await click('#btn-close-right');assert(await page.locator('#right-panel').evaluate(el=>el.inert),'mobile control sheet closes');
+  await click('#transport-trails');assert(await page.locator('#transport-trails').getAttribute('aria-pressed')==='false','trajectory visibility toggle');await click('#transport-trails');
+  await click('#transport-gravity');assert(await page.locator('#transport-gravity').getAttribute('aria-pressed')==='true','gravity vector visibility toggle');await click('#transport-gravity');
+  await click('#toggle-left-btn');await click('#toggle-right-btn');assert(await page.locator('#left-panel').evaluate(el=>el.inert),'mobile sheets are mutually exclusive');await click('#btn-close-right');
+  for(const scale of ['L2','L3','L4','L5']){await click(`.scale-btn[data-scale="${scale}"]`);await page.waitForTimeout(900);await page.screenshot({path:path.join(output,`mobile-${scale}.png`)});}
+  await click('[data-layout-mode="desktop"]');assert((await snapshot()).layout==='desktop','mobile to desktop layout switch');
+  await click('[data-layout-mode="mobile"]');await page.reload();await page.waitForFunction(()=>window.__atlas,{timeout:60000});assert((await snapshot()).layout==='mobile','layout selection persists');
+  await page.setViewportSize({width:844,height:390});await page.waitForTimeout(500);await page.screenshot({path:path.join(output,'mobile-landscape.png')});
+  await page.setViewportSize({width:320,height:568});await page.waitForTimeout(500);
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth===innerWidth),'320px viewport no overflow');
+  await page.screenshot({path:path.join(output,'mobile-small.png')});
+  const downloads=[];page.on('download',d=>downloads.push(d));await click('#btn-screenshot');await page.waitForTimeout(400);assert(downloads.length>0,'PNG screenshot downloads');
+  const mobileContext=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  await mobileContext.route(/^https?:/,route=>route.abort());const phone=await mobileContext.newPage();phone.on('pageerror',e=>errors.push(e.message));
+  await phone.goto(pathToFileURL(path.join(__dirname,'..','cosmic_atlas_3_0.html')).href+'?test=1');await phone.waitForFunction(()=>window.__atlas,{timeout:60000});
+  assert(await phone.evaluate(()=>document.body.dataset.layout==='mobile'),'touch phone defaults to mobile layout');
+  await phone.locator('#toggle-right-btn').tap();assert(await phone.locator('#right-panel').evaluate(el=>!el.inert),'touch tap opens control sheet');await phone.locator('#btn-close-right').tap();
+  await phone.screenshot({path:path.join(output,'phone-touch.png')});await mobileContext.close();
+  assert(errors.length===0,'no browser or shader errors: '+errors.join('; '));
+  fs.writeFileSync(path.join(__dirname,'test-results.json'),JSON.stringify({results,errors,final:await snapshot()},null,2));
+  console.log(JSON.stringify({passed:results.length,errors,files:fs.readdirSync(output)},null,2));await browser.close();
+})().catch(e=>{console.error(e);process.exit(1);});

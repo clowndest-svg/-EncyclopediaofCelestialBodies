@@ -1,0 +1,450 @@
+/* ==========================================================================
+   UI Polish Layer · 深空观测台视觉统一
+   最后注入，统一配色 / 字号 / 圆角 / 玻璃质感；不改变任何交互逻辑。
+   ========================================================================== */
+:root{
+  --ui-ink:#eef3fb;--ui-soft:#c9d5e6;--ui-muted:#91a3bd;--ui-faint:#62748e;
+  --ui-line:rgba(150,180,225,.13);--ui-line-strong:rgba(150,190,240,.26);
+  --ui-fill:rgba(255,255,255,.035);--ui-fill-hover:rgba(124,196,255,.09);
+  --ui-accent:#7cc4ff;--ui-accent-2:#a78bfa;--ui-warm:#f6c177;--ui-rose:#f7a1b5;--ui-green:#6ee7b7;
+  --ui-accent-bg:linear-gradient(135deg,rgba(124,196,255,.20),rgba(167,139,250,.13));
+  --ui-glass:linear-gradient(180deg,rgba(17,25,44,.80),rgba(7,11,22,.84));
+  --ui-shadow:0 24px 60px -18px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.06);
+  --ui-font:"Segoe UI Variable Text","Segoe UI","PingFang SC","Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;
+  --ui-mono:"Cascadia Code","JetBrains Mono",Consolas,"SFMono-Regular",monospace;
+}
+html,body{font-family:var(--ui-font);-webkit-font-smoothing:antialiased;letter-spacing:.01em;color-scheme:dark}
+.font-mono-tech{font-family:var(--ui-mono)!important;letter-spacing:0}
+::selection{background:rgba(124,196,255,.35)}
+
+/* ---------- 通用玻璃与按钮 ---------- */
+.glass-panel{background:var(--ui-glass);border:1px solid var(--ui-line);box-shadow:var(--ui-shadow);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
+.glass-btn{background:var(--ui-fill);border-color:var(--ui-line);color:var(--ui-soft);transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease}
+.glass-btn:hover{background:var(--ui-fill-hover);border-color:rgba(124,196,255,.34);color:#fff}
+.glass-btn.active{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.55);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 18px -8px rgba(124,196,255,.55)}
+.ico{width:16px;height:16px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid rgba(124,196,255,.8);outline-offset:2px}
+.custom-scroll{scrollbar-color:rgba(124,160,210,.35) transparent}
+.custom-scroll::-webkit-scrollbar{width:6px}
+.custom-scroll::-webkit-scrollbar-track{background:transparent}
+.custom-scroll::-webkit-scrollbar-thumb{background:rgba(124,160,210,.28);border-radius:99px}
+
+/* 滑块：细轨 + 白色拇指 + 光晕 */
+input[type=range].cosmic-slider{height:4px;background:rgba(150,180,225,.18);border-radius:99px;margin:6px 0}
+input[type=range].cosmic-slider::-webkit-slider-thumb{width:15px;height:15px;background:#f4f8ff;border:0;box-shadow:0 0 0 4px rgba(124,196,255,.22),0 2px 6px rgba(0,0,0,.5)}
+input[type=range].cosmic-slider::-webkit-slider-thumb:hover{transform:scale(1.12);box-shadow:0 0 0 6px rgba(124,196,255,.25),0 2px 6px rgba(0,0,0,.5)}
+input[type=range].cosmic-slider::-moz-range-thumb{width:15px;height:15px;background:#f4f8ff;border:0;border-radius:50%;box-shadow:0 0 0 4px rgba(124,196,255,.22)}
+select{background:rgba(255,255,255,.04);border:1px solid var(--ui-line-strong);border-radius:8px;color:var(--ui-ink);padding:5px 8px;font-size:12px}
+select option{background:#0c1424}
+.motion-options input[type=checkbox],.lab-checkbox input[type=checkbox]{accent-color:var(--ui-accent);border-radius:4px;cursor:pointer}
+
+/* ---------- 启动画面 ---------- */
+#loading-screen{background:radial-gradient(ellipse 70% 55% at 50% 42%,#0d1a33 0%,#050a16 55%,#02040a 100%)!important}
+#loading-screen h1{font-weight:600;letter-spacing:.32em!important;background-image:linear-gradient(90deg,#bfe3ff,#ffffff 50%,#d9ccff)!important}
+#loading-screen #load-progress{background:linear-gradient(90deg,var(--ui-accent),var(--ui-accent-2))!important;box-shadow:0 0 12px rgba(124,196,255,.6)}
+#loading-screen #load-status{color:var(--ui-muted);font-family:var(--ui-font)!important;font-size:12px}
+
+/* ---------- 顶部观测台栏 ---------- */
+#observatory-header{left:16px;right:16px;top:max(14px,env(safe-area-inset-top))}
+.brand-lockup{padding:7px 16px 7px 7px!important;border-radius:16px!important;gap:11px!important}
+.brand-lockup>div:first-child{width:36px;height:36px;border-radius:11px;background:radial-gradient(circle at 30% 25%,rgba(124,196,255,.45),rgba(88,80,200,.35) 60%,rgba(20,25,60,.6));border-color:rgba(160,200,255,.35);box-shadow:0 0 18px -4px rgba(124,196,255,.6),inset 0 1px 0 rgba(255,255,255,.2)}
+.brand-lockup>div:first-child svg{width:18px;height:18px;color:#e4f3ff}
+.brand-lockup .leading-tight>div:first-child>span:first-child{font-size:15px;font-weight:650;letter-spacing:.16em;color:#fff}
+.brand-lockup .brand-version{font-family:var(--ui-font)!important;font-size:10px!important;color:var(--ui-muted)!important;padding:2px 7px!important;border:1px solid var(--ui-line)!important;border-radius:999px!important;background:rgba(255,255,255,.03)!important;letter-spacing:.06em}
+.brand-lockup .scale-line{font-size:11px!important;color:var(--ui-muted)!important;margin-top:3px!important;font-family:var(--ui-font)!important}
+.brand-lockup .scale-line>span:nth-child(2){color:var(--ui-faint)!important}
+#hud-scale-name{color:var(--ui-accent)!important;font-weight:600}
+.header-tools{padding:4px!important;gap:2px!important;border-radius:14px!important;align-items:center}
+.header-tools>div:first-child{background:transparent!important;border:0!important;color:var(--ui-green)!important;font-size:11px!important;padding:0 10px 0 8px!important;gap:6px!important;border-right:1px solid var(--ui-line)!important;border-radius:0!important;margin-right:4px;min-height:24px}
+.header-tools>div:first-child>span:first-child{box-shadow:0 0 8px var(--ui-green)}
+.header-tools .glass-btn{background:transparent;border-color:transparent;border-radius:10px!important;min-height:34px;padding:0 11px!important;font-size:12.5px!important;gap:7px!important;color:var(--ui-soft)!important}
+.header-tools .glass-btn:hover{background:rgba(255,255,255,.06);border-color:transparent;color:#fff!important}
+.header-tools .glass-btn.active{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.4);color:#fff!important}
+#btn-global-reset{color:var(--ui-warm)!important;margin-left:2px;position:relative}
+#btn-global-reset:before{content:'';position:absolute;left:-3px;top:8px;bottom:8px;width:1px;background:var(--ui-line)}
+#btn-global-reset:hover{background:rgba(246,193,119,.1)!important}
+#btn-audio .ico-audio-on{display:none}
+#btn-audio.active .ico-audio-on{display:block}
+#btn-audio.active .ico-audio-off{display:none}
+#layout-switch{background:rgba(0,0,0,.28);border:1px solid var(--ui-line);border-radius:10px;padding:2px;margin-right:6px}
+#layout-switch button{min-height:28px!important;padding:0 12px;font-size:12px;border-radius:8px;color:var(--ui-muted);transition:all .18s}
+#layout-switch button:hover{color:#fff}
+#layout-switch button[aria-pressed=true]{background:var(--ui-accent-bg);color:#fff;box-shadow:inset 0 0 0 1px rgba(124,196,255,.35)}
+#btn-restore-hud{border-radius:999px;padding:8px 16px;font-size:12px;color:var(--ui-soft)}
+
+/* ---------- 面板入口按钮 ---------- */
+#toggle-left-btn,#toggle-right-btn,.atlas-library-launch{top:82px;min-height:38px;height:38px;border-radius:12px!important;padding:0 14px!important;font-size:13px!important;font-weight:500;gap:8px!important;display:flex;align-items:center;justify-content:center;color:var(--ui-soft)!important;transition:background .18s,border-color .18s,color .18s,box-shadow .18s}
+#toggle-left-btn{left:16px;width:112px}
+#toggle-right-btn{right:16px}
+#toggle-left-btn .ico{color:var(--ui-accent)}
+#toggle-right-btn .ico{color:var(--ui-warm)}
+#toggle-left-btn:hover,#toggle-right-btn:hover{color:#fff!important;border-color:var(--ui-line-strong)}
+#toggle-left-btn[aria-expanded=true],#toggle-right-btn[aria-expanded=true]{color:#fff!important;border-color:var(--ui-line-strong);background:linear-gradient(180deg,rgba(28,40,66,.85),rgba(12,18,34,.88))}
+.atlas-library-launch{left:136px;border:1px solid rgba(150,190,255,.38);background:linear-gradient(135deg,rgba(62,120,220,.42),rgba(124,84,230,.36));color:#fff!important;box-shadow:0 10px 26px -10px rgba(110,140,255,.7),inset 0 1px 0 rgba(255,255,255,.18);backdrop-filter:blur(16px)}
+.atlas-library-launch:hover{background:linear-gradient(135deg,rgba(72,135,240,.55),rgba(140,96,245,.48));box-shadow:0 12px 30px -10px rgba(120,150,255,.85),inset 0 1px 0 rgba(255,255,255,.22)}
+.atlas-library-launch .ico{width:15px;height:15px}
+.atlas-library-launch span{font-size:inherit!important;margin:0!important}
+
+/* ---------- 左右面板 ---------- */
+#left-panel,#right-panel{top:132px;border-radius:18px!important}
+#left-panel{left:16px;width:300px;bottom:auto;max-height:calc(100dvh - 236px)}
+#right-panel{right:16px;width:318px;bottom:104px}
+#left-panel>*,#right-panel>*{min-height:0}
+#left-panel>div:first-child{padding:16px 16px 12px!important;background:transparent!important;border-bottom:1px solid var(--ui-line)!important}
+#info-title{font-size:17px!important;font-weight:650!important;letter-spacing:.06em!important}
+#info-type-badge{font-size:10.5px!important;padding:2px 9px!important;border-radius:999px!important;background:rgba(124,196,255,.12)!important;color:#bfe3ff!important;border:1px solid rgba(124,196,255,.3)!important;white-space:nowrap}
+#info-subtitle{font-size:10px!important;letter-spacing:.16em;color:var(--ui-faint)!important;margin-top:4px!important}
+#btn-close-left{width:30px!important;height:30px!important;border-radius:999px!important;background:transparent;border-color:transparent;color:var(--ui-muted)!important}
+#btn-close-left:hover{background:rgba(255,255,255,.07);color:#fff!important}
+#btn-unlock-cam{border-radius:999px!important;padding:3px 10px!important;font-size:11px!important}
+
+/* 分段式标签 */
+#left-panel>div.grid,#right-panel>div.grid{margin:12px 12px 2px;padding:3px!important;gap:3px!important;background:rgba(0,0,0,.3)!important;border:1px solid var(--ui-line)!important;border-radius:12px}
+#left-panel .left-tab-btn,#right-panel .right-tab-btn{border-radius:9px!important;font-size:12px!important;padding:7px 0!important;font-weight:500!important;transition:all .18s}
+#left-panel .left-tab-btn.active,#right-panel .right-tab-btn.active{color:#fff!important;background:var(--ui-accent-bg)!important;border-color:rgba(124,196,255,.4)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 14px -6px rgba(124,196,255,.6)}
+#left-panel .left-tab-btn:not(.active),#right-panel .right-tab-btn:not(.active){color:var(--ui-muted)!important}
+#left-panel .left-tab-btn:not(.active):hover,#right-panel .right-tab-btn:not(.active):hover{color:#fff!important;background:rgba(255,255,255,.04)!important}
+#left-tab-encyclopedia,#left-tab-telemetry,#right-tab-lab,#right-tab-explore,#right-tab-optics{padding:14px 14px 16px!important}
+
+/* 天体档案内容 */
+#enc-desc{font-size:12.5px!important;line-height:1.85!important;color:var(--ui-soft)!important}
+#quick-body-nav>div:first-child,#left-panel .uppercase,#right-panel .uppercase{font-family:var(--ui-font)!important;font-size:10.5px!important;letter-spacing:.14em!important;color:var(--ui-faint)!important}
+#quick-body-list{gap:6px!important}
+#quick-body-list button{border-radius:999px!important;padding:4px 12px!important;font-size:12px!important;background:var(--ui-fill);border:1px solid var(--ui-line);color:var(--ui-soft)}
+#quick-body-list button:hover{background:var(--ui-fill-hover);border-color:rgba(124,196,255,.4);color:#fff}
+#enc-grid{gap:8px!important}
+#enc-grid>div{padding:10px 12px!important;border-radius:12px!important;background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.05)!important;transition:border-color .18s}
+#enc-grid>div:hover{border-color:var(--ui-line-strong)!important}
+#enc-grid>div>div:first-child{font-size:10.5px!important;color:var(--ui-muted)!important;letter-spacing:.04em}
+#enc-grid>div>div:last-child{font-size:13px!important;font-weight:600!important;color:var(--ui-ink)!important;margin-top:4px!important;font-variant-numeric:tabular-nums;line-height:1.45}
+#left-tab-telemetry>div{border-radius:14px!important}
+#left-tab-telemetry .rounded-lg{border-radius:10px!important}
+#impact-log>div{border-radius:10px!important;font-family:var(--ui-font)!important;font-size:11.5px;padding:7px 10px!important}
+
+/* 右侧实验室 */
+.right-close{margin:10px 12px -4px auto!important;font-size:11.5px!important;color:var(--ui-muted)!important;border-radius:999px!important;padding:4px 10px!important;transition:all .18s}
+.right-close:hover{color:#fff!important;background:rgba(255,255,255,.06)!important}
+#right-tab-lab>div:first-child{font-size:12px!important;padding:2px 2px 4px}
+#lab-target-name{color:var(--ui-accent)!important;font-weight:600}
+.lab-type-filter{background:linear-gradient(180deg,rgba(12,18,32,.98),rgba(12,18,32,.92))!important;gap:4px!important;padding:8px 0!important;backdrop-filter:blur(12px)}
+.lab-type-filter button{border-radius:999px!important;font-size:11px!important;padding:6px 4px!important;background:transparent!important;border:1px solid var(--ui-line)!important;color:var(--ui-muted)!important;transition:all .18s}
+.lab-type-filter button:hover{color:#fff!important;border-color:var(--ui-line-strong)!important}
+.lab-type-filter button[aria-pressed=true]{background:var(--ui-accent-bg)!important;color:#fff!important;border-color:rgba(124,196,255,.45)!important}
+#experiment-selector{gap:6px!important}
+#experiment-selector .exp-btn{border-radius:12px!important;padding:10px 11px!important;min-height:58px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.06)}
+#experiment-selector .exp-btn:hover{background:var(--ui-fill-hover);border-color:rgba(124,196,255,.3)}
+#experiment-selector .exp-btn.active{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 22px -10px rgba(124,196,255,.7)}
+#experiment-selector .exp-btn>div:first-child{font-size:12px!important;font-weight:600!important;color:var(--ui-ink)!important;letter-spacing:.02em}
+#experiment-selector .exp-btn>div:last-child{font-size:10.5px!important;color:var(--ui-muted)!important;margin-top:3px!important;line-height:1.45!important}
+#asteroid-params{border-radius:14px!important;background:rgba(255,255,255,.025)!important;border:1px solid var(--ui-line)!important;padding:12px 14px!important}
+#asteroid-params .text-\[11px\],#right-tab-optics .text-xs{font-size:12px!important}
+#val-ast-diam,#val-ast-vel,#val-est-mt{font-family:var(--ui-mono)!important;font-weight:600}
+#val-ast-diam{color:var(--ui-warm)!important}
+#val-ast-vel{color:var(--ui-accent)!important}
+#btn-aim-surface{border-radius:12px!important;padding:9px 0!important;font-size:12.5px!important;color:var(--ui-rose)!important;border:1px dashed rgba(247,161,181,.38)!important;background:rgba(247,161,181,.05)}
+#btn-aim-surface:hover{background:rgba(247,161,181,.12)!important}
+#btn-launch-exp{border-radius:12px!important;font-size:13px!important;letter-spacing:.06em;color:#1d0d12!important;background:linear-gradient(135deg,#ffd08a 0%,#ff9f7a 50%,#f472b6 100%)!important;box-shadow:0 10px 24px -10px rgba(255,140,120,.9),inset 0 1px 0 rgba(255,255,255,.45)!important;transition:transform .15s,filter .15s}
+#btn-launch-exp:hover:not(:disabled){filter:brightness(1.06);transform:translateY(-1px)}
+#btn-reset-target{border-radius:12px!important;font-size:12.5px!important}
+.dynamics-box{border:1px solid var(--ui-line);border-radius:14px;background:rgba(255,255,255,.025);padding:14px}
+.dynamics-box h3{font-size:13px;font-weight:650;color:var(--ui-ink);letter-spacing:.04em;margin-bottom:8px}
+.dynamics-box p{font-size:11.5px;color:var(--ui-muted);line-height:1.75}
+.dynamics-row{font-size:12px;color:var(--ui-soft)}
+.dynamics-row output{font-family:var(--ui-mono);color:var(--ui-ink);font-size:11.5px}
+.dynamics-box>button.glass-btn{border-radius:10px!important;padding:8px 12px;font-size:12px;margin:2px 4px 2px 0}
+.layer-controls{gap:6px}
+.layer-controls button{border-radius:999px;padding:5px 12px;font-size:11.5px;border:1px solid var(--ui-line);background:transparent;color:var(--ui-muted);transition:all .18s}
+.layer-controls button:hover{color:#fff;border-color:var(--ui-line-strong)}
+.layer-controls button[aria-pressed=true]{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.45);color:#fff}
+.impact-presets{gap:6px}
+.impact-presets button{border-radius:999px;font-size:11px;padding:6px 4px;background:transparent;border:1px solid var(--ui-line);color:var(--ui-soft);transition:all .18s}
+.impact-presets button:hover{background:var(--ui-fill-hover);border-color:rgba(124,196,255,.4);color:#fff}
+.lab-physics-controls{border-top:1px solid var(--ui-line);font-size:12px}
+.lab-model-note{font-size:11px;color:var(--ui-muted);border-left:2px solid rgba(124,196,255,.5)}
+#dynamics-table th,#dynamics-table td{border-bottom-color:var(--ui-line);font-size:11px}
+#right-tab-explore .glass-btn,#right-tab-optics .glass-btn{border-radius:12px!important}
+#btn-toggle-landing{border-radius:12px!important;background:linear-gradient(135deg,#6ee7b7,#5eead4)!important;color:#03251c!important;box-shadow:0 10px 24px -12px rgba(94,234,212,.9)!important}
+kbd{font-family:var(--ui-mono);border-radius:6px}
+
+/* ---------- 场景标题与快捷控制 ---------- */
+#scene-observation{left:336px;right:350px;bottom:94px;gap:6px}
+#scene-title{font-size:23px;font-weight:650;letter-spacing:.12em;background:linear-gradient(180deg,#ffffff 30%,#b9d6f5);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 2px 12px rgba(0,0,0,.9))}
+#scene-subtitle{font-size:12px;color:#b5c3d6;letter-spacing:.03em;text-shadow:0 1px 8px #000,0 0 2px #000}
+#scene-transport{border-radius:999px;padding:4px;gap:2px;margin-top:8px;background:var(--ui-glass);border:1px solid var(--ui-line);box-shadow:var(--ui-shadow);backdrop-filter:blur(20px)}
+#scene-transport button{border-radius:999px;min-height:32px;padding:0 13px;font-size:12px;color:var(--ui-soft);transition:background .18s,color .18s}
+#scene-transport button:hover{background:rgba(255,255,255,.07);color:#fff}
+#scene-transport button[aria-pressed=true]{background:var(--ui-accent-bg);color:#fff;box-shadow:inset 0 0 0 1px rgba(124,196,255,.38)}
+#transport-pause{color:#fff!important;background:rgba(255,255,255,.06)!important}
+#transport-pause[aria-pressed=true]{background:rgba(246,193,119,.16)!important;color:var(--ui-warm)!important;box-shadow:inset 0 0 0 1px rgba(246,193,119,.4)!important}
+#transport-speed{font-family:var(--ui-mono);min-width:52px}
+#transport-time{font-family:var(--ui-mono);font-size:11.5px;color:var(--ui-muted);padding:0 12px;border-left:1px solid var(--ui-line);border-right:1px solid var(--ui-line);line-height:20px}
+
+/* ---------- 底部尺度 Dock ---------- */
+#scale-dock{bottom:calc(14px + var(--safe-bottom))}
+#scale-dock>div{padding:5px!important;gap:3px!important;border-radius:18px!important}
+#scale-dock .scale-btn{min-width:82px;min-height:50px;padding:7px 12px!important;border-radius:13px!important;background:transparent;border:1px solid transparent!important;color:var(--ui-muted)}
+#scale-dock .scale-btn:hover{background:rgba(255,255,255,.05);color:#fff}
+#scale-dock .scale-btn>span:first-child{font-size:10px!important;letter-spacing:.08em;opacity:.85}
+#scale-dock .scale-btn>span:last-child{font-size:13px!important;margin-top:2px!important;font-weight:500!important;color:inherit}
+#scale-dock .scale-btn.active{color:#fff;background:linear-gradient(180deg,rgba(124,196,255,.24),rgba(124,196,255,.07));border-color:rgba(124,196,255,.48)!important;box-shadow:0 10px 24px -10px rgba(124,196,255,.75),inset 0 1px 0 rgba(255,255,255,.14)}
+#scale-dock .scale-btn.active>span:first-child{opacity:1}
+#scale-dock button.active:after{width:18px;height:2px;bottom:4px;background:linear-gradient(90deg,var(--ui-accent),var(--ui-accent-2));box-shadow:0 0 8px var(--ui-accent)}
+
+/* ---------- 场景内标注 / 提示 / 通知 ---------- */
+.body-label{font-size:11px;padding:2px 9px;border-radius:999px;background:rgba(6,10,20,.66);border:1px solid rgba(150,185,230,.22);color:#dbe6f4;letter-spacing:.04em;backdrop-filter:blur(6px)}
+#object-tooltip{background:var(--ui-glass);border:1px solid var(--ui-line-strong);border-radius:12px;padding:9px 12px;font-size:12px;box-shadow:var(--ui-shadow);backdrop-filter:blur(16px)}
+#object-tooltip small{color:var(--ui-muted);font-size:11px;margin-top:2px}
+#toast-container>div{border-radius:12px!important;font-size:12.5px!important;padding:10px 14px!important;color:var(--ui-ink)!important;border-left:3px solid var(--ui-accent)!important}
+#toast-container>div.border-amber-400\/50{border-left-color:var(--ui-warm)!important}
+#aim-banner>div,#landing-prompt>div{border-radius:999px!important}
+
+/* ---------- 星海百科（对话框） ---------- */
+#cosmic-book{--book-bg:#060b16;border:1px solid rgba(150,185,230,.18);border-radius:22px;font-family:var(--ui-font);box-shadow:0 40px 160px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.05)}
+#cosmic-book::backdrop{background:rgba(1,4,10,.78);backdrop-filter:blur(10px)}
+#cosmic-book .book-header{background:linear-gradient(180deg,rgba(18,28,50,.9),rgba(9,15,28,.9));border-bottom-color:var(--ui-line)}
+#cosmic-book .book-brand svg{stroke:var(--ui-accent);filter:drop-shadow(0 0 8px rgba(124,196,255,.5))}
+#cosmic-book .book-brand h2{font-size:22px;font-weight:650;letter-spacing:.14em}
+#cosmic-book .book-brand p{font-size:12px;color:var(--ui-muted)}
+#cosmic-book .book-header-tools>span{font-size:11px;border-radius:999px;border-color:var(--ui-line);padding:5px 11px;color:var(--ui-muted)}
+#cosmic-book .book-header-tools button{font-size:13px;border-radius:10px;padding:8px 14px;background:rgba(255,255,255,.04);border-color:var(--ui-line-strong);transition:all .18s}
+#cosmic-book .book-header-tools button:hover{background:var(--ui-fill-hover);color:#fff}
+#cosmic-book #book-random{background:linear-gradient(135deg,rgba(62,120,220,.42),rgba(124,84,230,.36));border-color:rgba(150,190,255,.38);color:#fff}
+#cosmic-book #book-close{width:38px;height:38px;border-radius:999px;font-size:15px;padding:0}
+#cosmic-book .book-searchbar{background:rgba(8,13,25,.95);border-bottom-color:var(--ui-line)}
+#cosmic-book .book-search{border-radius:12px;border-color:var(--ui-line-strong);background:rgba(255,255,255,.035);transition:border-color .18s,box-shadow .18s}
+#cosmic-book .book-search:focus-within{border-color:rgba(124,196,255,.6);box-shadow:0 0 0 4px rgba(124,196,255,.12)}
+#cosmic-book .book-search input,#cosmic-book .book-search input:focus-visible{outline:none;font-size:13.5px}
+#cosmic-book .book-search>span{font-size:20px;color:var(--ui-accent)}
+#cosmic-book .book-search kbd{font-size:10px;border-color:var(--ui-line-strong);border-radius:6px;padding:2px 6px}
+#cosmic-book .book-realms{gap:4px;padding:3px;background:rgba(0,0,0,.28);border:1px solid var(--ui-line);border-radius:12px}
+#cosmic-book .book-realms button{font-size:13px;padding:7px 14px;border-radius:9px;color:var(--ui-muted);transition:all .18s}
+#cosmic-book .book-realms button:hover{color:#fff}
+#cosmic-book .book-realms button[aria-pressed=true]{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.4);color:#fff}
+#cosmic-book .book-catalog{background:rgba(8,13,25,.9);border-right-color:var(--ui-line)}
+#cosmic-book .book-catalog-heading h3{font-size:15px;font-weight:650;letter-spacing:.06em}
+#cosmic-book .book-catalog-heading p{font-size:11px;color:var(--ui-muted)}
+#cosmic-book .book-catalog-heading select{font-size:12px;max-width:110px;border-radius:8px}
+#cosmic-book .book-kinds{gap:6px;padding:2px 16px 14px}
+#cosmic-book .book-kinds button{font-size:12px;padding:4px 11px;border-radius:999px;border-color:var(--ui-line);background:transparent;color:var(--ui-muted);transition:all .18s}
+#cosmic-book .book-kinds button:hover{color:#fff;border-color:var(--ui-line-strong)}
+#cosmic-book .book-kinds button[aria-pressed=true]{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.45);color:#fff}
+#cosmic-book .book-object-card{border-radius:12px;padding:10px;position:relative;transition:background .15s,border-color .15s}
+#cosmic-book .book-object-card:hover{background:rgba(255,255,255,.035);border-color:var(--ui-line)}
+#cosmic-book .book-object-card[aria-current=true]{background:linear-gradient(90deg,rgba(124,196,255,.14),rgba(124,196,255,.04));border-color:rgba(124,196,255,.35)}
+#cosmic-book .book-object-card[aria-current=true]:before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--ui-accent),var(--ui-accent-2))}
+#cosmic-book .book-object-card h4{font-size:13.5px;color:var(--ui-ink)}
+#cosmic-book .book-object-card p{font-size:11.5px;color:var(--ui-muted)}
+#cosmic-book .book-object-card small{font-size:10.5px;color:var(--ui-faint)}
+#cosmic-book .book-pagination{border-top-color:var(--ui-line)}
+#cosmic-book .book-pagination button{font-size:18px;width:34px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border-color:var(--ui-line-strong)}
+#cosmic-book .book-pagination span{font-size:12px;font-family:var(--ui-mono)}
+#cosmic-book .book-data-note{font-size:10.5px;color:var(--ui-faint)}
+#cosmic-book .book-detail{background:radial-gradient(ellipse 60% 40% at 58% 18%,rgba(60,100,180,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 30% at 85% 60%,rgba(130,90,220,.08),transparent 70%),#060b16}
+#cosmic-book .book-badges span{font-size:11px;border-radius:999px;padding:3px 10px;border-color:rgba(124,196,255,.3);background:rgba(124,196,255,.08)}
+#cosmic-book .book-object-heading>div>p{font-size:12.5px;color:var(--ui-muted);letter-spacing:.05em}
+#cosmic-book #book-save{font-size:13px;border-radius:10px;padding:8px 14px;border-color:var(--ui-line-strong);background:rgba(255,255,255,.04)}
+#cosmic-book .book-viewer-tools{gap:6px}
+#cosmic-book .book-viewer-tools button{font-size:12px;border-radius:999px;padding:6px 12px;background:rgba(10,18,34,.7);border-color:var(--ui-line-strong);backdrop-filter:blur(10px)}
+#cosmic-book .book-visual-note{font-size:11px;color:var(--ui-muted)}
+#cosmic-book .book-stage-mark{color:rgba(124,196,255,.25)}
+#cosmic-book .book-object-summary{font-size:14.5px;line-height:1.95;color:var(--ui-soft)}
+#cosmic-book .book-fact-highlights{border-color:var(--ui-line);gap:0;padding:0;background:rgba(255,255,255,.02);border:1px solid var(--ui-line);border-radius:14px;overflow:hidden}
+#cosmic-book .book-fact-highlights>div{padding:14px 18px}
+#cosmic-book .book-fact-highlights div:not(:first-child){border-left-color:var(--ui-line);padding-left:18px}
+#cosmic-book .book-fact-highlights dt{font-size:11.5px;color:var(--ui-muted);letter-spacing:.04em}
+#cosmic-book .book-fact-highlights dd{font-size:22px;font-weight:500}
+#cosmic-book .book-fact-highlights small{font-size:11px;color:var(--ui-muted)}
+#cosmic-book .book-detail-tabs{background:rgba(8,13,25,.9);border-bottom-color:var(--ui-line);gap:30px}
+#cosmic-book .book-detail-tabs button{font-size:14px;padding:14px 0;color:var(--ui-muted);transition:color .18s}
+#cosmic-book .book-detail-tabs button:hover{color:#fff}
+#cosmic-book .book-detail-tabs button[aria-selected=true]{color:#fff;border-bottom-color:var(--ui-accent)}
+#cosmic-book .book-reading h3{font-size:21px}
+#cosmic-book .book-reading p{font-size:14px;line-height:2;color:#bccadb}
+#cosmic-book .book-takeaway{border-radius:14px;background:linear-gradient(135deg,rgba(124,196,255,.08),rgba(167,139,250,.06));border-color:rgba(124,196,255,.22)}
+#cosmic-book .book-takeaway>span{font-size:11.5px;letter-spacing:.1em;color:var(--ui-accent)}
+#cosmic-book .book-facts-table{font-size:13px}
+#cosmic-book .book-facts-table th{font-size:11.5px}
+#cosmic-book .book-facts-table td:nth-child(3){font-size:11.5px}
+#cosmic-book .book-comparison{border-radius:14px;border-color:var(--ui-line);background:rgba(255,255,255,.025)}
+#cosmic-book .book-comparison p{font-size:11.5px}
+#cosmic-book .book-source-link{border-radius:12px;border-color:var(--ui-line);background:rgba(255,255,255,.025);font-size:13px;transition:border-color .18s}
+#cosmic-book .book-source-link:hover{border-color:rgba(124,196,255,.4)}
+#cosmic-book .book-source-link small{font-size:11px}
+#cosmic-book .book-detail-footer{font-size:11.5px;border-top-color:var(--ui-line)}
+#cosmic-book .book-detail-footer button{font-size:12.5px;border-radius:10px;padding:9px 14px}
+#cosmic-book .book-empty button,#cosmic-book .book-mobile-nav button{font-size:12px}
+
+/* ---------- 桌面中等宽度 ---------- */
+@media(max-width:1150px){
+  body[data-layout=desktop] #left-panel,body[data-layout=desktop] #right-panel{width:262px}
+  body[data-layout=desktop] #scene-observation{left:290px;right:290px}
+  body[data-layout=desktop] .header-tools .glass-btn{padding:0 9px!important}
+}
+@media(max-width:900px){
+  body[data-layout=desktop] #toggle-left-btn{width:auto}
+  body[data-layout=desktop] .atlas-library-launch{left:72px}
+  body[data-layout=desktop] #left-panel,body[data-layout=desktop] #right-panel{width:min(300px,84vw)}
+}
+
+/* ---------- 手机布局 ---------- */
+body[data-layout=mobile] #observatory-header{left:10px;right:10px;gap:6px;top:max(10px,env(safe-area-inset-top))}
+body[data-layout=mobile] .brand-lockup{padding:6px 12px 6px 6px!important;border-radius:14px!important;gap:9px!important}
+body[data-layout=mobile] .brand-lockup>div:first-child{width:30px;height:30px;border-radius:9px}
+body[data-layout=mobile] .brand-lockup>div:first-child svg{width:15px;height:15px}
+body[data-layout=mobile] .brand-lockup .leading-tight>div:first-child>span:first-child{font-size:14px;letter-spacing:.12em}
+body[data-layout=mobile] .brand-lockup .scale-line{font-size:10px!important;margin-top:2px!important}
+body[data-layout=mobile] #hud-scale-ruler{font-size:10px}
+body[data-layout=mobile] .header-tools{padding:3px!important;border-radius:13px!important}
+body[data-layout=mobile] .header-tools .glass-btn{min-height:32px;padding:0 8px!important;flex:1;justify-content:center}
+body[data-layout=mobile] #btn-global-reset:before{top:7px;bottom:7px}
+body[data-layout=mobile] #layout-switch{margin-right:2px}
+body[data-layout=mobile] #layout-switch button{padding:0 10px;min-height:28px!important;font-size:11.5px}
+body[data-layout=mobile] #toggle-left-btn,body[data-layout=mobile] #toggle-right-btn,body[data-layout=mobile] .atlas-library-launch{top:112px;height:36px;min-height:36px;font-size:12px!important;padding:0 11px!important;gap:6px!important;border-radius:11px!important}
+body[data-layout=mobile] #toggle-left-btn{width:96px}
+body[data-layout=mobile] .atlas-library-launch{left:max(112px,calc((100vw - 680px)/2 + 102px))}
+body[data-layout=mobile] .atlas-library-launch .ico,body[data-layout=mobile] #toggle-left-btn .ico,body[data-layout=mobile] #toggle-right-btn .ico{width:14px;height:14px}
+body[data-layout=mobile] #left-panel,body[data-layout=mobile] #right-panel{border-radius:22px 22px 16px 16px!important}
+body[data-layout=mobile] #left-panel:before,body[data-layout=mobile] #right-panel:before{width:38px;height:4px;background:rgba(150,180,225,.35);margin-top:8px}
+body[data-layout=mobile] #scene-observation{bottom:calc(76px + var(--safe-bottom))}
+body[data-layout=mobile] #scene-title{font-size:18px;letter-spacing:.08em}
+body[data-layout=mobile] #scene-subtitle{font-size:11px}
+body[data-layout=mobile] #scene-transport{border-radius:16px;margin-top:8px}
+body[data-layout=mobile] #scene-transport button{min-height:38px;border-radius:12px;padding:0 6px;font-size:11.5px}
+body[data-layout=mobile] #scale-dock>div{border-radius:16px!important;padding:4px!important}
+body[data-layout=mobile] #scale-dock .scale-btn{min-width:66px;min-height:48px;padding:6px 8px!important;border-radius:12px!important}
+body[data-layout=mobile] #scale-dock .scale-btn>span:last-child{font-size:12px!important}
+body[data-layout=mobile] #aim-banner,body[data-layout=mobile] #landing-prompt{top:158px}
+body[data-layout=mobile] #toast-container{top:158px}
+body[data-layout=mobile] .body-label{font-size:10px;padding:1px 7px}
+body[data-layout=mobile] #cosmic-book{border-radius:0;border:0}
+body[data-layout=mobile] #cosmic-book .book-realms{padding:3px}
+body[data-layout=mobile] #cosmic-book .book-realms button{font-size:12px;padding:7px 4px}
+body[data-layout=mobile] #cosmic-book .book-mobile-nav button{border-radius:999px;padding:6px 14px}
+body[data-layout=mobile] #cosmic-book .book-mobile-nav button[aria-pressed=true]{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.45);color:#fff}
+body[data-layout=mobile] #cosmic-book .book-fact-highlights>div{padding:12px 10px}
+body[data-layout=mobile] #cosmic-book .book-fact-highlights div:not(:first-child){padding-left:10px}
+body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
+@media(max-width:760px){
+  #cosmic-book .book-realms{padding:3px}
+  #cosmic-book .book-realms button{font-size:12px;padding:7px 4px}
+  #cosmic-book .book-fact-highlights>div{padding:12px 10px}
+  #cosmic-book .book-fact-highlights div:not(:first-child){padding-left:10px}
+  #cosmic-book .book-fact-highlights dd{font-size:17px}
+  #cosmic-book .book-object-summary{font-size:13.5px}
+  #cosmic-book .book-reading p{font-size:13.5px}
+}
+@media(max-height:560px){
+  body[data-layout=mobile] #toggle-left-btn,body[data-layout=mobile] #toggle-right-btn,body[data-layout=mobile] .atlas-library-launch{top:66px}
+}
+
+/* ---------- 新增：实验室尺度提示 & 3连发按钮 ---------- */
+.lab-scale-notice{display:flex;flex-direction:column;gap:8px;padding:11px 12px;border-radius:12px;background:linear-gradient(135deg,rgba(124,196,255,.12),rgba(167,139,250,.10));border:1px solid rgba(124,196,255,.35);font-size:11.5px;line-height:1.65;color:#dbe9f8}
+.lab-scale-notice.hidden{display:none!important}
+.lab-scale-notice button{align-self:flex-start;padding:6px 12px;border-radius:999px;background:linear-gradient(135deg,rgba(62,120,220,.55),rgba(124,84,230,.5));border:1px solid rgba(150,190,255,.45);color:#fff;font-size:11.5px;font-weight:600}
+.lab-scale-notice button:hover{filter:brightness(1.12)}
+#btn-launch-salvo{border-radius:12px!important;background:rgba(246,193,119,.12);border-color:rgba(246,193,119,.45)!important;color:#ffe2b3!important}
+#btn-launch-salvo:hover:not(:disabled){background:rgba(246,193,119,.24);color:#fff!important}
+
+/* ---------- 新增：星海百科视觉增强、实时调节器与演化时期时间轴 ---------- */
+#cosmic-book .book-visual-stage{height:380px;margin-top:4px;border-radius:18px;border:1px solid rgba(124,196,255,.16);background:radial-gradient(ellipse 68% 62% at 50% 48%,rgba(52,96,178,.28) 0%,rgba(14,24,46,.55) 56%,rgba(5,9,20,.92) 100%);overflow:hidden;transition:height .28s ease,background .3s ease}
+#cosmic-book .book-visual-stage.real-space{background:#010308!important;border-color:rgba(148,184,230,.10)}
+#cosmic-book .book-visual-stage.real-space:before{opacity:0}
+#cosmic-book .book-visual-stage.expanded{height:min(64dvh,560px)}
+#cosmic-book .book-visual-note{left:14px;bottom:12px;padding:4px 10px;border-radius:999px;background:rgba(6,11,24,.62);border:1px solid rgba(148,184,230,.18);backdrop-filter:blur(8px)}
+#cosmic-book .book-viewer-tools{right:14px;bottom:10px}
+#cosmic-book .book-viewer-tools button[aria-pressed=true]{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.5);color:#fff}
+.book-viewer-controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin:12px 0 0;padding:11px 16px;border-radius:14px;background:rgba(255,255,255,.028);border:1px solid var(--ui-line)}
+.bvc-slider{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ui-muted);flex:1 1 155px;min-width:140px}
+.bvc-slider span{white-space:nowrap;font-weight:500;color:var(--ui-soft)}
+.bvc-slider input[type=range]{flex:1;min-width:72px;height:4px;accent-color:var(--ui-accent);cursor:pointer}
+.bvc-slider output{font-family:var(--ui-mono);font-size:11.5px;color:var(--ui-accent);min-width:38px;text-align:right;font-variant-numeric:tabular-nums}
+.bvc-toggles{display:flex;align-items:center;gap:6px;margin-left:auto}
+.bvc-toggles button{border-radius:999px;padding:5px 12px;font-size:11.5px;background:transparent;border:1px solid var(--ui-line-strong);color:var(--ui-muted);transition:all .18s;white-space:nowrap}
+.bvc-toggles button:hover{color:#fff;border-color:rgba(124,196,255,.5)}
+.bvc-toggles button[aria-pressed=true]{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.5);color:#fff}
+.book-stage-panel{margin:12px 0 18px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(124,196,255,.07),rgba(167,139,250,.05));border:1px solid rgba(124,196,255,.22)}
+.book-stage-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.book-stage-label{font-size:11.5px;font-weight:650;letter-spacing:.1em;color:var(--ui-accent)}
+#book-stage-play{border-radius:999px;padding:4px 12px;font-size:11.5px;background:rgba(255,255,255,.05);border:1px solid var(--ui-line-strong);color:var(--ui-soft);transition:all .18s}
+#book-stage-play:hover{color:#fff;border-color:rgba(124,196,255,.5)}
+#book-stage-play[aria-pressed=true]{background:rgba(246,193,119,.2);border-color:rgba(246,193,119,.55);color:#ffe4b5}
+.book-stage-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.book-stage-buttons button{border-radius:999px;padding:6px 13px;font-size:12px;background:rgba(7,12,24,.65);border:1px solid var(--ui-line-strong);color:var(--ui-muted);transition:all .18s}
+.book-stage-buttons button:hover{color:#fff;border-color:rgba(124,196,255,.5)}
+.book-stage-buttons button[aria-pressed=true]{background:linear-gradient(135deg,rgba(72,140,245,.42),rgba(140,96,245,.34));border-color:rgba(148,204,255,.72);color:#fff;box-shadow:0 6px 16px -8px rgba(124,196,255,.85)}
+.book-stage-desc{margin:0;font-size:12.5px;line-height:1.85;color:#cbd8e8}
+.book-stage-desc strong{color:#ffe2a8;font-weight:600}
+@media(max-width:760px){
+  #cosmic-book .book-visual-stage{height:300px}
+  .book-viewer-controls{padding:10px 12px;gap:8px 12px}
+  .bvc-toggles{margin-left:0;width:100%;justify-content:flex-start}
+  .book-stage-panel{padding:12px}
+  .book-stage-buttons button{font-size:11.5px;padding:5px 10px}
+  .book-stage-desc{font-size:12px}
+  .book-dossier{grid-template-columns:1fr}
+  .book-qa-dialog{padding:20px 18px}
+}
+
+/* ---------- 新增：百科深度身世档案卡 & 点击弹出互动问答 ---------- */
+.book-dossier{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 28px}
+.book-dossier-card{padding:14px 16px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.038),rgba(255,255,255,.018));border:1px solid var(--ui-line);transition:border-color .18s}
+.book-dossier-card:hover{border-color:rgba(124,196,255,.35)}
+.book-dossier-card>span{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--ui-accent);margin-bottom:6px}
+.book-dossier-card>p{margin:0!important;font-size:13px!important;line-height:1.78!important;color:#d6e3f2!important}
+.book-qa-section{margin:30px 0 26px;padding:20px 22px;border-radius:16px;background:linear-gradient(135deg,rgba(124,196,255,.07),rgba(167,139,250,.06));border:1px solid rgba(124,196,255,.24)}
+.book-qa-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.book-qa-head h3{margin:0!important;font-size:19px!important;color:#f4f8ff!important}
+.book-qa-head span{font-size:12px;color:var(--ui-muted)}
+.book-qa-list{display:grid;grid-template-columns:1fr;gap:10px}
+.book-qa-card{width:100%;text-align:left;padding:14px 16px;border-radius:13px;background:rgba(8,14,28,.75);border:1px solid rgba(148,184,230,.2);color:var(--ui-ink);transition:transform .16s,border-color .18s,background .18s,box-shadow .18s}
+.book-qa-card:hover{transform:translateY(-1px);background:rgba(24,42,74,.65);border-color:rgba(124,196,255,.55);box-shadow:0 10px 24px -14px rgba(124,196,255,.85)}
+.book-qa-card[data-read=true]{border-color:rgba(110,231,183,.35)}
+.book-qa-card[data-read=true] .book-qa-hint{color:var(--ui-green)}
+.book-qa-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.book-qa-tag{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(124,196,255,.15);border:1px solid rgba(124,196,255,.35);color:#bfe4ff}
+.book-qa-hint{font-size:11.5px;color:var(--ui-warm);font-weight:500}
+.book-qa-q{font-size:14.5px;font-weight:600;line-height:1.6;color:#f1f6fd}
+
+/* 答案弹出浮层（位于星海百科 dialog 内，支持 ESC / 点击背景关闭） */
+.book-qa-modal{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,6,16,.76);backdrop-filter:blur(8px);animation:qaFadeIn .18s ease}
+.book-qa-modal[hidden]{display:none!important}
+.book-qa-dialog{width:min(620px,100%);max-height:82dvh;overflow-y:auto;padding:24px 26px;border-radius:20px;background:linear-gradient(180deg,rgba(19,30,54,.98),rgba(8,14,28,.98));border:1px solid rgba(124,196,255,.42);box-shadow:0 30px 90px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.1);animation:qaPopIn .2s cubic-bezier(.16,1,.3,1)}
+.book-qa-dialog-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+#book-qa-modal-close{width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--ui-line-strong);color:var(--ui-soft);font-size:14px}
+#book-qa-modal-close:hover{background:rgba(255,255,255,.14);color:#fff}
+#book-qa-modal-q{margin:0 0 16px;font-family:'Noto Serif SC','Source Han Serif SC',serif;font-size:20px;line-height:1.5;font-weight:600;color:#ffffff}
+.book-qa-answer-box{padding:16px 18px;border-radius:14px;background:rgba(124,196,255,.08);border:1px solid rgba(124,196,255,.25)}
+.book-qa-answer-box>span{display:block;font-size:12px;font-weight:600;color:#ffe09e;letter-spacing:.06em;margin-bottom:8px}
+#book-qa-modal-a{margin:0;font-size:14.5px;line-height:1.95;color:#e3edf8;user-select:text}
+.book-qa-dialog-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding-top:14px;border-top:1px solid var(--ui-line)}
+#book-qa-modal-idx{font-family:var(--ui-mono);font-size:12px;color:var(--ui-muted)}
+.book-qa-dialog-foot>div{display:flex;gap:8px}
+#book-qa-modal-next,#book-qa-modal-ok{border-radius:10px;padding:8px 15px;font-size:13px;font-weight:600;transition:all .16s}
+#book-qa-modal-next{background:rgba(255,255,255,.06);border:1px solid var(--ui-line-strong);color:var(--ui-soft)}
+#book-qa-modal-next:hover{background:var(--ui-fill-hover);color:#fff}
+#book-qa-modal-ok{background:linear-gradient(135deg,rgba(62,120,220,.8),rgba(124,84,230,.75));border:1px solid rgba(160,200,255,.5);color:#fff}
+#book-qa-modal-ok:hover{filter:brightness(1.12)}
+@keyframes qaFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes qaPopIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* ---------- 新增：百科搜索清空按钮 & 多天体横向对比 ---------- */
+#book-search-clear{background:rgba(255,255,255,.08);border:0;color:var(--ui-muted);width:22px;height:22px;border-radius:999px;font-size:11px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+#book-search-clear:hover{background:rgba(255,255,255,.16);color:#fff}
+.book-heading-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#book-compare-toggle{border:1px solid var(--ui-line-strong);background:rgba(255,255,255,.04);color:var(--ui-soft);border-radius:10px;padding:8px 13px;font-size:13px;white-space:nowrap;transition:all .18s}
+#book-compare-toggle:hover{background:var(--ui-fill-hover);color:#fff}
+#book-compare-toggle[aria-pressed=true]{background:var(--ui-accent-bg);border-color:rgba(124,196,255,.55);color:#fff}
+.book-compare-bar{position:sticky;bottom:14px;z-index:20;margin:0 38px 14px;padding:10px 14px;border-radius:14px;background:rgba(12,22,42,.95);border:1px solid rgba(124,196,255,.42);box-shadow:0 16px 40px rgba(0,0,0,.7);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.book-compare-chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.book-compare-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(124,196,255,.15);border:1px solid rgba(124,196,255,.35);font-size:12px;color:#e5f2ff}
+.book-compare-chip button{background:none;border:0;color:#93c5fd;font-size:11px;padding:0 2px}
+.book-compare-chip button:hover{color:#fff}
+.book-compare-actions{display:flex;align-items:center;gap:8px}
+#book-compare-open{border-radius:10px;padding:7px 14px;font-size:12.5px;font-weight:600;background:linear-gradient(135deg,rgba(62,120,220,.8),rgba(124,84,230,.75));border:1px solid rgba(160,200,255,.5);color:#fff}
+#book-compare-clear{border-radius:10px;padding:7px 12px;font-size:12px;background:rgba(255,255,255,.05);border:1px solid var(--ui-line-strong);color:var(--ui-muted)}
+#book-compare-clear:hover{color:#fff}
+.book-compare-dialog{width:min(860px,100%)}
+.book-compare-grid{overflow-x:auto;margin-top:8px}
+.book-compare-table th:first-child,.book-compare-table td:first-child{white-space:nowrap;color:var(--ui-muted);width:120px}
+.book-compare-table th{color:var(--ui-accent);font-size:13px}
+.book-compare-note{margin:12px 0 0;font-size:11.5px;color:var(--ui-muted)}

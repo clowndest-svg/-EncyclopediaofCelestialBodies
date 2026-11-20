@@ -1,0 +1,1 @@
+<div class="lab-type-filter" role="group" aria-label="实验分类"><button data-lab-filter="all" aria-pressed="true">全部 · 14</button><button data-lab-filter="impact" aria-pressed="false">自然撞击</button><button data-lab-filter="energy" aria-pressed="false">能量辐射</button><button data-lab-filter="fiction" aria-pressed="false">科幻引力</button></div>

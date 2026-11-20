@@ -1,0 +1,17 @@
+<div class="lab-physics-controls">
+  <div class="impact-presets"><button data-impact-preset=".02,20">20 m 空爆</button><button data-impact-preset="1,20">1 km 撞击</button><button data-impact-preset="10,20">10 km 大撞击</button></div>
+  <div class="dynamics-row"><label for="lab-angle">入射角（相对地平线）</label><output id="lab-angle-value">45°</output></div><input id="lab-angle" type="range" min="15" max="90" step="1" value="45" class="cosmic-slider">
+  <div class="lab-select-row"><label for="lab-material">入射材质</label><select id="lab-material"><option value="rock">岩石 · 3000 kg/m³</option><option value="ice">冰尘 · 600 kg/m³</option><option value="iron">铁镍 · 7800 kg/m³</option></select></div>
+  <div class="lab-select-row"><label for="lab-surface">固体天体表面</label><select id="lab-surface"><option value="rock">岩石</option><option value="ocean">海洋（水体示意）</option></select></div>
+  <label class="lab-checkbox"><input id="lab-atmosphere" type="checkbox" checked> 使用目标大气模型（无大气天体自动关闭）</label>
+</div>
+<div id="lab-energy-params" class="dynamics-box hidden">
+  <div data-parameter="kinetic photoid"><div class="dynamics-row"><label for="lab-mass">入射体质量</label><output id="lab-mass-value">1.00e5 kg</output></div><input id="lab-mass" class="cosmic-slider" type="range" min="3" max="9" step=".1" value="5"></div>
+  <div data-parameter="nuclear"><div class="dynamics-row"><label for="lab-yield">释放能量</label><output id="lab-yield-value">20 Mt TNT</output></div><input id="lab-yield" class="cosmic-slider" type="range" min="-2" max="5" step=".1" value="1.301"></div>
+  <div data-parameter="antimatter"><div class="dynamics-row"><label for="lab-antimatter">反物质质量（等量普通物质）</label><output id="lab-antimatter-value">0.01 kg</output></div><input id="lab-antimatter" class="cosmic-slider" type="range" min="-5" max="3" step=".1" value="-2"></div>
+  <div data-parameter="laser dyson grb"><div class="dynamics-row"><label for="lab-power">沉积功率（4 秒）</label><output id="lab-power-value">1.00e18 W</output></div><input id="lab-power" class="cosmic-slider" type="range" min="12" max="26" step=".1" value="18"></div>
+  <div data-parameter="photoid"><div class="dynamics-row"><label for="lab-beta">入射速度</label><output id="lab-beta-value">0.8 c</output></div><input id="lab-beta" class="cosmic-slider" type="range" min=".1" max=".99" step=".01" value=".8"></div>
+  <div data-parameter="tidal"><div class="dynamics-row"><label for="lab-tidal">掠过体质量比</label><output id="lab-tidal-value">10 倍目标质量</output></div><input id="lab-tidal" class="cosmic-slider" type="range" min=".1" max="100" step=".1" value="10"></div>
+</div>
+<p id="lab-physical-note" class="lab-model-note"></p>
+<section class="dynamics-box lab-report"><h3 id="lab-phase">等待实验</h3><div id="lab-report-values"></div><p>动能、大气与喷射物使用简化物理模型；坑径是标度估计。冲击波、烟尘、坑缘按可读性放大，不是灾害预测或武器工程模拟。</p></section>
