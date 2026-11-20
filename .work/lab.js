@@ -15,7 +15,8 @@
     const EXPERIMENTS=[
       ['asteroid','☄','小行星撞击','大气减速与地表挖掘','impact'],['comet','✦','彗星撞击','冰尘烧蚀与碎裂','impact'],['airburst','◌','大气空爆','小天体碎裂，空中释能','impact'],['kinetic','▾','动能撞击器','按质量与速度计算','impact'],
       ['nuclear','☢','核能量释放','指定当量，不模拟装置','energy'],['antimatter','⊕','反物质湮灭','理想模型 E = 2mc²','energy'],['laser','⌁','激光烧蚀','持续加热与熔融喷发','energy'],['grb','✧','伽马暴照射','迎光半球辐射沉积','energy'],
-      ['dyson','☀','戴森恒星光束','科幻装置，功率积分','fiction'],['photoid','⋄','相对论撞击体','洛伦兹动能模型','energy'],['tidal','≈','潮汐掠过','近场拉伸与碎屑剥离','fiction'],['singularity','◉','微型黑洞','艺术化吸积吞噬','fiction'],['foil','▱','二向箔','科幻降维演出','fiction'],['vacuum','○','真空相变泡','假说的艺术化表达','fiction']
+      ['dyson','☀','戴森恒星光束','科幻装置，功率积分','fiction'],['photoid','⋄','相对论撞击体','洛伦兹动能模型','energy'],['tidal','≈','潮汐掠过','近场拉伸与碎屑剥离','fiction'],['singularity','◉','微型黑洞','艺术化吸积吞噬','fiction'],['foil','▱','二向箔','科幻降维演出','fiction'],['vacuum','○','真空相变泡','假说的艺术化表达','fiction'],
+      ...(typeof MONSTER_EXPERIMENTS!=='undefined'?MONSTER_EXPERIMENTS:[])
     ];
     const lab={projectiles:[],effects:[],scars:[],reports:[],salvoTimers:[],material:'rock',angle:45,massKg:100000,energyMt:20,powerW:1e18,antimatterKg:.01,beta:.8,tidalMass:10,atmosphere:true,surface:'rock',sequence:0,lastReport:null};
     function scientificImpact(settings,planetId='earth') {
@@ -229,6 +230,7 @@
       lab.effects.push({kind:'tidal',body,flyby,local,age:0,duration:6,initialScale:body.mesh.scale.clone(),massRatio:lab.tidalMass,physical});showToast('潮汐掠过：拉伸为放大演示，非流体 Roche 极限求解','amber');
     }
     function executeExoticExperiment(type,body,point=null) {
+      if(typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type)){spawnMonsterExperiment(type,body,point);return;}
       if(lab.effects.length+lab.projectiles.length+activeExoticEffects.length>=(document.body.dataset.layout==='mobile'?12:24)){showToast('当前并发实验较多，请稍候片刻','amber');return;}
       if(!body||body.isDestroyed){showToast('请先选择一个完整的天体','amber');return;}
       if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻艺术演出，不是已验证的物理现象','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 科幻演出';document.getElementById('lab-report-values').textContent='此演出不提供实测能量或真实破坏预测。';if(type==='foil')flattenBodyTo2D(body);else legacyExecuteExoticExperiment(type,body,point);return;}
@@ -263,6 +265,7 @@
       disposeTree(p.grp);disposeTree(p.line);renderLabReport();
     }
     function updateLab(dt) {
+      if(typeof updateMonsters==='function')updateMonsters(dt);
       for(const b of celestialBodies){
         if(b.ashShroud?.material?.uniforms?.uTime)b.ashShroud.material.uniforms.uTime.value+=dt;
         if(b.debrisRing)b.debrisRing.rotation.y+=dt*.22;
@@ -299,6 +302,7 @@
       }
     }
     function resetLab(body=null) {
+      if(typeof resetMonsters==='function')resetMonsters(body);
       lab.salvoTimers.forEach(clearTimeout);lab.salvoTimers=[];
       for(let i=lab.projectiles.length-1;i>=0;i--){const p=lab.projectiles[i];if(!body||p.body===body){disposeTree(p.grp);disposeTree(p.line);lab.projectiles.splice(i,1);}}
       for(let i=lab.effects.length-1;i>=0;i--){const e=lab.effects[i];if(!body||e.body===body){for(const o of [e.root,e.shock?.mesh,e.shock2?.mesh,e.debris,e.flyby])if(o)disposeTree(o);if(e.initialScale)e.body.mesh.scale.copy(e.initialScale);lab.effects.splice(i,1);}}
@@ -308,17 +312,20 @@
       if(!body){lab.lastReport=null;lab.reports=[];document.getElementById('lab-report-values').replaceChildren();document.getElementById('lab-phase').textContent='等待实验';}
     }
     function updateLabParameters(type=state.selectedExperiment) {
+      const isMonster=typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type);
       const impact=['asteroid','comet','airburst','kinetic'].includes(type),energy=['nuclear','antimatter','laser','dyson','grb','photoid','tidal'].includes(type);
       document.querySelector('.lab-physics-controls').classList.toggle('hidden',!impact);
       document.getElementById('asteroid-params').classList.toggle('hidden',!impact);document.getElementById('lab-energy-params').classList.toggle('hidden',!energy&&type!=='kinetic');
+      const monsterBox=document.getElementById('lab-monster-params');if(monsterBox)monsterBox.classList.toggle('hidden',!isMonster);
       document.querySelectorAll('[data-parameter]').forEach(el=>el.classList.toggle('hidden',!el.dataset.parameter.split(' ').includes(type)));
       document.getElementById('slider-ast-diam').parentElement.classList.toggle('hidden',type==='kinetic');
       const materialSelect=document.getElementById('lab-material');materialSelect.disabled=['kinetic','comet'].includes(type);materialSelect.value=type==='kinetic'?'iron':type==='comet'?'ice':lab.material;
       document.getElementById('val-ast-vel').textContent=state.astVelKms+' km/s';
       const body=getActiveLabTarget(),physics=scientificImpact(selectedSettings(type),body?.id||'earth');
       document.getElementById('val-ast-diam').textContent=state.astDiamKm<1?(state.astDiamKm*1000).toFixed(0)+' m':state.astDiamKm.toFixed(2)+' km';
-      document.getElementById('val-est-mt').textContent=((impact?physics.initialEnergy:energyForType(type))/4.184e15).toExponential(2)+' Mt TNT';
-      document.getElementById('lab-physical-note').textContent=impact?`${physics.planet.solid?'固体表面 · 支持最多 16 处熔岩坑与尘埃环叠加':'气态目标，无岩石撞击坑'}；${physics.planet.atmosphere&&lab.atmosphere?'指数大气 + 阻力 + 等离子烧蚀 + 碎裂近似':'无大气减速'}。`:['singularity','foil','vacuum'].includes(type)?'科幻 / 假说的艺术演出，不对应经过验证的物理模型。':type==='tidal'?'点质量潮汐比例与放大的形变示意，不是流体解。':'理想能量沉积模型。支持连续多次发射，观察热融裂纹与冲击波叠加。';
+      const monsterEst=isMonster?(1.6e24*Math.pow(10,(monsterLab.power-1)*.95)*(.65+monsterLab.scale*.45)):0;
+      document.getElementById('val-est-mt').textContent=((isMonster?monsterEst:impact?physics.initialEnergy:energyForType(type))/4.184e15).toExponential(2)+' Mt TNT';
+      document.getElementById('lab-physical-note').textContent=isMonster?(MONSTER_NOTES[type]||'科幻/玄幻巨兽与舰队毁灭演出，支持体型/破坏力调节与 3 连发叠加，Lv.5+ 破坏力可将固体行星彻底粉碎。'):impact?`${physics.planet.solid?'固体表面 · 支持最多 16 处熔岩坑与尘埃环叠加':'气态目标，无岩石撞击坑'}；${physics.planet.atmosphere&&lab.atmosphere?'指数大气 + 阻力 + 等离子烧蚀 + 碎裂近似':'无大气减速'}。`:['singularity','foil','vacuum'].includes(type)?'科幻 / 假说的艺术演出，不对应经过验证的物理模型。':type==='tidal'?'点质量潮汐比例与放大的形变示意，不是流体解。':'理想能量沉积模型。支持连续多次发射，观察热融裂纹与冲击波叠加。';
     }
     function bindLabUI() {
       const selector=document.getElementById('experiment-selector');selector.innerHTML=EXPERIMENTS.map(([id,icon,name,desc,category])=>`<button data-exp="${id}" data-category="${category}" class="exp-btn glass-btn ${id===state.selectedExperiment?'active':''} rounded-xl p-2 text-left"><div class="text-xs font-semibold text-white">${icon} ${name}</div><div class="text-[10px] text-slate-400 mt-0.5">${desc}</div></button>`).join('');
@@ -331,6 +338,10 @@
       const sliders=[['lab-mass','massKg',true,' kg'],['lab-yield','energyMt',true,' Mt TNT'],['lab-power','powerW',true,' W'],['lab-antimatter','antimatterKg',true,' kg'],['lab-beta','beta',false,' c'],['lab-tidal','tidalMass',false,' 倍目标质量']];
       sliders.forEach(([id,key,log,unit])=>document.getElementById(id).oninput=e=>{lab[key]=log?10**(+e.target.value):+e.target.value;document.getElementById(id+'-value').textContent=lab[key].toPrecision(3)+unit;updateLabParameters();});
       document.querySelectorAll('[data-impact-preset]').forEach(b=>b.onclick=()=>{const [d,v]=b.dataset.impactPreset.split(',').map(Number);state.astDiamKm=d;state.astVelKms=v;document.getElementById('slider-ast-diam').value=d;document.getElementById('slider-ast-vel').value=v;document.getElementById('val-ast-vel').textContent=v+' km/s';updateLabParameters();});
+      const mScale=document.getElementById('lab-monster-scale'),mPower=document.getElementById('lab-monster-power');
+      const powerNames=['','Lv.1 灭城级','Lv.2 灭国级','Lv.3 灭世级','Lv.4 裂壳级','Lv.5 爆星级','Lv.6 终极湮灭'];
+      if(mScale)mScale.oninput=e=>{monsterLab.scale=+e.target.value;document.getElementById('lab-monster-scale-value').textContent=monsterLab.scale.toFixed(1)+'× 巨兽尺度';updateLabParameters();};
+      if(mPower)mPower.oninput=e=>{monsterLab.power=+e.target.value;document.getElementById('lab-monster-power-value').textContent=powerNames[monsterLab.power]||('Lv.'+monsterLab.power);updateLabParameters();};
       const salvoBtn=document.getElementById('btn-launch-salvo');if(salvoBtn)salvoBtn.onclick=()=>launchSalvo(state.selectedExperiment,getActiveLabTarget());
       updateLabParameters();
     }

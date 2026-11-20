@@ -400,7 +400,7 @@
       const attr=p.line.geometry.attributes.position;p.history.forEach((v,i)=>{let q=v.clone();if(motion.frame==='external'&&p.key==='L1'){const gf=galacticFrameAt(p.historyTime[i]);q=gf.pos.clone().addScaledVector(gf.Ex,v.x).addScaledVector(gf.Ey,v.y).addScaledVector(gf.Ez,v.z);}else if(motion.frame==='external'&&p.key==='L0')q.add(travelAt(p.historyTime[i],'L0'));if(motion.frame==='external'&&p.key==='L5')q.multiplyScalar(p.historyScale[i]);attr.setXYZ(i,q.x,q.y,q.z);});attr.needsUpdate=true;p.line.geometry.computeBoundingSphere();
     }
     function updateMotion(dt) {
-      motion.labClock=typeof lab!=='undefined'&&(lab.projectiles.length>0||lab.effects.length>0||activeExoticEffects.some(e=>['dyson','singularity','vacuum'].includes(e.type)));
+      motion.labClock=typeof lab!=='undefined'&&(lab.projectiles.length>0||lab.effects.length>0||(typeof monsterLab!=='undefined'&&monsterLab.active.length>0)||activeExoticEffects.some(e=>['dyson','singularity','vacuum'].includes(e.type)));
       const key=state.currentScale,old=frameCenter(key),oldTheta=motion.years*GAL_OMEGA;
       if(key==='L1')advanceSolar(dt);if(key==='L0')renderLunar(dt);if(key==='L4')updateClusterCenters(dt);if(key==='L5')advanceCosmology(dt);
       if(key==='L3'){const drift=new THREE.Vector3(motion.phase.L3*22,motion.phase.L3*7,-motion.phase.L3*11);updateParallaxField(motion.parallax.L3,drift,new THREE.Vector3(.85,.27,-.43),motion.stream);}

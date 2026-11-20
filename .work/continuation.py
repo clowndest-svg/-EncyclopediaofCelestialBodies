@@ -5,7 +5,8 @@ def apply(s, root, work):
         nonlocal s
         assert old in s, old[:120]
         s=s.replace(old,new,1)
-    replace('    // 尺度分组容器',(work/'motion.js').read_text(encoding='utf-8')+'\n'+(work/'lab.js').read_text(encoding='utf-8')+'\n    // 尺度分组容器')
+    monsters_src = (work/'monsters.js').read_text(encoding='utf-8') + '\n' if (work/'monsters.js').exists() else ''
+    replace('    // 尺度分组容器',(work/'motion.js').read_text(encoding='utf-8')+'\n'+monsters_src+(work/'lab.js').read_text(encoding='utf-8')+'\n    // 尺度分组容器')
     replace('  </style>','\n'+(work/'continuation.css').read_text(encoding='utf-8')+'\n  </style>')
     replace('<section class="dynamics-box" aria-label="引力与轨道设置">',(work/'motion-panel.txt').read_text(encoding='utf-8')+'\n<section class="dynamics-box" aria-label="引力与轨道设置">')
     replace('<div class="grid grid-cols-2 gap-1.5" id="experiment-selector">',(work/'lab-filters.txt').read_text(encoding='utf-8')+'\n<div class="grid grid-cols-2 gap-1.5" id="experiment-selector">')
@@ -40,7 +41,7 @@ def apply(s, root, work):
     replace('`${body.atmoPct}%`','`${body.atmoPct.toFixed(2)}%`')
     replace('`${body.atmoPct.toFixed(2)}%`',"PLANET_PHYSICS[body.id]?.atmosphere?`${body.atmoPct.toFixed(2)}%`:'无大气'")
     replace('天体结构完整度','全球结构保留（能量尺度）')
-    replace("projectiles:activeProjectiles.length", "projectiles:lab.projectiles.length+activeProjectiles.length,effects:lab.effects.length,legacyEffects:activeExoticEffects.length,reports:lab.reports.slice(-3),frame:motion.frame,solarYears:motion.years,sunWorld:l1Sun.mesh.getWorldPosition(new THREE.Vector3()).toArray(),solar:motion.solar.map(b=>({id:b.id,p:b.p.toArray(),v:b.v.toArray(),mass:b.mass})),momentum:physicalMomentum().toArray(),clusterCenters:clusterNodes.map(n=>n.center.toArray()),webScale:motion.webScale,labClock:motion.labClock,experimentCount:EXPERIMENTS.length")
+    replace("projectiles:activeProjectiles.length", "projectiles:lab.projectiles.length+activeProjectiles.length,effects:lab.effects.length,activeMonsters:typeof monsterLab!=='undefined'?monsterLab.active.length:0,shattered:celestialBodies.filter(b=>!!b.shatterGroup).length,legacyEffects:activeExoticEffects.length,reports:lab.reports.slice(-3),frame:motion.frame,solarYears:motion.years,sunWorld:l1Sun.mesh.getWorldPosition(new THREE.Vector3()).toArray(),solar:motion.solar.map(b=>({id:b.id,p:b.p.toArray(),v:b.v.toArray(),mass:b.mass})),momentum:physicalMomentum().toArray(),clusterCenters:clusterNodes.map(n=>n.center.toArray()),webScale:motion.webScale,labClock:motion.labClock,experimentCount:EXPERIMENTS.length")
     replace('          })\n        };',"          }),predictImpact:(settings,id)=>scientificImpact(settings,id)\n        };")
     a=s.index('    function spawnProjectile({startPos,targetPos,targetBody=null')
     b=s.index('    function spawnRadiation(body,type,worldPoint=null)',a)
