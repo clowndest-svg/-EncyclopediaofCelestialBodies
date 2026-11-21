@@ -7132,6 +7132,7 @@ function normalizeSandboxUniverse(value) {
       sb.effects.forEach(e => disposeTree(e.grp));
       sb.tidalStreams.forEach(t => disposeTree(t.mesh));
       sb.effects = []; sb.tidalStreams = []; sb.waves = [];
+      sb.gridState = { cx: 0, cz: 0, maxR: 125 };
       if (sb.tidalRibbonLine) sb.tidalRibbonLine.visible = false;
       if (sb.wormholeLine) sb.wormholeLine.visible = false;
       if (sb.hoverRing) sb.hoverRing.visible = false;
@@ -7278,15 +7279,24 @@ function normalizeSandboxUniverse(value) {
         if (sb.showGrid) {
           const massive = sb.bodies.filter(b => b.mass >= 0.02);
           const refBodies = sb.bodies.filter(b => !b.isDebris);
-          let cx = sb.controls ? sb.controls.target.x : 0, cz = sb.controls ? sb.controls.target.z : 0, maxR = 125;
+          sb.gridState ||= { cx: 0, cz: 0, maxR: 125 };
+          let targetCx = 0, targetCz = 0, targetMaxR = 125;
           if (refBodies.length) {
-            cx = 0; cz = 0;
-            for (const b of refBodies) { cx += b.pos.x; cz += b.pos.z; }
-            cx /= refBodies.length; cz /= refBodies.length;
+            for (const b of refBodies) { targetCx += b.pos.x; targetCz += b.pos.z; }
+            targetCx /= refBodies.length; targetCz /= refBodies.length;
             let span = 90;
-            for (const b of refBodies) span = Math.max(span, Math.hypot(b.pos.x - cx, b.pos.z - cz) + 45);
-            maxR = THREE.MathUtils.clamp(span * 1.35, 125, 2800);
+            for (const b of refBodies) span = Math.max(span, Math.hypot(b.pos.x - targetCx, b.pos.z - targetCz) + 40);
+            targetMaxR = THREE.MathUtils.clamp(span * 1.35, 125, 2800);
           }
+          // 防抖死区 + 慢阻尼平滑：只有质心或尺度发生明显变化时才极平滑过渡，日常公转绝不抖动！
+          if (Math.hypot(targetCx - sb.gridState.cx, targetCz - sb.gridState.cz) > sb.gridState.maxR * 0.22) {
+            sb.gridState.cx += (targetCx - sb.gridState.cx) * 0.04;
+            sb.gridState.cz += (targetCz - sb.gridState.cz) * 0.04;
+          }
+          if (Math.abs(targetMaxR - sb.gridState.maxR) > sb.gridState.maxR * 0.18) {
+            sb.gridState.maxR += (targetMaxR - sb.gridState.maxR) * 0.04;
+          }
+          const cx = sb.gridState.cx, cz = sb.gridState.cz, maxR = sb.gridState.maxR;
           const sc = maxR / 125;
           sb.gridMesh.position.set(cx, -6.5, cz);
           sb.gridMesh.scale.set(sc, 1, sc);
@@ -7435,12 +7445,12 @@ function normalizeSandboxUniverse(value) {
         sbCreateSolar();
         sbSelectBody(sb.bodies[3]);
       } else if (name === 'bh_tde') {
-        // 专属展示：黑洞潮汐撕裂蓝超巨星（TDE 意大利面化 + 螺旋吸积！）
+        // 专属展示：黑洞潮汐撕裂蓝超巨星（掠过螺旋轨道，完整呈现 5~8 秒渐进拉丝剥离吞噬！）
         const bh = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'smbh'), name: '潮汐实验黑洞（15 M☉）', mass: 1800, radius: 4.4, pos: [0, 0, 0], vel: [0, 0, 0] });
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'bluegiant'), name: '蓝超巨星', mass: 360, radius: 6.4, pos: [34, 0, 8], vel: [-1.4, 0, -4.6] });
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '伴随行星', pos: [46, 0, 14], vel: [-1.2, 0, -4.4] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'bluegiant'), name: '蓝超巨星', mass: 360, radius: 6.4, pos: [36, 0, 14], vel: [-2.1, 0, -5.2] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '伴随行星', pos: [48, 0, 20], vel: [-1.8, 0, -4.9] });
         sbSelectBody(sb.bodies[1]);
-        sbToast('🕳️ 观察蓝超巨星进入黑洞潮汐半径后被实时拉长撕裂并螺旋吸入吸积盘！');
+        sbToast('🕳️ 观察蓝超巨星进入黑洞潮汐半径后被渐进拉长、剥离螺旋等离子丝带并逐步吞噬！');
       } else if (name === 'roche_ring') {
         // 专属展示：卫星闯入巨行星洛希极限被潮汐撕碎成光环！
         const jup = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'jupiter'), name: '巨行星', radius: .55, pos: [0, 0, 0], vel: [0, 0, 0] });
@@ -7800,19 +7810,25 @@ function normalizeSandboxUniverse(value) {
               victim.tidalTarget = primary;
               // 潮汐摩擦剧烈升温 + 每帧连续撕裂剥离多股炽热螺旋丝带（而非炸碎！）
               victim.temp = Math.min(1e9, victim.temp + dt * stress * 1650);
-              victim.tidalEmission=(victim.tidalEmission||0)+dt*(20+stress*35);
-              const streamCount=Math.min(4,Math.floor(victim.tidalEmission));
+              victim.tidalEmission=(victim.tidalEmission||0)+dt*(26+stress*42);
+              const streamCount=Math.min(5,Math.floor(victim.tidalEmission));
               victim.tidalEmission-=streamCount;
               for(let sc=0;sc<streamCount;sc++)sbSpawnTidalStream(victim,primary);
-              const drainRate = primary.kind === 'gas' ? (0.28 + stress * 0.72) : (0.16 + stress * 0.42);
+              // 渐进潮汐撕裂：约 5~8 秒一点点剥离外层气体与质量，同时引导进入螺旋吸积轨道
+              const drainRate = primary.kind === 'gas' ? (0.26 + stress * 0.55) : (0.12 + stress * 0.22);
+              if (primary.kind === 'bh' && dist > primary.radius * 1.35) {
+                const radDir = victim.pos.clone().sub(primary.pos).normalize();
+                const radialSpeed = victim.vel.dot(radDir);
+                if (radialSpeed < 0) victim.vel.addScaledVector(radDir, -radialSpeed * Math.min(0.45, dt * 1.4));
+              }
               const dm = victim.mass * dt * drainRate;
               victim.mass -= dm;
               primary.vel.multiplyScalar(primary.mass).addScaledVector(victim.vel,dm).divideScalar(primary.mass+dm);
               primary.mass += dm;
               sbCheckCompactCollapse(primary);
               if(!primary.alive) break;
-              primary.diskFlare = Math.min(2.8, (primary.diskFlare || 0) + dt * 2.6);
-              const shrink = Math.max(0.20, Math.cbrt(Math.max(0.04, 1 - dt * drainRate * 0.92)));
+              primary.diskFlare = Math.min(2.8, (primary.diskFlare || 0) + dt * 2.4);
+              const shrink = Math.max(0.24, Math.cbrt(Math.max(0.04, 1 - dt * drainRate * 0.85)));
               victim.radius *= shrink;
 
               // 如果闯入气态巨行星的洛希极限且已被撕碎大半 -> 凝聚成壮丽行星光环！
@@ -7826,8 +7842,8 @@ function normalizeSandboxUniverse(value) {
                 sbRemoveBody(victim);
                 break;
               }
-              // 黑洞 / 中子星 / 白矮星持续意大利面化撕裂抽干（绝不炸碎，最后化作密集螺旋等离子丝带彻底吸入视界！）
-              if ((primary.kind === 'bh' || primary.kind === 'ns' || primary.kind === 'wd') && victim.radius < victim.baseRadius * 0.28) {
+              // 黑洞 / 中子星 / 白矮星持续意大利面化撕裂抽干（剥离至残核 < 32% 时最终吸入视界！）
+              if ((primary.kind === 'bh' || primary.kind === 'ns' || primary.kind === 'wd') && (victim.radius < victim.baseRadius * 0.32 || dist < primary.radius * 1.12)) {
                 for (let s = 0; s < 18; s++) sbSpawnTidalStream(victim, primary);
                 primary.diskFlare = 2.8;
                 sbToast(`🕳️ 潮汐瓦解事件 (TDE)！${victim.name} 已被 ${primary.name} 彻底拉成等离子丝带螺旋吞入事件视界！`);
@@ -7910,7 +7926,11 @@ function normalizeSandboxUniverse(value) {
         for (let j = i - 1; j >= 0; j--) {
           const b = collisionBodies[j]; if (!b || !b.alive) continue;
           if(['galaxy','nebula','darkmatter','whitehole'].includes(a.kind)||['galaxy','nebula','darkmatter','whitehole'].includes(b.kind))continue;
-          const contactRadius=(sbInteractionRadius(a)+sbInteractionRadius(b))*1.0;
+          const rA0 = sbCompactRank(a.kind), rB0 = sbCompactRank(b.kind);
+          const p0 = rA0 > rB0 ? a : b, v0 = p0 === a ? b : a;
+          // 黑洞/中子星开启洛希撕裂时，只在真正跌入事件视界（1.15 倍视界半径）或外层已被撕干时才吞没，避免还没撕裂就直接秒删！
+          const isTidalTarget = sb.rocheEnabled && (p0.kind === 'bh' || p0.kind === 'ns') && v0.kind !== 'bh' && v0.kind !== 'ns' && v0.radius > v0.baseRadius * 0.36;
+          const contactRadius = isTidalTarget ? (sbInteractionRadius(p0) * 1.15) : (sbInteractionRadius(a)+sbInteractionRadius(b))*1.0;
           const contact=sbSegmentContact(a.previousPos||a.pos,a.pos,b.previousPos||b.pos,b.pos,contactRadius);
           if (contact !== null) {
             if(contact>0) {a.pos.lerpVectors(a.previousPos,a.pos,contact);b.pos.lerpVectors(b.previousPos,b.pos,contact);}
@@ -8148,14 +8168,8 @@ function normalizeSandboxUniverse(value) {
 
     function sbPlanePoint(e) {
       sb.raycaster.setFromCamera(sbPointerNDC(e), sb.camera);
-      // 3D 星空模式：当关闭平面网格且视角偏平视时，使用穿过相机焦点的三维视线平面，允许上下左右任意立体投放！
-      const camDir = new THREE.Vector3();
-      sb.camera.getWorldDirection(camDir);
-      if (sb.showGrid || Math.abs(camDir.y) > 0.65) {
-        sb.plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), sb.controls ? sb.controls.target : new THREE.Vector3(0, 0, 0));
-      } else {
-        sb.plane.setFromNormalAndCoplanarPoint(camDir.clone().negate(), sb.controls ? sb.controls.target : new THREE.Vector3(0, 0, 0));
-      }
+      // 3D 摄像机 + 2D 黄金黄道轨道面（y = 0）：确保投放的星球、黑洞在同一轨道面上稳定公转、精准碰撞与潮汐撕裂！
+      sb.plane.set(new THREE.Vector3(0, 1, 0), 0);
       const out = new THREE.Vector3();
       return sb.raycaster.ray.intersectPlane(sb.plane, out) ? out : null;
     }
@@ -8660,7 +8674,10 @@ function normalizeSandboxUniverse(value) {
       wrap.insertBefore(sb.renderer.domElement, wrap.firstChild);
       sb.controls = new OrbitControls(sb.camera, sb.renderer.domElement);
       sb.controls.enableDamping = true; sb.controls.dampingFactor = 0.08;
-      sb.controls.screenSpacePanning = true;
+      sb.controls.screenSpacePanning = false;
+      sb.controls.zoomSpeed = 1.65;
+      sb.controls.panSpeed = 1.15;
+      sb.controls.maxPolarAngle = Math.PI * 0.85;
       sb.controls.minDistance = .001; sb.controls.maxDistance = 1e7;
 
       sbBuildEnvironment();
