@@ -514,3 +514,20 @@ body.clean-hud .sandbox-launch-btn { display: none !important; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.sb-model-grid .sb-spawn-item {
+  background: linear-gradient(135deg, rgba(14, 42, 74, 0.85), rgba(49, 24, 84, 0.78));
+  border-color: rgba(125, 211, 252, 0.32);
+}
+.sb-model-grid .sb-spawn-item[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.92), rgba(124, 58, 237, 0.92));
+  border-color: #fde047;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+}
+
+.sb-section-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2px;
+}

@@ -12,7 +12,7 @@
       </div>
       <div class="sb-top-controls">
         <select id="sb-preset-select" aria-label="选择宇宙沙盘预设场景">
-          <option value="solar">☀️ 太阳系全景（含宜居带）</option>
+          <option value="solar">☀️ 太阳系全景（八大行星+宜居带）</option>
           <option value="bh_tde">🕳️ 黑洞潮汐撕裂蓝超巨星（TDE）</option>
           <option value="roche_ring">🪐 洛希极限：卫星撕裂造环</option>
           <option value="kilonova">⚡ 双中子星旋进与千新星并合</option>
@@ -26,7 +26,7 @@
         <div class="sb-view-pills" role="group" aria-label="物理视图叠加">
           <button id="sb-tog-trails" class="sb-pill" aria-pressed="true">轨迹</button>
           <button id="sb-tog-hz" class="sb-pill" aria-pressed="true">宜居带</button>
-          <button id="sb-tog-grid" class="sb-pill" aria-pressed="true">引力网格</button>
+          <button id="sb-tog-grid" class="sb-pill" aria-pressed="false" title="显示或隐藏广义相对论时空弯曲网格">引力网格</button>
           <button id="sb-tog-vel" class="sb-pill" aria-pressed="false">速度矢</button>
           <button id="sb-tog-labels" class="sb-pill" aria-pressed="true">标签</button>
         </div>
@@ -61,7 +61,10 @@
             <button data-sb-launch="static" aria-pressed="false" title="零初速直接放置，观察自由落体与潮汐撕裂">◎ 静止放置</button>
           </div>
 
-          <div class="sb-section-label">选择天体（16 种 · 严守致密天体物理层级）</div>
+          <div class="sb-section-label">📦 完整星系模型（10 种 · 点击 3D 星空直接投放）</div>
+          <div id="sb-model-grid" class="sb-spawn-grid sb-model-grid"></div>
+
+          <div class="sb-section-label">🪐 单个天体模板（16 种 · 严守致密天体物理层级）</div>
           <div id="sb-spawn-grid" class="sb-spawn-grid"></div>
         </div>
 
@@ -191,6 +194,10 @@
           </div>
 
           <!-- 实时可调滑块 -->
+          <div class="sb-section-row">
+            <span class="sb-section-label">天体表面与气候调校</span>
+            <button id="sb-reset-body-btn" class="sb-mini-btn" title="将该天体的质量、温度、水分、大气与半径恢复为初始默认值">↺ 恢复默认</button>
+          </div>
           <label class="sb-slider-row"><span>表面温度 <output id="sb-ed-temp-val">15 °C</output></span><input id="sb-ed-temp" type="range" min="-250" max="4000" step="5" value="15"></label>
           <label class="sb-slider-row"><span>液态水 / 冰覆盖 <output id="sb-ed-water-val">71%</output></span><input id="sb-ed-water" type="range" min="0" max="100" step="1" value="71"></label>
           <label class="sb-slider-row"><span>大气与温室效应 <output id="sb-ed-atmo-val">1.0×</output></span><input id="sb-ed-atmo" type="range" min="0" max="5" step="0.1" value="1.0"></label>
@@ -214,8 +221,9 @@
     <footer class="sb-dock">
       <div class="sb-time-controls">
         <button id="sb-pause-btn" class="sb-btn" aria-pressed="false">Ⅱ 暂停</button>
-        <label class="sb-dock-slider"><span>时间</span><input id="sb-speed" type="range" min="0.1" max="10" step="0.1" value="1"><output id="sb-speed-val">1.0×</output></label>
-        <label class="sb-dock-slider" title="支持调为负值体验暗能量反引力排斥！"><span>引力 G</span><input id="sb-gravity" type="range" min="-1" max="4" step="0.1" value="1"><output id="sb-gravity-val">1.0×</output></label>
+        <label class="sb-dock-slider" title="双击滑块或点右侧重置可恢复 1.0×"><span>时间</span><input id="sb-speed" type="range" min="0.1" max="10" step="0.1" value="1"><output id="sb-speed-val">1.0×</output></label>
+        <label class="sb-dock-slider" title="双击滑块或点右侧重置可恢复 1.0×（负值为反引力排斥）"><span>引力 G</span><input id="sb-gravity" type="range" min="-1" max="4" step="0.1" value="1"><output id="sb-gravity-val">1.0×</output></label>
+        <button id="sb-reset-sim-params" class="sb-mini-btn" title="一键重置时间流速 (1.0×) 与引力常数 G (1.0×) 为默认值">↺ 默认</button>
       </div>
       <div class="sb-tools" role="group" aria-label="沙盘交互工具">
         <button data-sb-tool="select" aria-pressed="true" title="点击选中、双击锁定天体">👆 选择</button>
