@@ -187,6 +187,29 @@
         if(views)startCamTransition(c.clone().add(fittedCameraPosition(views[0])),c.clone().add(new THREE.Vector3(...views[1])));
       });
       const goL1=document.getElementById('btn-jump-l1');if(goL1)goL1.onclick=()=>switchScale('L1');
+      const homeSendSb=document.getElementById('btn-home-send-sandbox');
+      if(homeSendSb)homeSendSb.onclick=()=>{
+        const b=state.lockedBody||getActiveLabTarget();
+        if(!b){if(typeof window.openSandbox2==='function')window.openSandbox2();return;}
+        const info=ENCYCLOPEDIA[b.id]||{};
+        const isStar=b.id==='sun';
+        const isGas=['jupiter','saturn','uranus','neptune'].includes(b.id);
+        const obj={name:info.name||b.id,subtype:info.type||(isStar?'恒星':'行星'),kind:isStar?'star':'planet',visual:{preset:isStar?'star':b.id==='saturn'?'ring':isGas?'gas':'planet'},facts:{tempK:isStar?5778:b.id==='venus'?737:b.id==='mars'?210:288}};
+        if(typeof window.openSandbox2==='function')window.openSandbox2(obj);
+      };
+      const homeOpenBook=document.getElementById('btn-home-open-book');
+      if(homeOpenBook)homeOpenBook.onclick=async()=>{
+        const b=state.lockedBody||getActiveLabTarget();
+        await cosmicBook.show();
+        if(b){const found=cosmicBook.data.find(i=>i.id===b.id);if(found)bookSelect(found);}
+      };
+      renderer.domElement.addEventListener('dblclick',e=>{
+        if(state.aimMode||sb?.open||cosmicBook?.open)return;
+        const ndc=new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);
+        raycaster.setFromCamera(ndc,camera);
+        const hits=raycaster.intersectObjects(celestialBodies.filter(b=>b.scaleKey===state.currentScale&&!b.isDestroyed).map(b=>b.mesh));
+        if(hits.length){const body=hits[0].object.userData.bodyRef;if(body){lockToBody(body,true);showToast('🎯 双击锁定：'+(ENCYCLOPEDIA[body.id]?.name||body.id));}}
+      });
       renderer.domElement.addEventListener('pointermove',e=>{dynamics.pointer.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);});
       renderer.domElement.addEventListener('pointerleave',()=>{dynamics.pointer.set(9,9);document.getElementById('object-tooltip').hidden=true;});
       window.addEventListener('keydown',e=>{if(e.key==='Escape'){togglePanel('left',true);togglePanel('right',true);} });

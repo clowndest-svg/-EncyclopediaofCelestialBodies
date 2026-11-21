@@ -24,7 +24,16 @@ replace('class="flex items-center gap-2 text-[11px] text-slate-300/80 font-mono-
 replace('class="glass-panel rounded-2xl px-2.5 py-1.5 flex items-center gap-1.5 pointer-events-auto"','class="header-tools glass-panel rounded-2xl px-2.5 py-1.5 flex items-center gap-1.5 pointer-events-auto"')
 replace('      <button id="btn-audio"','      <div id="layout-switch" role="group" aria-label="页面布局"><button data-layout-mode="desktop" aria-pressed="true" title="电脑布局">电脑</button><button data-layout-mode="mobile" aria-pressed="false" title="手机布局">手机</button></div>\n      <button id="btn-audio"')
 replace('<nav class="hud-layer','<nav id="scale-dock" aria-label="宇宙尺度选择" class="hud-layer')
-replace('<div><span class="text-sky-300 font-mono-tech">H</span> 纯净录屏模式 · <span class="text-sky-300 font-mono-tech">S</span> 保存截图</div>', '<div><span class="text-sky-300 font-mono-tech">B</span> 打开星海百科 · <span class="text-sky-300 font-mono-tech">Ctrl+K</span> 百科搜索</div>\n          <div><span class="text-sky-300 font-mono-tech">H</span> 纯净录屏模式 · <span class="text-sky-300 font-mono-tech">S</span> 保存截图 · <span class="text-sky-300 font-mono-tech">Esc</span> 关闭面板</div>')
+replace('<div><span class="text-sky-300 font-mono-tech">H</span> 纯净录屏模式 · <span class="text-sky-300 font-mono-tech">S</span> 保存截图</div>', '<div><span class="text-sky-300 font-mono-tech">G</span> 打开宇宙沙盘 2 · <span class="text-sky-300 font-mono-tech">B</span> 星海百科 · <span class="text-sky-300 font-mono-tech">Ctrl+K</span> 搜索</div>\n          <div><span class="text-sky-300 font-mono-tech">H</span> 纯净录屏模式 · <span class="text-sky-300 font-mono-tech">S</span> 保存截图 · <span class="text-sky-300 font-mono-tech">Esc</span> 关闭面板</div>')
+replace('''      <!-- 详细参数网格 -->
+      <div id="enc-grid" class="grid grid-cols-2 gap-2 text-xs">''','''      <!-- 首页快捷联动按钮 -->
+      <div class="grid grid-cols-2 gap-1.5">
+        <button id="btn-home-send-sandbox" type="button" class="glass-btn rounded-xl py-1.5 px-2 text-[11px] font-semibold text-amber-200 border-amber-400/40" title="将当前天体直接送入宇宙沙盘 2 模拟演化">🎮 投入沙盘 2</button>
+        <button id="btn-home-open-book" type="button" class="glass-btn rounded-xl py-1.5 px-2 text-[11px] font-semibold text-sky-200 border-sky-400/35" title="在星海百科中查看此天体深度词条">✧ 百科深读</button>
+      </div>
+
+      <!-- 详细参数网格 -->
+      <div id="enc-grid" class="grid grid-cols-2 gap-2 text-xs">''')
 replace('    <!-- 顶部 3 标签 -->','    <button id="btn-close-right" class="right-close" aria-label="关闭控制实验室">关闭实验室 ✕</button>\n    <!-- 顶部 3 标签 -->')
 replace('    <div id="right-tab-lab" class="flex-1 overflow-y-auto custom-scroll p-3.5 space-y-3">','    <div id="right-tab-lab" class="flex-1 overflow-y-auto custom-scroll p-3.5 space-y-3">\n      <div id="lab-scale-notice" class="hidden lab-scale-notice"><span>当前为深空大尺度场景，行星撞击实验仅在 L0 地月系 / L1 太阳系可用。</span><button id="btn-jump-l1" type="button">切换到 L1 太阳系</button></div>')
 replace('''        <div class="grid grid-cols-3 gap-2">
@@ -556,6 +565,14 @@ replace('        animate();','''        clearTimeout(startupWatch);
 import runpy
 s=runpy.run_path(str(WORK/'continuation.py'))['apply'](s,ROOT,WORK)
 s=runpy.run_path(str(WORK/'encyclopedia-build.py'))['apply'](s,ROOT,WORK)
+# Universe Sandbox 2 interactive game modal (isolated WebGL2 engine + SQLite saves)
+if (WORK/'sandbox2.js').exists():
+    replace('  </style>', '\n' + (WORK/'sandbox2.css').read_text(encoding='utf-8') + '\n  </style>')
+    replace('  <!-- ==================== 核心 Three.js', (WORK/'sandbox2.html.txt').read_text(encoding='utf-8') + '\n  <!-- ==================== 核心 Three.js')
+    replace('    // 尺度分组容器', (WORK/'sandbox2.js').read_text(encoding='utf-8') + '\n    // 尺度分组容器')
+    replace('        cosmicBook.bind();', '        cosmicBook.bind();\n        bindSandbox2Buttons();')
+    replace('      if(cosmicBook.open){cosmicBook.frame(Math.min(actualFrameDt,.06));return;}', '      if(sb.open){return;}\n      if(cosmicBook.open){cosmicBook.frame(Math.min(actualFrameDt,.06));return;}')
+    replace('        if(window.__atlas)window.__atlas.book=', '        if(window.__atlas)window.__atlas.sandbox=()=>({open:sb.open,preset:sb.preset,tool:sb.tool,bodies:sb.bodies.length,selected:sb.selected?.name||null,selectedLife:sb.selected?sbLifeLikelihood(sb.selected):0,selectedTemp:sb.selected?Math.round(sb.selected.temp):null,paused:sb.paused,gravity:sb.gravity,hasImport:!!sb.customTemplate});\n        if(window.__atlas)window.__atlas.book=')
 # High-detail 3D Earth geology, flowing ocean/rivers, polar auroras & fixed landmark targeting
 if (WORK/'earth-hd.js').exists():
     replace('    // 尺度分组容器', (WORK/'earth-hd.js').read_text(encoding='utf-8')+'\n    // 尺度分组容器')

@@ -1,0 +1,160 @@
+<button id="btn-sandbox-game" class="hud-layer sandbox-launch-btn" aria-haspopup="dialog" aria-controls="sandbox-modal" title="打开宇宙沙盘 2 互动模拟游戏 (快捷键 G)"><span aria-hidden="true">🎮</span><span>宇宙沙盘 2</span></button>
+<dialog id="sandbox-modal" aria-labelledby="sb-title">
+  <div class="sb-shell">
+    <!-- 顶部栏：预设场景、视图叠加与存档 -->
+    <header class="sb-topbar">
+      <div class="sb-brand">
+        <span class="sb-logo">🌌</span>
+        <div>
+          <h2 id="sb-title">宇宙沙盘 2 · N体引力与气候沙盘</h2>
+          <p id="sb-stats-line">天体 0 颗 · 模拟历元 0.00 年 · 60 FPS</p>
+        </div>
+      </div>
+      <div class="sb-top-controls">
+        <select id="sb-preset-select" aria-label="选择宇宙沙盘预设场景">
+          <option value="solar">☀️ 太阳系全景（含宜居带）</option>
+          <option value="earth_moon">🌍 地月系统与忒伊亚撞击</option>
+          <option value="three_body">⭐ 三体双星混沌系统</option>
+          <option value="bh_eat">🕳️ 黑洞吞噬太阳系</option>
+          <option value="jupiter_slingshot">🪐 巨行星引力弹弓与卫星群</option>
+          <option value="planet_crash">💥 双行星对撞造月</option>
+          <option value="galaxy_merge">🌌 双星团引力并合</option>
+          <option value="blank">✨ 空白深空画布（自由创造）</option>
+        </select>
+        <button id="sb-reset-scene" class="sb-btn" title="重置当前预设场景">↺ 重置</button>
+        <div class="sb-view-pills" role="group" aria-label="物理视图叠加">
+          <button id="sb-tog-trails" class="sb-pill" aria-pressed="true">轨迹</button>
+          <button id="sb-tog-hz" class="sb-pill" aria-pressed="true">宜居带</button>
+          <button id="sb-tog-grid" class="sb-pill" aria-pressed="true">引力网格</button>
+          <button id="sb-tog-vel" class="sb-pill" aria-pressed="false">速度矢</button>
+          <button id="sb-tog-labels" class="sb-pill" aria-pressed="true">标签</button>
+        </div>
+        <button id="sb-save-toggle" class="sb-btn sb-btn-accent" aria-pressed="false">💾 存档</button>
+        <button id="sb-close" class="sb-btn sb-btn-close" aria-label="退出宇宙沙盘">✕ 退出</button>
+      </div>
+    </header>
+
+    <!-- 主体区：左发射库 + 中 3D 画布 + 右属性检视器 -->
+    <div class="sb-main">
+      <!-- 左侧：天体生成库 / 存档抽屉 -->
+      <aside class="sb-panel sb-left" id="sb-left-panel">
+        <div class="sb-panel-tabs">
+          <button data-sb-left="spawn" aria-pressed="true">🚀 天体库</button>
+          <button data-sb-left="saves" aria-pressed="false">💾 我的宇宙</button>
+        </div>
+        <div id="sb-tab-spawn" class="sb-panel-body">
+          <div id="sb-custom-import" class="sb-import-card" hidden>
+            <div class="sb-import-tag">✧ 来自星海百科</div>
+            <div id="sb-import-name" class="sb-import-name"></div>
+            <div id="sb-import-meta" class="sb-import-meta"></div>
+          </div>
+          <div class="sb-section-label">发射轨道模式</div>
+          <div class="sb-launch-modes" role="group" aria-label="发射轨道模式">
+            <button data-sb-lmode="orbit" aria-pressed="true" title="点击空白处自动计算圆轨道绕主星公转">◎ 自动圆轨</button>
+            <button data-sb-lmode="sling" aria-pressed="false" title="按住左键拖动弹射，实时预览引力抛物线">🏹 拖拽弹射</button>
+            <button data-sb-lmode="still" aria-pressed="false" title="零初速度静止放置，观察自由落体吸积">◉ 静止放置</button>
+          </div>
+          <div class="sb-section-label">选择要生成 / 发射的天体（14 种）</div>
+          <div id="sb-spawn-grid" class="sb-spawn-grid"></div>
+        </div>
+        <div id="sb-tab-saves" class="sb-panel-body" hidden>
+          <div class="sb-section-label">保存当前宇宙到服务器 SQLite</div>
+          <div class="sb-save-form">
+            <input id="sb-save-name" type="text" maxlength="40" placeholder="给你的宇宙起个名字…" />
+            <button id="sb-save-btn" class="sb-btn sb-btn-accent">保存</button>
+          </div>
+          <div class="sb-section-label" style="margin-top:10px">已保存的宇宙存档</div>
+          <div id="sb-saves-list" class="sb-saves-list"><p class="sb-muted">暂无存档，点击上方保存当前宇宙。</p></div>
+        </div>
+      </aside>
+
+      <!-- 中央 3D 沙盘画布 -->
+      <div class="sb-stage" id="sb-canvas-wrap">
+        <div id="sb-labels" class="sb-labels" aria-hidden="true"></div>
+        <div id="sb-hint" class="sb-hint">当前工具：<strong>选择 / 观察</strong> · 点击任意天体编辑质量/气候，或切换「发射」向宇宙投放新天体</div>
+        <div id="sb-toast" class="sb-toast" hidden></div>
+      </div>
+
+      <!-- 右侧：选中天体实时物理与气候仪 -->
+      <aside class="sb-panel sb-right" id="sb-right-panel">
+        <div class="sb-inspector-head">
+          <div>
+            <h3 id="sb-sel-name">太阳</h3>
+            <span id="sb-sel-badge" class="sb-sel-badge">G 型主序星</span>
+          </div>
+          <div class="sb-sel-actions">
+            <button id="sb-follow-btn" class="sb-mini-btn" aria-pressed="false" title="镜头锁定跟随此天体">🎯 锁定</button>
+            <button id="sb-delete-btn" class="sb-mini-btn sb-danger" title="移除此天体">🗑</button>
+          </div>
+        </div>
+
+        <div class="sb-panel-body">
+          <!-- 生命宜居概率仪表 -->
+          <div class="sb-life-card">
+            <div class="sb-row"><span>🌱 生命宜居概率</span><strong id="sb-life-pct">0%</strong></div>
+            <div class="sb-life-track"><div id="sb-life-bar" class="sb-life-bar" style="width:0%"></div></div>
+            <div id="sb-surface-state" class="sb-surface-state">炽热恒星等离子体</div>
+          </div>
+
+          <!-- 实时物理遥测 -->
+          <div class="sb-metrics">
+            <div><span>质量</span><strong id="sb-m-mass">1.00 M☉</strong></div>
+            <div><span>表面温度</span><strong id="sb-m-temp">5505 °C</strong></div>
+            <div><span>即时速率</span><strong id="sb-m-vel">0.0 km/s</strong></div>
+            <div><span>逃逸速度</span><strong id="sb-m-esc">617 km/s</strong></div>
+          </div>
+
+          <!-- 实时质量与物理编辑 -->
+          <div class="sb-section-label">实时修改质量（>8 M☉ 可引爆超新星）</div>
+          <div class="sb-mass-btns">
+            <button data-sb-mass="0.5">÷2</button>
+            <button data-sb-mass="2">×2</button>
+            <button data-sb-mass="10">×10</button>
+            <button id="sb-supernova-btn" class="sb-nova-btn">💥 引爆超新星</button>
+          </div>
+
+          <div class="sb-slider-group">
+            <div class="sb-row"><label for="sb-ed-temp">表面温度</label><output id="sb-ed-temp-val">15 °C</output></div>
+            <input id="sb-ed-temp" type="range" min="-250" max="4000" step="5" value="15" class="cosmic-slider" />
+
+            <div class="sb-row"><label for="sb-ed-water">液态水 / 冰覆盖</label><output id="sb-ed-water-val">70%</output></div>
+            <input id="sb-ed-water" type="range" min="0" max="100" step="1" value="70" class="cosmic-slider" />
+
+            <div class="sb-row"><label for="sb-ed-atmo">大气与温室效应</label><output id="sb-ed-atmo-val">1.0×</output></div>
+            <input id="sb-ed-atmo" type="range" min="0" max="5" step="0.1" value="1.0" class="cosmic-slider" />
+
+            <div class="sb-row"><label for="sb-ed-radius">天体半径倍率</label><output id="sb-ed-radius-val">1.0×</output></div>
+            <input id="sb-ed-radius" type="range" min="0.4" max="3.0" step="0.05" value="1.0" class="cosmic-slider" />
+          </div>
+
+          <div class="sb-section-label">🧪 一键行星改造 (Terraform)</div>
+          <div class="sb-tf-grid">
+            <button data-sb-tf="earth">🌍 类地宜居</button>
+            <button data-sb-tf="snowball">❄️ 冰封雪球</button>
+            <button data-sb-tf="lava">🌋 熔岩炼狱</button>
+            <button data-sb-tf="ocean">🌊 海洋世界</button>
+            <button data-sb-tf="venus">☁️ 失控金星</button>
+            <button data-sb-tf="ring">🪐 生成行星环</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 底部经典 Universe Sandbox 2 工具与时间/引力控制坞 -->
+    <footer class="sb-dock">
+      <div class="sb-time-controls">
+        <button id="sb-pause-btn" class="sb-btn" aria-pressed="false">Ⅱ 暂停</button>
+        <label class="sb-inline-slider"><span>时间</span><input id="sb-speed" type="range" min="0.1" max="12" step="0.1" value="1.0" /><output id="sb-speed-val">1.0×</output></label>
+        <label class="sb-inline-slider"><span>引力 G</span><input id="sb-gravity" type="range" min="0" max="4" step="0.1" value="1.0" /><output id="sb-gravity-val">1.0×</output></label>
+      </div>
+      <div class="sb-tools" role="group" aria-label="宇宙沙盘互动工具">
+        <button data-sb-tool="select" aria-pressed="true" title="选择并检视/修改天体">👆 选择</button>
+        <button data-sb-tool="launch" aria-pressed="false" title="在宇宙中点击或拖拽发射新天体">🚀 发射</button>
+        <button data-sb-tool="heat" aria-pressed="false" title="按住向目标发射高能加热激光">🔥 激光</button>
+        <button data-sb-tool="freeze" aria-pressed="false" title="按住向目标发射绝对零度冰冻射线">❄️ 冰冻</button>
+        <button data-sb-tool="spin" aria-pressed="false" title="按住强制加速自转直至离心撕裂">🌀 甩裂</button>
+        <button data-sb-tool="pulse" aria-pressed="false" title="点击任意天体瞬间引爆冲击波或超新星">💥 引爆</button>
+      </div>
+    </footer>
+  </div>
+</dialog>

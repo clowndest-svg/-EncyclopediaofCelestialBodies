@@ -13,3 +13,21 @@ test('literal wildcards and SQL strings do not affect tables',async()=>{for(cons
 test('unknown objects and nonpublic files are not exposed',async()=>{for(const url of ['/api/objects/not-a-body','/.env','/server/data/catalog.sqlite','/.work/runtime-check.mjs'])assert.equal((await app.inject({url})).statusCode,404);assert.equal((await app.inject({method:'POST',url:'/api/objects',payload:{}})).statusCode,404);});
 test('Redis is live and repeated requests are cached in our namespace',async()=>{assert.equal(app.catalogStorage.status().redis,'connected');await app.inject({url:'/api/objects?realm=real&q=木星'});const initial=app.catalogStorage.status().cache.hits;await app.inject({url:'/api/objects?realm=real&q=木星'});assert(app.catalogStorage.status().cache.hits>initial);});
 test('detail comparison is read only and preserves provenance',async()=>{const j=(await app.inject({url:'/api/compare?ids=earth,sun'})).json();assert.equal(j.items.length,2);assert(j.items.every(i=>i.sources.length&&i.sections.length));});
+
+test('sandbox saves API supports create, list, detail, and delete',async()=>{
+  const created=await app.inject({method:'POST',url:'/api/sandbox/saves',payload:{name:'三体测试宇宙',preset:'three_body',data:{preset:'three_body',gravity:1,speed:1,bodies:[{name:'恒星A',kind:'star',mass:120,radius:5,pos:[0,0,0],vel:[0,0,0]},{name:'行星B',kind:'planet',mass:0.05,radius:1.6,pos:[24,0,0],vel:[0,0,2.2]}]}}});
+  assert.equal(created.statusCode,201);
+  const saveId=created.json().id;
+  assert(saveId);
+  const list=await app.inject({url:'/api/sandbox/saves'});
+  assert.equal(list.statusCode,200);
+  assert(list.json().saves.some(s=>s.id===saveId&&s.body_count===2));
+  const detail=await app.inject({url:`/api/sandbox/saves/${saveId}`});
+  assert.equal(detail.statusCode,200);
+  assert.equal(detail.json().data.bodies.length,2);
+  const del=await app.inject({method:'DELETE',url:`/api/sandbox/saves/${saveId}`});
+  assert.equal(del.statusCode,200);
+  assert.equal(del.json().ok,true);
+  const gone=await app.inject({url:`/api/sandbox/saves/${saveId}`});
+  assert.equal(gone.statusCode,404);
+});

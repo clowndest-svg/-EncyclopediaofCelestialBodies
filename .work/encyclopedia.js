@@ -224,6 +224,8 @@
       const qaClose=book$('book-qa-modal-close'),qaOk=book$('book-qa-modal-ok'),qaNext=book$('book-qa-modal-next');
       if(qaClose)qaClose.onclick=bookCloseQAModal;if(qaOk)qaOk.onclick=bookCloseQAModal;
       if(qaNext)qaNext.onclick=()=>bookOpenQAModal(cosmicBook.qaIndex+1);
+      const sendSbBtn=book$('book-send-sandbox');
+      if(sendSbBtn)sendSbBtn.onclick=()=>{const it=cosmicBook.selected;if(!it)return;cosmicBook.hide();if(typeof window.openSandbox2==='function')window.openSandbox2(it);};
       const cmpToggle=book$('book-compare-toggle'),cmpOpen=book$('book-compare-open'),cmpClear=book$('book-compare-clear'),cmpModal=book$('book-compare-modal'),cmpClose=book$('book-compare-close');
       if(cmpToggle)cmpToggle.onclick=()=>{const it=cosmicBook.selected;if(!it)return;const idx=cosmicBook.compareIds.indexOf(it.id);if(idx>=0)cosmicBook.compareIds.splice(idx,1);else{if(cosmicBook.compareIds.length>=3)cosmicBook.compareIds.shift();cosmicBook.compareIds.push(it.id);}bookSyncCompareUI();};
       if(cmpOpen)cmpOpen.onclick=bookOpenCompareModal;
