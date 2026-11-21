@@ -16,10 +16,18 @@
           <option value="bh_tde">🕳️ 黑洞潮汐撕裂蓝超巨星（TDE）</option>
           <option value="roche_ring">🪐 洛希极限：卫星撕裂造环</option>
           <option value="kilonova">⚡ 双中子星旋进与千新星并合</option>
-          <option value="three_body">⭐ 三体双星混沌系统</option>
+          <option value="three_body">⭐ 层级三恒星（双星+远伴星）</option>
+          <option value="three_chaos">✨ 三体混沌（不保证稳定）</option>
+          <option value="galaxy_cluster">🌌 星系群与暗物质晕</option>
+          <option value="cosmic_web">🕸️ 超星系团与宇宙纤维</option>
+          <option value="whitehole">✧ 白洞喷发（科学设想）</option>
+          <option value="big_bang">💥 大爆炸演化（示意）</option>
+          <option value="big_crunch">🌑 宇宙大坍缩（假设）</option>
+          <option value="big_rip">⚡ 宇宙大撕裂（假设）</option>
+          <option value="heat_death">❄️ 热寂远景（假设）</option>
           <option value="bh_eat">🕳️ 流浪黑洞吞噬太阳系</option>
           <option value="earth_moon">🌍 地月系统与忒伊亚撞击</option>
-          <option value="galaxy_merge">🌌 双星团引力并合</option>
+          <option value="galaxy_merge">🌌 双星系引力并合（参数化）</option>
           <option value="blank">✨ 空白深空画布（自由创世）</option>
         </select>
         <button id="sb-reset-scene" class="sb-btn" title="重置当前预设场景">↺ 重置</button>
@@ -61,10 +69,10 @@
             <button data-sb-launch="static" aria-pressed="false" title="零初速直接放置，观察自由落体与潮汐撕裂">◎ 静止放置</button>
           </div>
 
-          <div class="sb-section-label">📦 完整星系模型（10 种 · 点击 3D 星空直接投放）</div>
+          <div class="sb-section-label">📦 完整系统模型（点击星空投放）</div>
           <div id="sb-model-grid" class="sb-spawn-grid sb-model-grid"></div>
 
-          <div class="sb-section-label">🪐 单个天体模板（16 种 · 严守致密天体物理层级）</div>
+          <div class="sb-section-label">🪐 天体模板（现实 / 科学设想 / 原创想象）</div>
           <div id="sb-spawn-grid" class="sb-spawn-grid"></div>
         </div>
 
@@ -72,10 +80,13 @@
         <div id="sb-tab-genesis" class="sb-panel-body" hidden>
           <div class="sb-genesis-hero">
             <div class="sb-section-label" style="color:#fcd34d">💥 宇宙大爆炸奇点创世</div>
-            <p class="sb-muted" style="margin:0 0 8px">从奇点大爆炸开始，暴胀冷却、凝聚星云并诞生全新恒星与行星系统。</p>
-            <button id="sb-bigbang-btn" class="sb-btn sb-btn-bigbang" style="width:100%">💥 引爆奇点 · 大爆炸创世</button>
+            <p class="sb-muted" style="margin:0 0 8px">压缩时间演示热宇宙膨胀、冷却与大尺度结构形成。具体恒星和行星可用下方锻造炉创建。</p>
+            <button id="sb-bigbang-btn" class="sb-btn sb-btn-bigbang" style="width:100%">💥 播放大爆炸演化</button>
           </div>
 
+          <div class="sb-section-label">宇宙演化与末日实验</div>
+          <div class="sb-tf-grid"><button data-sb-cosmos="big_bang" class="sb-mini-btn">💥 大爆炸演化</button><button data-sb-cosmos="galaxy_merge" class="sb-mini-btn">🌌 星系大碰撞</button><button data-sb-cosmos="big_crunch" class="sb-mini-btn">🌑 大坍缩</button><button data-sb-cosmos="big_rip" class="sb-mini-btn">⚡ 大撕裂</button><button data-sb-cosmos="heat_death" class="sb-mini-btn">❄️ 热寂</button><button data-sb-cosmos="cosmic_web" class="sb-mini-btn">🕸️ 宇宙纤维</button></div>
+          <p class="sb-muted">末日模型是假设性演示，并非已确定的宇宙未来。大爆炸是空间膨胀，不是向已有空间发射碎片。</p>
           <div class="sb-section-label">🌀 自定义星系锻造炉</div>
           <label class="sb-field">
             <span>中心引力源</span>
@@ -83,8 +94,8 @@
               <option value="sun">☀️ 类日黄矮星（稳定宜居）</option>
               <option value="bluegiant">💠 O 型蓝超巨星（高光压）</option>
               <option value="binary">⭐ 双星互绕系统</option>
-              <option value="trinary">✨ 三体混沌恒星系</option>
-              <option value="smbh">🕳️ 超大质量黑洞（类星体核）</option>
+          <option value="trinary">✨ 层级三恒星（稳定初始轨道）</option>
+              <option value="smbh">🕳️ 黑洞示意核（参数化）</option>
             </select>
           </label>
           <label class="sb-slider-row"><span>行星数量 <output id="sb-gen-planets-val">7 颗</output></span><input id="sb-gen-planets" type="range" min="1" max="12" step="1" value="7"></label>
@@ -105,6 +116,7 @@
               <option value="bounce">⚪ 弹性碰撞弹射</option>
             </select>
           </label>
+          <p class="sb-muted">负 G 是反引力参数实验，不等同于真实暗能量。改变引力、投放天体或提高混沌度都可能破坏已有轨道。</p>
           <label class="sb-check-row">
             <input id="sb-law-roche" type="checkbox" checked>
             <span>启用真实洛希极限 & 黑洞意大利面化撕裂</span>
@@ -129,6 +141,20 @@
         <div id="sb-tool-hint" class="sb-tool-hint">当前工具：选择 / 观察 · 双击天体快速锁定，或切换「发射 / 牵引」自由操控宇宙</div>
         <div id="sb-toast" class="sb-toast" hidden></div>
         <!-- 成就徽章弹窗 -->
+        <div class="sb-navigation" role="group" aria-label="星空导航">
+          <button id="sb-nav-mode" class="sb-mini-btn" aria-pressed="false">✈ 自由飞行</button>
+          <button id="sb-overview" class="sb-mini-btn">⌂ 全景</button>
+          <button id="sb-focus-selected" class="sb-mini-btn">🎯 到达选中</button>
+          <button id="sb-mobile-library" class="sb-mini-btn" aria-pressed="false">天体库</button>
+          <button id="sb-mobile-inspector" class="sb-mini-btn" aria-pressed="false">参数</button>
+          <select id="sb-body-locator" aria-label="定位远方天体"><option value="">定位天体…</option></select>
+          <span id="sb-offscreen-status"></span>
+        </div>
+        <div id="sb-event-status" class="sb-event-status" hidden role="status"></div>
+        <div id="sb-flight-pad" class="sb-flight-pad" hidden aria-label="飞行方向">
+          <button data-sb-fly="q" aria-label="上升">↑ 升</button><button data-sb-fly="w" aria-label="前进">前进</button><button data-sb-fly="e" aria-label="下降">↓ 降</button>
+          <button data-sb-fly="a" aria-label="左移">←</button><button data-sb-fly="s" aria-label="后退">后退</button><button data-sb-fly="d" aria-label="右移">→</button>
+        </div>
         <div id="sb-ach-pop" class="sb-ach-pop" hidden>
           <div class="sb-ach-head">
             <strong>🏆 宇宙物理里程碑</strong>
@@ -158,7 +184,7 @@
           <!-- 生命宜居概率仪表 -->
           <div class="sb-life-box">
             <div class="sb-life-top">
-              <span>🌱 生命宜居概率</span>
+              <span>🌱 宜居评分（启发式）</span>
               <strong id="sb-life-pct">92%</strong>
             </div>
             <div class="sb-life-track"><div id="sb-life-bar" style="width:92%"></div></div>
@@ -166,22 +192,26 @@
           </div>
 
           <!-- 实时物理指标 6 格 -->
+          <div class="sb-section-label">显示与科学比例</div>
+          <label class="sb-field"><span>天体大小</span><select id="sb-size-mode" class="sb-select-sm"><option value="illustrative">可玩放大（非真实大小比例）</option><option value="proportional">真实半径比例（小天体靠标签定位）</option></select></label>
+          <p id="sb-science-note" class="sb-muted">轨道距离和演化时间采用压缩模型；不等同于高精度天文预报。</p>
           <div class="sb-metrics-grid">
             <div><span>质量</span><strong id="sb-m-mass">1.00 M⊕</strong></div>
             <div><span>表面温度</span><strong id="sb-m-temp">15 °C</strong></div>
             <div><span>平均密度</span><strong id="sb-m-dens">5.51 g/cm³</strong></div>
             <div><span>逃逸速度</span><strong id="sb-m-esc">11.2 km/s</strong></div>
-            <div><span>轨道速率</span><strong id="sb-m-vel">29.8 km/s</strong></div>
+            <div><span>模型速率</span><strong id="sb-m-vel">0 单位/s</strong></div>
+            <div><span>物理半径</span><strong id="sb-m-radius">6,371 km</strong></div>
             <div><span>光谱/层级</span><strong id="sb-m-rank">岩质行星</strong></div>
           </div>
 
           <!-- 实时温度 & 速度遥测曲线 -->
           <div class="sb-spark-box">
-            <div class="sb-spark-head">
-              <span>📈 实时温度 / 速率遥测</span>
-              <span class="sb-spark-leg"><i style="color:#f97316">━ 温度</i> <i style="color:#38bdf8">━ 速率</i></span>
-            </div>
-            <canvas id="sb-sparkline" width="232" height="48"></canvas>
+            <div class="sb-spark-head"><span>实时遥测（各自刻度）</span></div>
+            <label class="sb-field"><span>表面温度 / °C</span><canvas id="sb-sparkline" width="232" height="48" tabindex="0" aria-label="温度历史曲线"></canvas></label>
+            <label class="sb-field"><span>模型速率 / 单位每秒</span><canvas id="sb-speed-sparkline" width="232" height="48" tabindex="0" aria-label="速率历史曲线"></canvas></label>
+            <output id="sb-telemetry-readout" class="sb-muted">选中天体后记录遥测。</output>
+            <details id="sb-telemetry-details"><summary>遥测数据</summary><table class="sb-telemetry-table"><thead><tr><th>样本</th><th>温度 °C</th><th>速率 单位/s</th></tr></thead><tbody id="sb-telemetry-data"></tbody></table></details>
           </div>
 
           <!-- 质量倍增 / 超新星引爆 / 黑洞喷流 -->

@@ -249,6 +249,12 @@
 
     function monsterStrike(body, type, dirInGroup, energyScale = 1, craterFrac = 0.22, colorHex = 0xff7b29, labelPhase = '毁灭打击') {
       if (!body || body.isDestroyed) return;
+      const effectLimit=document.body.dataset.layout==='mobile'?12:24;
+      if(lab.effects.length>=effectLimit) {
+        const oldest=lab.effects.shift();
+        for(const object of [oldest.root,oldest.shock?.mesh,oldest.shock2?.mesh,oldest.debris,oldest.flyby]) if(object) disposeTree(object);
+        if(oldest.initialScale) oldest.body.mesh.scale.copy(oldest.initialScale);
+      }
       const planet = PLANET_PHYSICS[body.id] || PLANET_PHYSICS.earth;
       const effPower = monsterLab.autoBust ? 6 : monsterLab.power;
       const powerMult = Math.pow(10, (effPower - 1) * 0.95) * (0.65 + monsterLab.scale * 0.45);

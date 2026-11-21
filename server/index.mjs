@@ -2,8 +2,8 @@ import Fastify from 'fastify';import fs from 'node:fs/promises';import path from
 export const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 export async function createApp(options={}){
  const dataDir=options.dataDir||path.join(ROOT,'server/data'),catalog=options.catalog||await loadCatalog(dataDir);if(!catalog.items.length)throw new Error('目录为空，请先运行 npm run catalog:core 和 npm run catalog:pack');
- const storage=await createStorage(catalog,dataDir,options.storage||{}),sandboxStore=createSandboxStore(dataDir),app=Fastify({logger:false,bodyLimit:131072});
- app.addHook('onSend',async(req,reply,payload)=>{reply.header('X-Content-Type-Options','nosniff');reply.header('Referrer-Policy','same-origin');return payload;});
+ const storage=await createStorage(catalog,dataDir,options.storage||{}),sandboxStore=createSandboxStore(options.sandboxDataDir||dataDir),app=Fastify({logger:false,bodyLimit:524288});
+ app.addHook('onSend',async(req,reply,payload)=>{reply.header('Vary','Accept-Encoding');reply.header('X-Content-Type-Options','nosniff');reply.header('Referrer-Policy','same-origin');return payload;});
  app.get('/api/health',async()=>({ok:true,...storage.status()}));
  app.get('/api/catalog/stats',async()=>({...catalog.stats,storage:storage.mode}));
  app.get('/api/catalog/sources',async()=>catalog.sources);

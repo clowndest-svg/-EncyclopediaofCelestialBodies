@@ -1,6 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { normalizeSandboxUniverse } from '../.work/sandbox-schema.mjs';
 
 export function createSandboxStore(dataDir) {
   const dbPath = path.join(dataDir, 'sandbox-saves.sqlite');
@@ -36,11 +37,9 @@ export function createSandboxStore(dataDir) {
     save({ name, preset = 'custom', data }) {
       const cleanName = String(name || '我的宇宙').trim().slice(0, 48) || '我的宇宙';
       const cleanPreset = String(preset || 'custom').trim().slice(0, 32);
-      if (!data || !Array.isArray(data.bodies) || data.bodies.length > 260) {
-        throw Object.assign(new Error('无效的沙盘数据'), { statusCode: 400 });
-      }
+      data = normalizeSandboxUniverse(data);
       const payload = JSON.stringify(data);
-      if (payload.length > 100000) {
+      if (Buffer.byteLength(payload, 'utf8') > 262144) {
         throw Object.assign(new Error('存档体积过大'), { statusCode: 400 });
       }
       const id = 'sb_' + crypto.randomBytes(6).toString('hex');

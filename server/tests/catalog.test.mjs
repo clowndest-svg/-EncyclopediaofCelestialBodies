@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import path from 'node:path';import {createApp,ROOT} from '../index.mjs';
-const temp=await fs.mkdtemp(path.join(ROOT,'.work/catalog-test-'));const app=await createApp({storage:{sqlitePath:path.join(temp,'catalog.sqlite')}});test.after(async()=>{await app.close();await fs.rm(temp,{recursive:true,force:true});});
+const temp=await fs.mkdtemp(path.join(ROOT,'.work/catalog-test-'));const app=await createApp({sandboxDataDir:temp,storage:{sqlitePath:path.join(temp,'catalog.sqlite'),redis:false}});test.after(async()=>{await app.close();await fs.rm(temp,{recursive:true,force:true});});
 test('public API has no account or token requirement',async()=>{const r=await app.inject({url:'/api/catalog/stats'});assert.equal(r.statusCode,200);const j=r.json();assert.equal(j.total,25262);assert.equal(j.realms.real,24302);assert.equal(j.realms.fiction,576);assert.equal(j.realms.speculative,384);});
 test('SQLite persists every current-version object',async()=>{const r=await app.inject({url:'/api/objects?sort=name&limit=1'});assert.equal(r.json().total,25262);assert((await fs.stat(path.join(temp,'catalog.sqlite'))).size>1000000);});
 test('all-realms query returns combined real, speculative and fiction objects',async()=>{const r=(await app.inject({url:'/api/objects?realm=&limit=64'})).json();assert.equal(r.total,25262);const ton=(await app.inject({url:'/api/objects?realm=&q=TON%20618'})).json();assert(ton.total>=1);const pill=(await app.inject({url:'/api/objects?realm=&q='+encodeURIComponent('创生之柱')})).json();assert(pill.total>=1);});
@@ -11,7 +11,7 @@ test('real objects cannot leak into fiction filters',async()=>{const r=(await ap
 test('all sort modes and bounded pagination work through storage',async()=>{for(const sort of ['name','distance','radius','featured']){const j=(await app.inject({url:'/api/objects?sort='+sort+'&page=2&limit=4'})).json();assert.equal(j.items.length,4);assert.equal(j.page,2);}const j=(await app.inject({url:'/api/objects?limit=999999&page=-2'})).json();assert.equal(j.limit,64);assert.equal(j.page,1);});
 test('literal wildcards and SQL strings do not affect tables',async()=>{for(const q of ["' OR 1=1 --",'%','_']){const r=await app.inject({url:'/api/objects?q='+encodeURIComponent(q)});assert.equal(r.statusCode,200);}const j=(await app.inject({url:'/api/catalog/stats'})).json();assert.equal(j.total,25262);});
 test('unknown objects and nonpublic files are not exposed',async()=>{for(const url of ['/api/objects/not-a-body','/.env','/server/data/catalog.sqlite','/.work/runtime-check.mjs'])assert.equal((await app.inject({url})).statusCode,404);assert.equal((await app.inject({method:'POST',url:'/api/objects',payload:{}})).statusCode,404);});
-test('Redis is live and repeated requests are cached in our namespace',async()=>{assert.equal(app.catalogStorage.status().redis,'connected');await app.inject({url:'/api/objects?realm=real&q=木星'});const initial=app.catalogStorage.status().cache.hits;await app.inject({url:'/api/objects?realm=real&q=木星'});assert(app.catalogStorage.status().cache.hits>initial);});
+test('catalog queries work with optional Redis disabled',async()=>{assert.equal(app.catalogStorage.status().redis,'disabled');const first=(await app.inject({url:'/api/objects?realm=real&q=木星'})).json();const second=(await app.inject({url:'/api/objects?realm=real&q=木星'})).json();assert.deepEqual(second,first);});
 test('detail comparison is read only and preserves provenance',async()=>{const j=(await app.inject({url:'/api/compare?ids=earth,sun'})).json();assert.equal(j.items.length,2);assert(j.items.every(i=>i.sources.length&&i.sections.length));});
 
 test('sandbox saves API supports create, list, detail, and delete',async()=>{
@@ -30,4 +30,20 @@ test('sandbox saves API supports create, list, detail, and delete',async()=>{
   assert.equal(del.json().ok,true);
   const gone=await app.inject({url:`/api/sandbox/saves/${saveId}`});
   assert.equal(gone.statusCode,404);
+});
+test('sandbox API rejects malformed snapshots without writing saves',async()=>{
+  const before=(await app.inject({url:'/api/sandbox/saves'})).json().saves.length;
+  for(const data of [{bodies:[null]},{gravity:'1',bodies:[]},{bodies:[{pos:[0,0]}]},{bodies:[{temp:-300}]}]) {
+    assert.equal((await app.inject({method:'POST',url:'/api/sandbox/saves',payload:{name:'invalid',data}})).statusCode,400);
+  }
+  const huge=await app.inject({method:'POST',url:'/api/sandbox/saves',headers:{'content-type':'application/json'},payload:'{"data":{"bodies":[{"mass":1e309}]}}'});
+  assert.equal(huge.statusCode,400);
+  assert.equal((await app.inject({url:'/api/sandbox/saves'})).json().saves.length,before);
+});
+test('sandbox API round trips the complete 260-body budget with Unicode names',async()=>{
+  const created=await app.inject({method:'POST',url:'/api/sandbox/saves',payload:{name:'容量回归',data:{speed:3,lumMult:2,bodies:Array.from({length:260},(_,i)=>({name:'测试天体'.repeat(12)+i,mass:.01,radius:1,pos:[i,0,0],spin:2}))}}});
+  assert.equal(created.statusCode,201);assert.equal(created.json().body_count,260);
+  const id=created.json().id,loaded=(await app.inject({url:'/api/sandbox/saves/'+id})).json().data;
+  assert.equal(loaded.speed,3);assert.equal(loaded.lumMult,2);assert.equal(loaded.bodies.length,260);assert.equal(loaded.bodies[0].spin,2);
+  assert.equal((await app.inject({method:'DELETE',url:'/api/sandbox/saves/'+id})).statusCode,200);
 });

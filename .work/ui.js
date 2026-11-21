@@ -194,7 +194,7 @@
         const info=ENCYCLOPEDIA[b.id]||{};
         const isStar=b.id==='sun';
         const isGas=['jupiter','saturn','uranus','neptune'].includes(b.id);
-        const obj={name:info.name||b.id,subtype:info.type||(isStar?'恒星':'行星'),kind:isStar?'star':'planet',visual:{preset:isStar?'star':b.id==='saturn'?'ring':isGas?'gas':'planet'},facts:{tempK:isStar?5778:b.id==='venus'?737:b.id==='mars'?210:288}};
+        const obj={id:b.id,name:info.name||b.id,subtype:info.type||(isStar?'恒星':'行星'),kind:isStar?'star':'planet',visual:{preset:isStar?'star':b.id==='saturn'?'ring':isGas?'gas':'planet'},facts:{tempK:isStar?5778:b.id==='venus'?737:b.id==='mars'?210:288}};
         if(typeof window.openSandbox2==='function')window.openSandbox2(obj);
       };
       const homeOpenBook=document.getElementById('btn-home-open-book');

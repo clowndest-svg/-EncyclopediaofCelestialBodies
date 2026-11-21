@@ -239,10 +239,10 @@
       lab.effects.push({kind:'tidal',body,flyby,local,age:0,duration:6,initialScale:body.mesh.scale.clone(),massRatio:lab.tidalMass,physical});showToast('潮汐掠过：拉伸为放大演示，非流体 Roche 极限求解','amber');
     }
     function executeExoticExperiment(type,body,point=null) {
-      if(typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type)){spawnMonsterExperiment(type,body,point);return;}
       if(lab.effects.length+lab.projectiles.length+activeExoticEffects.length>=(document.body.dataset.layout==='mobile'?12:24)){showToast('当前并发实验较多，请稍候片刻','amber');return;}
+      if(typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type)){spawnMonsterExperiment(type,body,point);return;}
       if(!body||body.isDestroyed){showToast('请先选择一个完整的天体','amber');return;}
-      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻爆星演出，支持一键复原','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 💥 爆星演出';document.getElementById('lab-report-values').textContent='高能科幻爆星演出：可随时点击“单目标复原”还原。';if(type==='foil')flattenBodyTo2D(body);else{legacyExecuteExoticExperiment(type,body,point);if(monsterLab.autoBust&&PLANET_PHYSICS[body.id]?.solid)setTimeout(()=>{if(!body.isDestroyed&&!body.shatterGroup)triggerPlanetShatter(body,type==='singularity'?0xa855f7:0x38bdf8);},1800);}return;}
+      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻爆星演出，支持一键复原','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 💥 爆星演出';document.getElementById('lab-report-values').textContent='高能科幻爆星演出：可随时点击“单目标复原”还原。';if(type==='foil')flattenBodyTo2D(body);else{legacyExecuteExoticExperiment(type,body,point);if(monsterLab.autoBust&&PLANET_PHYSICS[body.id]?.solid)lab.salvoTimers.push(setTimeout(()=>{if(!body.isDestroyed&&!body.shatterGroup)triggerPlanetShatter(body,type==='singularity'?0xa855f7:0x38bdf8);},1800));}return;}
       if(type==='tidal'){tidalEncounter(body);return;}
       if(['nuclear','antimatter','laser','dyson','grb','photoid'].includes(type)){spawnRadiation(body,type,point);return;}
       const center=body.mesh.getWorldPosition(new THREE.Vector3()),radial=camera.position.clone().sub(center).normalize(),side=new THREE.Vector3(0,1,0).cross(radial).normalize();
