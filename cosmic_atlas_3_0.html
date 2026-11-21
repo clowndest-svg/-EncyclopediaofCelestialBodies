@@ -1260,6 +1260,333 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
 .book-compare-note{margin:12px 0 0;font-size:11.5px;color:var(--ui-muted)}
 
 </style>
+<style>
+/* =========================================================================
+   COSMIC ATLAS & UNIVERSE SANDBOX 2 — AAA "OBSIDIAN OBSERVATORY" UI POLISH
+   ========================================================================= */
+:root {
+  --obs-glass: rgba(7, 11, 22, 0.78);
+  --obs-glass-strong: rgba(8, 13, 26, 0.90);
+  --obs-card: rgba(13, 21, 38, 0.68);
+  --obs-card-hover: rgba(20, 33, 58, 0.84);
+  --obs-border: rgba(148, 197, 255, 0.14);
+  --obs-border-hi: rgba(125, 211, 252, 0.42);
+  --obs-spec: inset 0 1px 0 rgba(255, 255, 255, 0.085);
+  --obs-shadow: 0 16px 44px rgba(0, 0, 0, 0.52), 0 1px 0 rgba(255, 255, 255, 0.05);
+  --obs-cyan: #7dd3fc;
+  --obs-gold: #fcd34d;
+  --obs-rose: #fb7185;
+}
+
+/* 1. 全站自定义精密滑块（彻底告别浏览器默认丑蓝条） */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.32), rgba(148, 163, 184, 0.22));
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #7dd3fc 65%, #0284c7 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.65), 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+  box-shadow: 0 0 14px rgba(125, 211, 252, 0.9), 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #7dd3fc;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.65);
+}
+
+/* 极细暗色滚动条 */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(148, 197, 255, 0.22); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(125, 211, 252, 0.45); }
+
+/* 2. 首页高级黑曜石毛玻璃与排版精修 */
+.glass-panel {
+  background: var(--obs-glass) !important;
+  backdrop-filter: blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(145%) !important;
+  border: 1px solid var(--obs-border) !important;
+  box-shadow: var(--obs-shadow), var(--obs-spec) !important;
+}
+.glass-btn {
+  background: rgba(15, 23, 42, 0.62) !important;
+  border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.14s ease, box-shadow 0.16s ease !important;
+}
+.glass-btn:hover {
+  background: rgba(24, 38, 66, 0.86) !important;
+  border-color: rgba(125, 211, 252, 0.42) !important;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+.glass-btn.active, .scale-btn.active {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.22), rgba(14, 116, 144, 0.28)) !important;
+  border-color: rgba(125, 211, 252, 0.62) !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+/* 首页旗舰入口「宇宙沙盘 2」高级黑曜石极光镶边（与天体档案/百科完美统一又脱颖而出） */
+.sandbox-launch-btn {
+  background: linear-gradient(135deg, rgba(12, 22, 44, 0.90), rgba(30, 22, 58, 0.90)) !important;
+  border: 1px solid rgba(125, 211, 252, 0.52) !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  letter-spacing: 0.03em;
+}
+.sandbox-launch-btn:hover {
+  background: linear-gradient(135deg, rgba(16, 32, 62, 0.96), rgba(46, 30, 86, 0.96)) !important;
+  border-color: rgba(252, 211, 77, 0.72) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 24px rgba(125, 211, 252, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.26) !important;
+}
+
+/* 修复右侧实验卡片标题中文单字换行问题 */
+.exp-card {
+  background: var(--obs-card) !important;
+  border: 1px solid var(--obs-border) !important;
+  box-shadow: var(--obs-spec);
+}
+.exp-card:hover {
+  background: var(--obs-card-hover) !important;
+  border-color: rgba(125, 211, 252, 0.4) !important;
+}
+.exp-card .font-semibold, .exp-card .font-bold {
+  font-size: 11.5px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 3. 宇宙沙盘 2 — AAA 悬浮观测站视觉全面升级 */
+#sandbox-modal {
+  background: #02050c !important;
+}
+.sb-shell {
+  background: radial-gradient(ellipse at 50% 0%, rgba(14, 28, 56, 0.42), #02050c 60%) !important;
+}
+.sb-topbar {
+  background: rgba(6, 10, 20, 0.86) !important;
+  backdrop-filter: blur(22px) saturate(145%);
+  border-bottom: 1px solid rgba(148, 197, 255, 0.14) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  padding: 8px 14px !important;
+}
+.sb-brand h2 {
+  font-size: 13.5px !important;
+  letter-spacing: 0.04em;
+  background: linear-gradient(90deg, #f8fafc 0%, #bae6fd 65%, #fde68a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+.sb-brand p { color: #7e95b5 !important; font-size: 10.5px !important; }
+
+.sb-top-controls select {
+  background: rgba(11, 19, 36, 0.92) !important;
+  border: 1px solid rgba(148, 197, 255, 0.24) !important;
+  border-radius: 10px !important;
+  padding: 5px 10px !important;
+  font-size: 11.5px !important;
+  color: #e2e8f0 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.sb-top-controls select:hover { border-color: rgba(125, 211, 252, 0.5) !important; }
+
+.sb-btn, .sb-pill, .sb-mini-btn {
+  background: rgba(13, 22, 40, 0.72) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  border-radius: 9px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.16s ease !important;
+}
+.sb-btn:hover, .sb-pill:hover, .sb-mini-btn:hover {
+  background: rgba(22, 37, 66, 0.92) !important;
+  color: #f8fafc !important;
+  border-color: rgba(125, 211, 252, 0.45) !important;
+  transform: translateY(-0.5px);
+}
+.sb-pill[aria-pressed="true"], .sb-mini-btn[aria-pressed="true"] {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.24), rgba(14, 116, 144, 0.30)) !important;
+  color: #e0f2fe !important;
+  border-color: rgba(125, 211, 252, 0.68) !important;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+.sb-btn-accent {
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.45), rgba(109, 40, 217, 0.45)) !important;
+  border-color: rgba(125, 211, 252, 0.48) !important;
+  color: #f0f9ff !important;
+}
+.sb-btn-close {
+  background: rgba(127, 29, 29, 0.34) !important;
+  border-color: rgba(251, 113, 133, 0.34) !important;
+  color: #fecdd3 !important;
+}
+.sb-btn-close:hover {
+  background: rgba(190, 18, 60, 0.62) !important;
+  border-color: rgba(251, 113, 133, 0.75) !important;
+}
+
+/* 沙盘左右面板：通透深空玻璃 + 柔和内高光 */
+.sb-panel {
+  background: rgba(6, 10, 21, 0.80) !important;
+  backdrop-filter: blur(22px) saturate(145%);
+  border-color: rgba(148, 197, 255, 0.12) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.sb-panel-tabs {
+  background: rgba(4, 8, 16, 0.65);
+  border-bottom: 1px solid rgba(148, 197, 255, 0.10) !important;
+  padding: 6px 8px !important;
+  gap: 5px !important;
+}
+.sb-panel-tabs button {
+  border-radius: 8px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: #8aa2c0 !important;
+  font-weight: 600;
+}
+.sb-panel-tabs button[aria-pressed="true"] {
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-color: rgba(125, 211, 252, 0.42) !important;
+  color: #e0f2fe !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* 组合模型与天体模板卡片 */
+.sb-spawn-item {
+  background: rgba(12, 20, 36, 0.72) !important;
+  border: 1px solid rgba(148, 197, 255, 0.12) !important;
+  border-radius: 10px !important;
+  padding: 7px 8px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.16s ease !important;
+}
+.sb-spawn-item:hover {
+  background: rgba(20, 34, 60, 0.88) !important;
+  border-color: rgba(125, 211, 252, 0.42) !important;
+  transform: translateY(-1px);
+}
+.sb-spawn-item[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.34), rgba(37, 99, 235, 0.28)) !important;
+  border-color: rgba(125, 211, 252, 0.78) !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+.sb-model-grid .sb-spawn-item {
+  background: linear-gradient(135deg, rgba(13, 25, 48, 0.78), rgba(32, 20, 58, 0.68)) !important;
+  border-color: rgba(167, 139, 250, 0.22) !important;
+}
+.sb-model-grid .sb-spawn-item[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.45), rgba(109, 40, 217, 0.48)) !important;
+  border-color: rgba(252, 211, 77, 0.78) !important;
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+/* 顶部悬浮导航胶囊 & 工具提示 */
+.sb-nav-bar {
+  background: rgba(7, 12, 24, 0.76) !important;
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(148, 197, 255, 0.18) !important;
+  border-radius: 14px !important;
+  padding: 5px 8px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.sb-tool-hint {
+  background: rgba(7, 12, 24, 0.76) !important;
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  color: #9fb3cc !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* 右侧检视器卡片精致化 */
+.sb-life-box, .sb-spark-box, .sb-metrics-grid > div {
+  background: rgba(11, 19, 35, 0.72) !important;
+  border: 1px solid rgba(148, 197, 255, 0.13) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.sb-supernova {
+  background: linear-gradient(135deg, rgba(225, 29, 72, 0.78), rgba(234, 88, 12, 0.78)) !important;
+  border-color: rgba(253, 186, 116, 0.55) !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+.sb-supernova:hover { filter: brightness(1.12); }
+
+/* 底部控制坞：悬浮玻璃底座 + 高亮工具态 */
+.sb-dock {
+  background: rgba(6, 10, 20, 0.88) !important;
+  backdrop-filter: blur(22px) saturate(145%);
+  border-top: 1px solid rgba(148, 197, 255, 0.14) !important;
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 8px 14px !important;
+}
+.sb-tools button {
+  background: rgba(13, 22, 40, 0.72) !important;
+  border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  border-radius: 10px !important;
+  color: #cbd5e1 !important;
+  padding: 6px 10px !important;
+  font-weight: 600;
+  transition: all 0.16s ease !important;
+}
+.sb-tools button:hover {
+  background: rgba(22, 37, 66, 0.92) !important;
+  border-color: rgba(125, 211, 252, 0.45) !important;
+  color: #fff !important;
+}
+.sb-tools button[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.32), rgba(99, 102, 241, 0.34)) !important;
+  border-color: rgba(125, 211, 252, 0.82) !important;
+  color: #f0f9ff !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+/* 悬浮标签与 Toast 精致化 */
+.sb-label {
+  background: rgba(6, 11, 22, 0.74) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 197, 255, 0.24) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
+}
+.sb-label.selected {
+  border-color: rgba(252, 211, 77, 0.85) !important;
+  color: #fef08a !important;
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.32);
+}
+.sb-toast {
+  background: rgba(8, 15, 30, 0.90) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(125, 211, 252, 0.48) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 20px rgba(56, 189, 248, 0.18);
+}
+
+/* 4. 星海百科统一黑曜石质感微调 */
+#cosmic-book .book-shell {
+  background: radial-gradient(ellipse at 25% 0%, rgba(16, 30, 60, 0.52), rgba(5, 9, 18, 0.98) 55%) !important;
+  border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+</style>
 </head>
 <body data-layout="desktop">
 <script>try{document.body.dataset.layout=localStorage.getItem("cosmic-layout")||(innerWidth<900?"mobile":"desktop");}catch{document.body.dataset.layout=innerWidth<900?"mobile":"desktop";}</script>

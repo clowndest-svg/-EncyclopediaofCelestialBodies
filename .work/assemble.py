@@ -613,6 +613,8 @@ if (WORK/'earth-hd.js').exists():
 # Final visual polish layer (icons + stylesheet injected last so it wins the cascade).
 if (WORK/'polish.py').exists():
     s=runpy.run_path(str(WORK/'polish.py'))['apply'](s,ROOT,WORK)
+if (WORK/'polish-aaa.css').exists():
+    replace('</head>', '<style>\n' + (WORK/'polish-aaa.css').read_text(encoding='utf-8') + '\n</style>\n</head>')
 # Static CSS and optional offline module maps are generated separately.
 if (WORK/'tailwind.css').exists():
     replace('  <script src="https://cdn.tailwindcss.com"></script>', '<style>'+ (WORK/'tailwind.css').read_text(encoding='utf-8')+'</style>')
