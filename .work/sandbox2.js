@@ -964,8 +964,11 @@
           const distSq = dx * dx + dy * dy + dz * dz + soft;
           const invD = 1 / Math.sqrt(distSq);
           const f = G * invD * invD * invD;
-          a.acc.x += dx * f * b.mass; a.acc.y += dy * f * b.mass; a.acc.z += dz * f * b.mass;
-          b.acc.x -= dx * f * a.mass; b.acc.y -= dy * f * a.mass; b.acc.z -= dz * f * a.mass;
+          // 白洞物理特性（科学设想 · 只出不入）：近距产生强外流斥力推开物质，仅在黑洞相连时引向视界湮灭
+          const isWH = (a.kind === 'whitehole' && b.kind !== 'bh' && b.kind !== 'whitehole') || (b.kind === 'whitehole' && a.kind !== 'bh' && a.kind !== 'whitehole');
+          const whFactor = (isWH && distSq < 576) ? -1.85 : 1.0;
+          a.acc.x += dx * f * b.mass * whFactor; a.acc.y += dy * f * b.mass * whFactor; a.acc.z += dz * f * b.mass * whFactor;
+          b.acc.x -= dx * f * a.mass * whFactor; b.acc.y -= dy * f * a.mass * whFactor; b.acc.z -= dz * f * a.mass * whFactor;
         }
       }
     }
@@ -1211,6 +1214,24 @@
             const rA = sbCompactRank(a.kind), rB = sbCompactRank(b.kind);
             const big = rA > rB ? a : rB > rA ? b : (a.mass >= b.mass ? a : b);
             const small = big === a ? b : a;
+
+            // 🌀 爱因斯坦-罗森虫洞传送门：若黑洞正与白洞相连，落入黑洞的非致密天体直接穿过虫洞从白洞喷出！
+            if (big.kind === 'bh' && activeWormhole && activeWormhole.bh === big && activeWormhole.wh.alive && !small.isDebris) {
+              const wh = activeWormhole.wh;
+              const ang = Math.random() * Math.PI * 2;
+              const outDir = new THREE.Vector3(Math.cos(ang), 0, Math.sin(ang));
+              small.pos.copy(wh.pos).addScaledVector(outDir, wh.radius * 3.4);
+              small.vel.copy(outDir).multiplyScalar(Math.max(6.2, small.vel.length() * 1.15));
+              small.previousPos?.copy(small.pos);
+              small.trailCount = 0;
+              if (small.kind !== 'bh') { small.temp = Math.min(4000, small.temp + 650); small.manualTempLock = 5.0; }
+              sbSpawnExplosion(big.pos, 0x38bdf8, 4.2, false);
+              sbSpawnExplosion(wh.pos, 0xfde047, 5.2, false);
+              sbUnlockAch('wormhole');
+              sbToast(`🌀 虫洞跃迁！「${small.name}」坠入黑洞视界，经爱因斯坦-罗森桥从白洞极速喷出！`);
+              continue;
+            }
+
             const totalM = big.mass + small.mass;
             big.pos.multiplyScalar(big.mass).addScaledVector(small.pos,small.mass).divideScalar(totalM);
             big.vel.multiplyScalar(big.mass).addScaledVector(small.vel, small.mass).divideScalar(totalM);
@@ -1934,10 +1955,20 @@
         const btn = document.createElement('button');
         btn.className = 'sb-spawn-item';
         btn.dataset.spawnId = tpl.id;
+        btn.dataset.realm = tpl.realm || 'real';
         btn.setAttribute('aria-pressed', String(tpl.id === sb.spawnId));
         btn.innerHTML = `<strong>${tpl.icon} ${tpl.name}</strong><small>${tpl.badge}</small>`;
         btn.onclick = () => selectSpawnBtn(tpl.id, btn);
         grid.appendChild(btn);
+      });
+      document.querySelectorAll('[data-sb-filter]').forEach(fBtn => {
+        fBtn.onclick = () => {
+          const f = fBtn.dataset.sbFilter;
+          document.querySelectorAll('[data-sb-filter]').forEach(x => x.setAttribute('aria-pressed', String(x === fBtn)));
+          grid.querySelectorAll('.sb-spawn-item').forEach(card => {
+            card.hidden = f === 'real' ? card.dataset.realm !== 'real' : f === 'other' ? card.dataset.realm === 'real' : false;
+          });
+        };
       });
 
       window.addEventListener('keydown', e => {
@@ -1990,9 +2021,32 @@
       sb$('sb-save-toggle').onclick = () => sbSwitchLeftTab(sb$('sb-tab-saves').hidden ? 'saves' : 'spawn');
       sb$('sb-save-btn').onclick = sbSaveUniverse;
 
-      // 成就弹窗
+      // 成就弹窗 + 沙盘一键高清截图
       sb$('sb-ach-btn').onclick = () => { sbRenderAchievements(); sb$('sb-ach-pop').hidden = !sb$('sb-ach-pop').hidden; };
       sb$('sb-ach-close').onclick = () => { sb$('sb-ach-pop').hidden = true; };
+      const snapBtn = sb$('sb-snap-btn');
+      if (snapBtn) snapBtn.onclick = () => {
+        sb.renderer.render(sb.scene, sb.camera);
+        const a = document.createElement('a');
+        a.href = sb.renderer.domElement.toDataURL('image/png');
+        a.download = `cosmic-sandbox-2-${Date.now()}.png`;
+        a.click();
+        sbToast('📷 已保存宇宙沙盘 2 高清截图 (PNG)！');
+      };
+
+      const openBookBtn = sb$('sb-open-book');
+      if (openBookBtn) openBookBtn.onclick = async () => {
+        const b = sb.selected;
+        closeSandbox2();
+        if (typeof cosmicBook === 'undefined') return;
+        await cosmicBook.show();
+        if (!b) return;
+        const cleanName = b.name.replace(/·.*$/, '').replace(/（.*）/, '');
+        const match = (b.catalogId && cosmicBook.data.find(i => i.id === b.catalogId))
+          || cosmicBook.data.find(i => i.name === b.name || i.name === cleanName)
+          || cosmicBook.data.find(i => b.kind === 'bh' ? i.kind === 'blackhole' : b.kind === 'star' ? i.kind === 'star' : i.id === 'earth');
+        if (match) bookSelect(match);
+      };
 
       // 创世造物主与宇宙法则绑定
       sb$('sb-bigbang-btn').onclick = sbRunBigBang;
@@ -2105,6 +2159,7 @@
     }
 
     function openSandbox2(importObj = null) {
+      if (typeof cosmicBook !== 'undefined' && cosmicBook.open) cosmicBook.hide();
       const dlg = sb$('sandbox-modal'); if (!dlg) return;
       if (!sb.open) {
         sb.wasMainPaused = state.paused;

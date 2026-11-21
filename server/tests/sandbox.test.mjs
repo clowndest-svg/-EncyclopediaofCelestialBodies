@@ -154,10 +154,11 @@ test('selecting toolbar action tools does not auto-fire until user clicks a plan
   assert.equal(run('sb.activeBeamTarget'),null);
   assert.equal(run('sb.autoBeamTimer'),0);
 });
-test('black hole and white hole form Einstein-Rosen bridge and annihilate on horizon contact',()=>{
+test('black hole and white hole form Einstein-Rosen bridge, teleport planets, and annihilate on horizon contact',()=>{
   const {run}=fixture();
-  run("sbLoadPreset('blank');sbCreateBody({...SB_TEMPLATES.find(t=>t.id==='blackhole'),pos:[0,0,0],vel:[0,0,0]});sbCreateBody({...SB_TEMPLATES.find(t=>t.id==='whitehole'),pos:[18,0,0],vel:[0,0,0]});sbStepPhysics(.016)");
+  run("sbLoadPreset('blank');sb.rocheEnabled=false;sbCreateBody({...SB_TEMPLATES.find(t=>t.id==='blackhole'),pos:[0,0,0],vel:[0,0,0]});sbCreateBody({...SB_TEMPLATES.find(t=>t.id==='whitehole'),pos:[22,0,0],vel:[0,0,0]});sbCreateBody({...SB_TEMPLATES.find(t=>t.id==='earth'),pos:[0.5,0,0],vel:[0,0,0]});sbStepPhysics(.016)");
   assert(run('sb.achievements.has("wormhole")'));
+  assert(run('sb.bodies.some(b=>b.name==="地球"&&b.pos.distanceTo(new THREE.Vector3(22,0,0))>4)'));
   run("sb.bodies[1].pos.set(2,0,0);sbStepPhysics(.016)");
   assert(run('sb.bodies.some(b=>b.name==="湮灭新生恒星")'));
 });

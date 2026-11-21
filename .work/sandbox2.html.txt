@@ -38,7 +38,8 @@
           <button id="sb-tog-vel" class="sb-pill" aria-pressed="false">速度矢</button>
           <button id="sb-tog-labels" class="sb-pill" aria-pressed="true">标签</button>
         </div>
-        <button id="sb-ach-btn" class="sb-btn" title="查看宇宙物理探索成就">🏆 <span id="sb-ach-count">0/8</span></button>
+        <button id="sb-snap-btn" class="sb-btn" title="保存当前宇宙沙盘高清截图 (PNG)">📷</button>
+        <button id="sb-ach-btn" class="sb-btn" title="查看宇宙物理探索成就">🏆 <span id="sb-ach-count">0/10</span></button>
         <button id="sb-save-toggle" class="sb-btn sb-btn-accent" aria-pressed="false">💾 存档</button>
         <button id="sb-close" class="sb-btn sb-btn-close" aria-label="退出宇宙沙盘">✕ 退出</button>
       </div>
@@ -72,7 +73,14 @@
           <div class="sb-section-label">📦 完整系统模型（点击星空投放）</div>
           <div id="sb-model-grid" class="sb-spawn-grid sb-model-grid"></div>
 
-          <div class="sb-section-label">🪐 天体模板（现实 / 科学设想 / 原创想象）</div>
+          <div class="sb-section-row">
+            <span class="sb-section-label">🪐 天体模板库</span>
+            <div class="sb-filter-pills" role="group" aria-label="天体库分类筛选">
+              <button data-sb-filter="all" aria-pressed="true" class="sb-chip">全部</button>
+              <button data-sb-filter="real" aria-pressed="false" class="sb-chip">现实</button>
+              <button data-sb-filter="other" aria-pressed="false" class="sb-chip">设想·科幻</button>
+            </div>
+          </div>
           <div id="sb-spawn-grid" class="sb-spawn-grid"></div>
         </div>
 
@@ -175,6 +183,7 @@
             <span id="sb-sel-badge" class="sb-badge">宜居岩质星</span>
           </div>
           <div class="sb-head-btns">
+            <button id="sb-open-book" class="sb-mini-btn" title="跳往星海百科深度阅读此天体资料">✧ 百科</button>
             <button id="sb-follow-btn" class="sb-mini-btn" aria-pressed="false" title="镜头锁定跟随此天体">🎯 锁定</button>
             <button id="sb-delete-btn" class="sb-mini-btn sb-danger" title="移除此天体">🗑</button>
           </div>
