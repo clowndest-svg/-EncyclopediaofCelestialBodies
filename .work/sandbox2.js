@@ -1813,15 +1813,23 @@
 
       const wrap = sb$('sb-canvas-wrap'), w = wrap.clientWidth, h = wrap.clientHeight;
       const proj = new THREE.Vector3();
-      for (const b of sb.bodies) {
-        if (!sb.showLabels || (b.isDebris && b !== sb.selected)) { b.labelEl.hidden = true; continue; }
+      // 智能标签防重叠与数量上限：按重要性排序，避免几十个彗星/碎片标签框满屏乱飞互相遮挡！
+      const priority = b => (b === sb.selected ? 1000 : 0) + (b.kind === 'bh' || b.kind === 'whitehole' ? 400 : b.kind === 'star' ? 300 : b.kind === 'galaxy' ? 250 : b.kind === 'gas' ? 120 : b.isDebris ? -100 : 40) + Math.min(50, b.radius * 4);
+      const sortedLabels = [...sb.bodies].sort((a, b) => priority(b) - priority(a));
+      const occupiedLabels = [];
+      let shownLabels = 0;
+      for (const b of sortedLabels) {
+        if (!sb.showLabels || (b.isDebris && b !== sb.selected) || shownLabels >= 18) { b.labelEl.hidden = true; continue; }
         proj.copy(b.pos).project(sb.camera);
         const x = (proj.x * 0.5 + 0.5) * w, y = (-proj.y * 0.5 + 0.5) * h;
-        const off = proj.z > 1 || proj.z < -1 || x < 24 || x > w - 24 || y < 24 || y > h - 24;
-        b.labelEl.hidden = off;
-        if (!off) {
+        const off = proj.z > 1 || proj.z < -1 || x < 34 || x > w - 34 || y < 56 || y > h - 28;
+        const clash = !off && b !== sb.selected && occupiedLabels.some(p => Math.abs(p.x - x) < 76 && Math.abs(p.y - y) < 24);
+        b.labelEl.hidden = off || clash;
+        if (!off && !clash) {
           b.labelEl.style.left = x + 'px'; b.labelEl.style.top = y + 'px';
           b.labelEl.classList.toggle('selected', b === sb.selected);
+          occupiedLabels.push({ x, y });
+          shownLabels++;
         }
       }
 

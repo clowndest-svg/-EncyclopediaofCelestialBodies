@@ -142,18 +142,21 @@
         <div id="sb-toast" class="sb-toast" hidden></div>
         <!-- 成就徽章弹窗 -->
         <div class="sb-navigation" role="group" aria-label="星空导航">
-          <button id="sb-nav-mode" class="sb-mini-btn" aria-pressed="false">✈ 自由飞行</button>
-          <button id="sb-overview" class="sb-mini-btn">⌂ 全景</button>
-          <button id="sb-focus-selected" class="sb-mini-btn">🎯 到达选中</button>
+          <button id="sb-nav-mode" class="sb-mini-btn" aria-pressed="true" title="显示或隐藏左下角 3D 方向移动遥控器">🕹️ 方向遥控</button>
+          <button id="sb-overview" class="sb-mini-btn" title="一键缩放至全景 (Home)">⌂ 全景</button>
+          <button id="sb-focus-selected" class="sb-mini-btn" title="飞到当前选中天体近旁 (F)">🎯 飞往选中</button>
+          <button id="sb-view-top" class="sb-mini-btn" title="一键切换正上方俯瞰视角">⬇ 俯视</button>
+          <button id="sb-view-side" class="sb-mini-btn" title="一键切换平视侧面视角">➡ 平视</button>
+          <button id="sb-clear-canvas" class="sb-mini-btn sb-danger" title="一键清空画布全部天体">🧹 清场</button>
           <button id="sb-mobile-library" class="sb-mini-btn" aria-pressed="false">天体库</button>
           <button id="sb-mobile-inspector" class="sb-mini-btn" aria-pressed="false">参数</button>
           <select id="sb-body-locator" aria-label="定位远方天体"><option value="">定位天体…</option></select>
           <span id="sb-offscreen-status"></span>
         </div>
         <div id="sb-event-status" class="sb-event-status" hidden role="status"></div>
-        <div id="sb-flight-pad" class="sb-flight-pad" hidden aria-label="飞行方向">
-          <button data-sb-fly="q" aria-label="上升">↑ 升</button><button data-sb-fly="w" aria-label="前进">前进</button><button data-sb-fly="e" aria-label="下降">↓ 降</button>
-          <button data-sb-fly="a" aria-label="左移">←</button><button data-sb-fly="s" aria-label="后退">后退</button><button data-sb-fly="d" aria-label="右移">→</button>
+        <div id="sb-flight-pad" class="sb-flight-pad" aria-label="3D 视角方向遥控器">
+          <button data-sb-fly="q" title="向上移动 (Q)">↑ 上升</button><button data-sb-fly="w" title="向前推进 (W)">▲ 前进</button><button data-sb-fly="e" title="向下移动 (E)">↓ 下降</button>
+          <button data-sb-fly="a" title="向左平移 (A)">◀ 左移</button><button data-sb-fly="s" title="向后拉远 (S)">▼ 后退</button><button data-sb-fly="d" title="向右平移 (D)">▶ 右移</button>
         </div>
         <div id="sb-ach-pop" class="sb-ach-pop" hidden>
           <div class="sb-ach-head">

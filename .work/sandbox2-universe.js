@@ -222,15 +222,29 @@
       sb$('sb-pause-btn').setAttribute('aria-pressed',String(sb.paused));sb$('sb-pause-btn').textContent=sb.paused?'▶ 继续':'Ⅱ 暂停';
     }
     function sbBindExtendedControls() {
-      sb.sizeMode='illustrative';sb.flightMode=false;sbBindTelemetry();
+      sb.sizeMode='illustrative';sb.flightMode=true;sbBindTelemetry();
       sb$('sb-overview').onclick=sbOverview;sb$('sb-focus-selected').onclick=()=>sbFocusBody();
       sb$('sb-body-locator').onchange=e=>{sbFocusBody(sb.bodies.find(b=>b.id===e.target.value));e.target.value='';};
-      sb$('sb-nav-mode').onclick=()=>{sbCancelInteraction();sb.flightMode=!sb.flightMode;sb.followBody=null;sb$('sb-follow-btn').setAttribute('aria-pressed','false');sb$('sb-nav-mode').setAttribute('aria-pressed',String(sb.flightMode));sb$('sb-nav-mode').textContent=sb.flightMode?'◎ 返回观察':'✈ 自由飞行';sb$('sb-flight-pad').hidden=!sb.flightMode;sb.renderer?.domElement.focus({preventScroll:true});};
+      sb$('sb-nav-mode').onclick=()=>{sb.flightMode=!sb.flightMode;sb$('sb-nav-mode').setAttribute('aria-pressed',String(sb.flightMode));sb$('sb-nav-mode').textContent=sb.flightMode?'🕹️ 方向遥控':'🕹️ 打开遥控';sb$('sb-flight-pad').hidden=!sb.flightMode;};
+      const topBtn=sb$('sb-view-top'),sideBtn=sb$('sb-view-side'),clrBtn=sb$('sb-clear-canvas');
+      if(topBtn) topBtn.onclick=()=>{sbCancelInteraction();sb.followBody=null;sb$('sb-follow-btn')?.setAttribute('aria-pressed','false');const d=Math.max(40,sb.camera.position.distanceTo(sb.controls.target));sb.camera.position.copy(sb.controls.target).add(new THREE.Vector3(0,d,0.01));sb.controls.update();};
+      if(sideBtn) sideBtn.onclick=()=>{sbCancelInteraction();sb.followBody=null;sb$('sb-follow-btn')?.setAttribute('aria-pressed','false');const d=Math.max(40,sb.camera.position.distanceTo(sb.controls.target));sb.camera.position.copy(sb.controls.target).add(new THREE.Vector3(0,d*0.14,d));sb.controls.update();};
+      if(clrBtn) clrBtn.onclick=()=>{sbLoadPreset('blank');sbToast('🧹 已清空画布，可以自由创造全新宇宙！');};
       sb$('sb-size-mode').onchange=e=>{sb.sizeMode=e.target.value;sbApplySizeMode();sbSyncInspector();};
       for(const [id,panel] of [['sb-mobile-library','library'],['sb-mobile-inspector','inspector']]) sb$(id).onclick=()=>{const shell=sb$('sandbox-modal');const next=shell.dataset.mobilePanel===panel?'':panel;shell.dataset.mobilePanel=next;sb$('sb-mobile-library').setAttribute('aria-pressed',String(next==='library'));sb$('sb-mobile-inspector').setAttribute('aria-pressed',String(next==='inspector'));};
       document.querySelectorAll('[data-sb-cosmos]').forEach(button=>button.onclick=()=>sbLoadPreset(button.dataset.sbCosmos));
       document.querySelectorAll('[data-sb-fly]').forEach(button=>{
-        button.onpointerdown=e=>{e.preventDefault();button.setPointerCapture(e.pointerId);sb.keys.add(button.dataset.sbFly);};
+        const stepOnce=()=>{
+          if(!sb.camera||!sb.controls)return;
+          const k=button.dataset.sbFly,spd=Math.max(3,sb.camera.position.distanceTo(sb.controls.target)*0.12);
+          const fwd=new THREE.Vector3();sb.camera.getWorldDirection(fwd);
+          const right=new THREE.Vector3().crossVectors(fwd,sb.camera.up).normalize();
+          const up=sb.camera.up.clone().normalize(),d=new THREE.Vector3();
+          if(k==='w')d.addScaledVector(fwd,spd);else if(k==='s')d.addScaledVector(fwd,-spd);else if(k==='a')d.addScaledVector(right,-spd);else if(k==='d')d.addScaledVector(right,spd);else if(k==='q')d.addScaledVector(up,spd);else if(k==='e')d.addScaledVector(up,-spd);
+          sb.followBody=null;sb$('sb-follow-btn')?.setAttribute('aria-pressed','false');
+          sb.camera.position.add(d);sb.controls.target.add(d);sb.controls.update();
+        };
+        button.onpointerdown=e=>{e.preventDefault();button.setPointerCapture(e.pointerId);stepOnce();sb.keys.add(button.dataset.sbFly);};
         const end=()=>sb.keys.delete(button.dataset.sbFly);button.onpointerup=end;button.onpointercancel=end;button.onlostpointercapture=end;
       });
       window.addEventListener('keydown',e=>{
