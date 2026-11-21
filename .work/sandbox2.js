@@ -1,36 +1,87 @@
     // =========================================================================
-    // 宇宙沙盘 2 (Universe Sandbox 2 Mode) — 独立 N体引力/气候/宜居带/碰撞/超新星/时空网格引擎
+    // 宇宙沙盘 2 v2.0 — 科学天体物理引擎（洛希极限/黑洞意大利面化撕裂/引力波/创世造物主）
+    // 物理单位换算：120 内部质量单位 = 1.0 M☉（太阳质量），0.045 = 1.0 M⊕（地球质量）
     // =========================================================================
+    const SB_SOLAR_M = 120;
+    const SB_EARTH_M = 0.045;
+
     const SB_TEMPLATES = [
-      { id: 'asteroid',  icon: '☄️', name: '小行星',     badge: '岩质小天体', kind: 'planet', mass: 0.0005, radius: 0.65, temp: -40,  water: 0,   atmo: 0,   color: [0.55, 0.50, 0.45] },
-      { id: 'moon',      icon: '🌙', name: '月球',       badge: '天然卫星',   kind: 'planet', mass: 0.004,  radius: 1.05, temp: -20,  water: 0,   atmo: 0,   color: [0.72, 0.72, 0.74] },
-      { id: 'mars',      icon: '🔴', name: '火星',       badge: '荒漠岩质星', kind: 'planet', mass: 0.015,  radius: 1.35, temp: -55,  water: 12,  atmo: 0.2, color: [0.78, 0.36, 0.20] },
-      { id: 'earth',     icon: '🌍', name: '地球',       badge: '宜居岩质星', kind: 'planet', mass: 0.045,  radius: 1.75, temp: 15,   water: 71,  atmo: 1.0, color: [0.22, 0.52, 0.26] },
-      { id: 'jupiter',   icon: '🟠', name: '木星',       badge: '气态巨行星', kind: 'gas',    mass: 0.95,   radius: 3.45, temp: -110, water: 0,   atmo: 3.5, color: [0.85, 0.64, 0.44] },
-      { id: 'saturn',    icon: '🪐', name: '土星（带环）',badge: '环状巨行星', kind: 'gas',    mass: 0.62,   radius: 3.05, temp: -140, water: 0,   atmo: 3.2, color: [0.88, 0.78, 0.56], ring: true },
-      { id: 'hotjup',    icon: '🔥', name: '热木星',     badge: '炽热气态星', kind: 'gas',    mass: 1.25,   radius: 3.25, temp: 1450, water: 0,   atmo: 4.0, color: [0.95, 0.38, 0.16] },
-      { id: 'comet',     icon: '💫', name: '冰晶彗星',   badge: '冰尘彗星',   kind: 'planet', mass: 0.0004, radius: 0.72, temp: -190, water: 95,  atmo: 0.3, color: [0.68, 0.88, 1.0] },
-      { id: 'reddwarf',  icon: '🔴', name: '红矮星',     badge: 'M 型红矮星', kind: 'star',   mass: 42,     radius: 4.2,  temp: 3200, water: 0,   atmo: 0,   color: [1.0, 0.34, 0.16] },
-      { id: 'sun',       icon: '☀️', name: '类日恒星',   badge: 'G 型主序星', kind: 'star',   mass: 120,    radius: 5.8,  temp: 5505, water: 0,   atmo: 0,   color: [1.0, 0.82, 0.36] },
-      { id: 'bluegiant', icon: '💠', name: '蓝超巨星',   badge: 'O 型超巨星', kind: 'star',   mass: 360,    radius: 8.2,  temp: 24000,water: 0,   atmo: 0,   color: [0.58, 0.84, 1.0] },
-      { id: 'whitedwarf',icon: '⚪', name: '白矮星',     badge: '致密简并核', kind: 'star',   mass: 150,    radius: 2.1,  temp: 18000,water: 0,   atmo: 0,   color: [0.88, 0.96, 1.0] },
-      { id: 'neutron',   icon: '⚡', name: '脉冲中子星', badge: '极端致密星', kind: 'star',   mass: 240,    radius: 1.5,  temp: 40000,water: 0,   atmo: 0,   color: [0.45, 0.94, 1.0], pulsar: true },
-      { id: 'blackhole', icon: '🕳️', name: '黑洞',       badge: '事件视界',   kind: 'bh',     mass: 520,    radius: 3.2,  temp: 0,    water: 0,   atmo: 0,   color: [0.02, 0.02, 0.04] }
+      { id: 'asteroid',  icon: '☄️', name: '小行星',       badge: '岩质小天体', kind: 'planet', mass: 0.0005, radius: 0.58, temp: -40,   water: 0,   atmo: 0,   density: 3.1,  color: [0.55, 0.50, 0.45] },
+      { id: 'moon',      icon: '🌙', name: '月球',         badge: '天然卫星',   kind: 'planet', mass: 0.004,  radius: 1.02, temp: -20,   water: 0,   atmo: 0,   density: 3.34, color: [0.72, 0.72, 0.74] },
+      { id: 'mars',      icon: '🔴', name: '火星',         badge: '荒漠岩质星', kind: 'planet', mass: 0.015,  radius: 1.32, temp: -55,   water: 12,  atmo: 0.2, density: 3.93, color: [0.78, 0.36, 0.20] },
+      { id: 'earth',     icon: '🌍', name: '地球',         badge: '宜居岩质星', kind: 'planet', mass: 0.045,  radius: 1.72, temp: 15,    water: 71,  atmo: 1.0, density: 5.51, color: [0.22, 0.52, 0.26] },
+      { id: 'jupiter',   icon: '🟠', name: '木星',         badge: '气态巨行星', kind: 'gas',    mass: 0.95,   radius: 3.35, temp: -110,  water: 0,   atmo: 3.5, density: 1.33, color: [0.85, 0.64, 0.44] },
+      { id: 'saturn',    icon: '🪐', name: '土星（带环）', badge: '环状巨行星', kind: 'gas',    mass: 0.62,   radius: 2.95, temp: -140,  water: 0,   atmo: 3.2, density: 0.69, color: [0.88, 0.78, 0.56], ring: true },
+      { id: 'hotjup',    icon: '🔥', name: '热木星',       badge: '炽热气态星', kind: 'gas',    mass: 1.25,   radius: 3.20, temp: 1450,  water: 0,   atmo: 4.0, density: 0.95, color: [0.95, 0.38, 0.16] },
+      { id: 'comet',     icon: '💫', name: '冰晶彗星',     badge: '冰尘彗星',   kind: 'planet', mass: 0.0004, radius: 0.68, temp: -190,  water: 95,  atmo: 0.3, density: 0.60, color: [0.68, 0.88, 1.0] },
+      { id: 'reddwarf',  icon: '🔴', name: '红矮星',       badge: 'M 型红矮星', kind: 'star',   mass: 42,     radius: 4.0,  temp: 3200,  water: 0,   atmo: 0,   density: 4.5,  color: [1.0, 0.34, 0.16] },
+      { id: 'sun',       icon: '☀️', name: '类日恒星',     badge: 'G 型主序星', kind: 'star',   mass: 120,    radius: 5.5,  temp: 5505,  water: 0,   atmo: 0,   density: 1.41, color: [1.0, 0.82, 0.36] },
+      { id: 'bluegiant', icon: '💠', name: '蓝超巨星',     badge: 'O 型超巨星', kind: 'star',   mass: 480,    radius: 8.0,  temp: 26000, water: 0,   atmo: 0,   density: 0.015,color: [0.55, 0.84, 1.0] },
+      { id: 'whitedwarf',icon: '⚪', name: '白矮星',       badge: '简并致密星', kind: 'wd',     mass: 126,    radius: 1.85, temp: 18000, water: 0,   atmo: 0,   density: 1.0e6,color: [0.90, 0.96, 1.0] },
+      { id: 'neutron',   icon: '⚡', name: '脉冲中子星',   badge: '中子简并星', kind: 'ns',     mass: 216,    radius: 1.45, temp: 50000, water: 0,   atmo: 0,   density: 4.0e14,color: [0.42, 0.94, 1.0], pulsar: true },
+      { id: 'blackhole', icon: '🕳️', name: '恒星级黑洞',   badge: '恒星级黑洞', kind: 'bh',     mass: 720,    radius: 3.1,  temp: 0,     water: 0,   atmo: 0,   density: 1.0e16,color: [0.02, 0.02, 0.04] },
+      { id: 'smbh',      icon: '🌀', name: '超大质量黑洞', badge: '星系核黑洞', kind: 'bh',     mass: 2400,   radius: 5.4,  temp: 0,     water: 0,   atmo: 0,   density: 1.0e17,color: [0.01, 0.01, 0.03], smbh: true },
+      { id: 'belt',      icon: '🪨', name: '小行星环群',   badge: '12 颗星子',  kind: 'belt',   mass: 0.0004, radius: 0.55, temp: -70,   water: 5,   atmo: 0,   density: 2.8,  color: [0.62, 0.56, 0.50] }
     ];
+
+    const SB_ACHIEVEMENTS = [
+      { id: 'cradle',   icon: '🌱', title: '生命摇篮造物主',   desc: '在沙盘中孕育或改造出宜居概率 ≥ 85% 的蓝色星球' },
+      { id: 'tde',      icon: '🕳️', title: '潮汐撕裂目击者',   desc: '亲眼目睹黑洞或中子星将恒星/行星意大利面化撕裂吞噬' },
+      { id: 'roche',    icon: '🪐', title: '洛希极限造环大师', desc: '让卫星或行星闯入巨行星洛希极限并碎裂成行星环' },
+      { id: 'gw',       icon: '〰️', title: '引力波观测者',     desc: '触发双黑洞或双中子星并合，激起时空网格引力波涟漪' },
+      { id: 'kilonova', icon: '⚡', title: '千新星炼金术师',   desc: '触发双中子星并合千新星爆发并坍缩诞生新黑洞' },
+      { id: 'chandra',  icon: '💥', title: '超新星引爆者',     desc: '触发恒星超新星或白矮星钱德拉塞卡极限 Ia 型爆发' },
+      { id: 'genesis',  icon: '✨', title: '创世奇点神明',     desc: '使用「大爆炸创世」或「星系锻造炉」创造全新宇宙' },
+      { id: 'grab',     icon: '🧲', title: '执掌星辰之手',     desc: '使用「引力牵引」亲手拖拽并甩动一颗天体改变轨道' }
+    ];
+
+    // 科学致密天体层级：高致密层级永远潮汐撕裂并吸积低致密层级（蓝超巨星绝不可吞噬黑洞或中子星！）
+    function sbCompactRank(kind) {
+      return ({ bh: 4, ns: 3, wd: 2, star: 1, gas: 0.5, planet: 0 })[kind] ?? 0;
+    }
+
+    function sbRankLabel(b) {
+      if (b.kind === 'bh') return b.mass > 1500 ? 'SMBH 黑洞' : '恒星级黑洞';
+      if (b.kind === 'ns') return '中子星 / 脉冲星';
+      if (b.kind === 'wd') return '简并白矮星';
+      if (b.kind === 'star') {
+        const m = b.mass / SB_SOLAR_M;
+        return m >= 3 ? 'O/B 蓝超巨星' : m >= 1.5 ? 'A/F 蓝白星' : m >= 0.7 ? 'G 类日恒星' : 'M 型红矮星';
+      }
+      return b.kind === 'gas' ? '气态巨行星' : '岩质行星';
+    }
+
+    function sbDensityText(b) {
+      const d = b.density ?? 5.5;
+      if (d >= 1e12) return '10¹⁴+ g/cm³';
+      if (d >= 1e5) return '10⁶ g/cm³';
+      return d < 0.1 ? `${d.toFixed(3)} g/cm³` : `${d.toFixed(2)} g/cm³`;
+    }
 
     const sb = {
       open: false, inited: false, rafId: 0, wasMainPaused: false,
       scene: null, camera: null, renderer: null, controls: null,
-      bodies: [], effects: [], selected: null, followBody: null,
+      bodies: [], effects: [], tidalStreams: [], waves: [],
+      selected: null, followBody: null,
       preset: 'solar', tool: 'select', launchMode: 'orbit', spawnId: 'earth',
       customTemplate: null,
-      paused: false, speed: 1.0, gravity: 1.0, simYears: 0,
+      paused: false, speed: 1.0, gravity: 1.0, lumMult: 1.0,
+      rocheEnabled: true, collideMode: 'scientific',
+      simYears: 0,
       showTrails: true, showHZ: true, showGrid: true, showVel: false, showLabels: true,
       gridMesh: null, gridBasePos: null, hzMesh: null,
-      dragState: null, previewLine: null, laserLine: null, activeBeamTarget: null,
+      dragState: null, grabBody: null, grabPrevPos: new THREE.Vector3(), grabVel: new THREE.Vector3(),
+      barrageActive: false, barrageTimer: 0, barragePos: new THREE.Vector3(),
+      previewLine: null, laserLine: null, activeBeamTarget: null,
       raycaster: new THREE.Raycaster(), plane: new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
-      G_CONST: 1.25, nextId: 1, fpsFrames: 0, fpsLast: 0, fpsVal: 60
+      G_CONST: 1.25, nextId: 1, fpsFrames: 0, fpsLast: 0, fpsVal: 60,
+      achievements: new Set()
     };
+
+    try {
+      const savedAch = JSON.parse(localStorage.getItem('cosmic-sb-ach') || '[]');
+      if (Array.isArray(savedAch)) savedAch.forEach(a => sb.achievements.add(a));
+    } catch {}
 
     const sb$ = id => document.getElementById(id);
 
@@ -38,11 +89,30 @@
       const el = sb$('sb-toast'); if (!el) return;
       el.textContent = msg; el.hidden = false;
       clearTimeout(sb._toastTimer);
-      sb._toastTimer = setTimeout(() => { el.hidden = true; }, 2600);
+      sb._toastTimer = setTimeout(() => { el.hidden = true; }, 3200);
+    }
+
+    function sbUnlockAch(id) {
+      if (sb.achievements.has(id)) return;
+      sb.achievements.add(id);
+      try { localStorage.setItem('cosmic-sb-ach', JSON.stringify([...sb.achievements])); } catch {}
+      const meta = SB_ACHIEVEMENTS.find(a => a.id === id);
+      if (meta) sbToast(`🏆 解锁宇宙成就：${meta.icon} ${meta.title}！`);
+      sbRenderAchievements();
+    }
+
+    function sbRenderAchievements() {
+      const cnt = sb$('sb-ach-count');
+      if (cnt) cnt.textContent = `${sb.achievements.size}/${SB_ACHIEVEMENTS.length}`;
+      const list = sb$('sb-ach-list'); if (!list) return;
+      list.innerHTML = SB_ACHIEVEMENTS.map(a => {
+        const ok = sb.achievements.has(a.id);
+        return `<div class="sb-ach-item ${ok ? 'unlocked' : ''}"><span>${a.icon}</span><div><strong>${a.title} ${ok ? '✓' : ''}</strong><small>${a.desc}</small></div></div>`;
+      }).join('');
     }
 
     function sbMakePlanetMat(body) {
-      if (body.kind === 'star') {
+      if (body.kind === 'star' || body.kind === 'wd' || body.kind === 'ns') {
         return new THREE.ShaderMaterial({
           uniforms: { uTime: { value: 0 }, uColor: { value: new THREE.Color(...body.color) }, uTemp: { value: body.temp } },
           vertexShader: `varying vec3 vP,vN,vV;void main(){vP=normalize(position);vec4 mv=modelViewMatrix*vec4(position,1.);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`,
@@ -52,15 +122,14 @@
             void main(){
               float g=n(vP*7.+vec3(uTime*.6,-uTime*.4,uTime*.3))*.6+n(vP*16.-vec3(uTime*.9))*.4;
               float rim=pow(1.-max(0.,dot(normalize(vN),normalize(vV))),2.2);
-              vec3 hot=mix(uColor,vec3(1.,0.98,0.92),smoothstep(0.45,0.88,g));
-              gl_FragColor=vec4(hot*(0.92+0.35*g)+uColor*rim*0.65,1.);
+              vec3 hot=mix(uColor,vec3(1.,0.98,0.94),smoothstep(0.42,0.88,g));
+              gl_FragColor=vec4(hot*(0.94+0.36*g)+uColor*rim*0.72,1.);
             }`
         });
       }
       if (body.kind === 'bh') {
-        return new THREE.MeshBasicMaterial({ color: 0x010205 });
+        return new THREE.MeshBasicMaterial({ color: 0x000103 });
       }
-      // 实时气候/冰封/海洋/温室/熔岩自适应行星着色器（Universe Sandbox 2 核心特色！）
       return new THREE.ShaderMaterial({
         uniforms: {
           uTime: { value: 0 },
@@ -101,7 +170,6 @@
               col=mix(col,vec3(0.20,0.12,0.10),lava*0.82);
               float crack=smoothstep(0.46,0.72,n(vP*11.+vec3(uTime*.15)));
               emi+=mix(vec3(1.,0.22,0.02),vec3(1.,0.85,0.35),crack)*lava*(0.45+crack*1.25);
-              // 云层/温室雾霾
               float cloud=smoothstep(0.48,0.76,n(vP*5.2+vec3(uTime*.12,0.,-uTime*.08)))*min(1.,uAtmo*0.35)*(1.-lava*0.7);
               vec3 cloudCol=mix(vec3(0.92,0.96,1.),vec3(0.95,0.78,0.42),smoothstep(1.8,4.0,uAtmo));
               col=mix(col,cloudCol,cloud*0.75);
@@ -115,24 +183,32 @@
 
     function sbCreateBody(cfg) {
       const id = 'b' + (sb.nextId++);
+      const kind = cfg.kind || 'planet';
+      const defDens = kind === 'bh' ? 1e16 : kind === 'ns' ? 4e14 : kind === 'wd' ? 1e6 : kind === 'star' ? 1.4 : kind === 'gas' ? 1.2 : 5.0;
       const body = {
         id, name: cfg.name || '天体', badge: cfg.badge || '自定义天体',
-        kind: cfg.kind || 'planet',
+        kind,
         mass: Math.max(0.0001, Number(cfg.mass) || 0.04),
-        radius: Math.max(0.35, Number(cfg.radius) || 1.5),
-        baseRadius: Math.max(0.35, Number(cfg.radius) || 1.5),
+        radius: Math.max(0.32, Number(cfg.radius) || 1.5),
+        baseRadius: Math.max(0.32, Number(cfg.radius) || 1.5),
+        density: cfg.density ?? defDens,
         pos: new THREE.Vector3(...(cfg.pos || [0, 0, 0])),
         vel: new THREE.Vector3(...(cfg.vel || [0, 0, 0])),
         acc: new THREE.Vector3(),
         temp: cfg.temp ?? 15,
         water: cfg.water ?? 0,
         atmo: cfg.atmo ?? 0,
-        spin: cfg.spin ?? 0.6,
+        spin: cfg.spin ?? (kind === 'ns' ? 6.5 : 0.6),
         color: cfg.color || [0.5, 0.6, 0.7],
         hasRing: !!cfg.ring,
-        pulsar: !!cfg.pulsar,
+        pulsar: !!cfg.pulsar || kind === 'ns',
+        isDebris: !!cfg.isDebris,
+        tidalStress: 0,
+        tidalTarget: null,
+        diskFlare: 0,
         alive: true,
-        history: []
+        tempHist: [],
+        velHist: []
       };
 
       const grp = new THREE.Group();
@@ -142,40 +218,71 @@
       mesh.userData.sbBody = body;
       grp.add(mesh);
 
-      if (body.kind === 'star') {
-        const glow = glowSprite(new THREE.Color(...body.color).getHex(), body.radius * 4.2, 0.72);
+      if (kind === 'star' || kind === 'wd' || kind === 'ns') {
+        const glow = glowSprite(new THREE.Color(...body.color).getHex(), body.radius * (kind === 'ns' ? 5.2 : 4.2), 0.76);
         grp.add(glow); body.glow = glow;
-        if (body.pulsar) {
-          const jetGeo = new THREE.CylinderGeometry(body.radius * 0.14, body.radius * 0.5, body.radius * 18, 12, 1, true);
-          const jet = new THREE.Mesh(jetGeo, new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }));
-          jet.rotation.z = 0.35; grp.add(jet);
+        if (body.pulsar || kind === 'ns') {
+          const jetGeo = new THREE.CylinderGeometry(body.radius * 0.12, body.radius * 0.55, body.radius * 22, 12, 1, true);
+          const jet = new THREE.Mesh(jetGeo, new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+          jet.rotation.z = 0.32; grp.add(jet); body.jetMesh = jet;
         }
-      } else if (body.kind === 'bh') {
-        const disk = new THREE.Mesh(
-          new THREE.RingGeometry(body.radius * 1.45, body.radius * 4.2, 64),
-          new THREE.MeshBasicMaterial({ color: 0xff9a3c, transparent: true, opacity: 0.78, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
+      } else if (kind === 'bh') {
+        // 真实多普勒增亮黑洞吸积盘着色器 + 光子环 + 相对论双极喷流
+        const diskMat = new THREE.ShaderMaterial({
+          uniforms: { uTime: { value: 0 }, uFlare: { value: 0.0 } },
+          vertexShader: `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+          fragmentShader: `varying vec2 vUv;uniform float uTime,uFlare;
+            void main(){
+              vec2 p=(vUv-0.5)*2.0;float r=length(p);
+              if(r<0.32||r>1.0)discard;
+              float ang=atan(p.y,p.x);
+              float spiral=sin(ang*4.0-r*18.0+uTime*5.5)*0.5+0.5;
+              float ring=smoothstep(0.32,0.44,r)*smoothstep(1.0,0.48,r);
+              float doppler=0.72+0.42*cos(ang+0.6);
+              vec3 cInner=vec3(1.0,0.92,0.72);
+              vec3 cMid=vec3(1.0,0.52,0.14);
+              vec3 cOuter=vec3(0.65,0.18,0.85);
+              vec3 col=mix(cInner,cMid,smoothstep(0.34,0.64,r));
+              col=mix(col,cOuter,smoothstep(0.68,0.98,r));
+              col*=(0.75+0.55*spiral)*doppler*(1.0+uFlare*1.4);
+              gl_FragColor=vec4(col,clamp(ring*(0.85+uFlare*0.15),0.0,1.0));
+            }`,
+          transparent: true, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+        });
+        const disk = new THREE.Mesh(new THREE.PlaneGeometry(body.radius * 8.6, body.radius * 8.6), diskMat);
+        disk.rotation.x = Math.PI * 0.43; grp.add(disk);
+        body.diskMesh = disk; body.diskMat = diskMat;
+        // 亮金色光子环
+        const photonRing = new THREE.Mesh(
+          new THREE.RingGeometry(body.radius * 1.08, body.radius * 1.28, 64),
+          new THREE.MeshBasicMaterial({ color: 0xffe4a0, transparent: true, opacity: 0.92, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
         );
-        disk.rotation.x = Math.PI * 0.44; grp.add(disk);
-        const halo = glowSprite(0xff8c24, body.radius * 5.2, 0.55); grp.add(halo);
+        grp.add(photonRing); body.photonRing = photonRing;
+        // 相对论双极喷流（吸积吞噬时暴涨！）
+        const bhJet = new THREE.Mesh(
+          new THREE.CylinderGeometry(body.radius * 0.14, body.radius * 0.85, body.radius * 22, 14, 1, true),
+          new THREE.MeshBasicMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.24, blending: THREE.AdditiveBlending, depthWrite: false })
+        );
+        grp.add(bhJet); body.jetMesh = bhJet;
+        const halo = glowSprite(0xff8c24, body.radius * 5.2, 0.52); grp.add(halo);
       }
       if (body.hasRing) sbAttachRing(grp, body);
 
       // 轨迹线与速度矢量
-      const trailMax = 140;
+      const trailMax = body.isDebris ? 40 : 150;
       const trailPos = new Float32Array(trailMax * 3);
       for (let i = 0; i < trailMax; i++) { trailPos[i * 3] = body.pos.x; trailPos[i * 3 + 1] = body.pos.y; trailPos[i * 3 + 2] = body.pos.z; }
       const trailGeo = new THREE.BufferGeometry();
       trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
-      const trailCol = body.kind === 'star' ? 0xfbbf24 : body.kind === 'bh' ? 0xc084fc : new THREE.Color(...body.color).lerp(new THREE.Color(0x7dd3fc), 0.45).getHex();
-      const trail = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({ color: trailCol, transparent: true, opacity: 0.55, depthWrite: false }));
+      const trailCol = kind === 'star' ? 0xfbbf24 : kind === 'bh' ? 0xc084fc : kind === 'ns' ? 0x38bdf8 : new THREE.Color(...body.color).lerp(new THREE.Color(0x7dd3fc), 0.45).getHex();
+      const trail = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({ color: trailCol, transparent: true, opacity: body.isDebris ? 0.28 : 0.58, depthWrite: false }));
       trail.frustumCulled = false;
       sb.scene.add(trail);
 
       const velArrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), body.pos, 4, 0x38bdf8, 1.1, 0.55);
-      velArrow.visible = sb.showVel;
+      velArrow.visible = sb.showVel && !body.isDebris;
       sb.scene.add(velArrow);
 
-      // 浮动标签
       const labelEl = document.createElement('span');
       labelEl.className = 'sb-label';
       labelEl.textContent = body.name;
@@ -187,11 +294,14 @@
       return body;
     }
 
-    function sbAttachRing(grp, body) {
-      if (body.ringMesh) return;
+    function sbAttachRing(grp, body, tint = 0xe6d2a2) {
+      if (body.ringMesh) {
+        body.ringMesh.scale.multiplyScalar(1.08);
+        return;
+      }
       const ring = new THREE.Mesh(
-        new THREE.RingGeometry(body.radius * 1.45, body.radius * 2.55, 64),
-        new THREE.MeshBasicMaterial({ color: 0xe6d2a2, transparent: true, opacity: 0.62, side: THREE.DoubleSide, depthWrite: false })
+        new THREE.RingGeometry(body.radius * 1.42, body.radius * 2.65, 72),
+        new THREE.MeshBasicMaterial({ color: tint, transparent: true, opacity: 0.68, side: THREE.DoubleSide, depthWrite: false })
       );
       ring.rotation.x = Math.PI * 0.44;
       grp.add(ring);
@@ -207,27 +317,28 @@
       body.labelEl?.remove();
       const idx = sb.bodies.indexOf(body);
       if (idx >= 0) sb.bodies.splice(idx, 1);
-      if (sb.selected === body) sbSelectBody(sb.bodies[0] || null);
+      if (sb.selected === body) sbSelectBody(sb.bodies.find(x => !x.isDebris) || sb.bodies[0] || null);
       if (sb.followBody === body) { sb.followBody = null; sb$('sb-follow-btn')?.setAttribute('aria-pressed', 'false'); }
+      if (sb.grabBody === body) sb.grabBody = null;
     }
 
     function sbClearAll() {
       [...sb.bodies].forEach(sbRemoveBody);
       sb.effects.forEach(e => disposeTree(e.grp));
-      sb.effects = [];
+      sb.tidalStreams.forEach(t => disposeTree(t.mesh));
+      sb.effects = []; sb.tidalStreams = []; sb.waves = [];
       sb.simYears = 0;
     }
 
     // -------------------------------------------------------------------------
-    // 3D 广义相对论时空弯曲引力网格 (Spacetime Gravity Well Grid) + 3带宜居带
+    // 3D 广义相对论时空弯曲网格（支持引力波时空震荡！）+ 动态 3 带宜居带
     // -------------------------------------------------------------------------
     function sbBuildEnvironment() {
-      // 深空星空背景
-      const nS = 2600, pos = new Float32Array(nS * 3), col = new Float32Array(nS * 3), rng = deterministicRandom(2027);
+      const nS = 2800, pos = new Float32Array(nS * 3), col = new Float32Array(nS * 3), rng = deterministicRandom(2027);
       for (let i = 0; i < nS; i++) {
-        const r = 420 + rng() * 520, a = rng() * Math.PI * 2, ph = Math.acos(2 * rng() - 1);
+        const r = 420 + rng() * 540, a = rng() * Math.PI * 2, ph = Math.acos(2 * rng() - 1);
         pos[i * 3] = r * Math.sin(ph) * Math.cos(a); pos[i * 3 + 1] = r * Math.cos(ph); pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(a);
-        const c = new THREE.Color().setHSL(0.56 + (rng() - 0.5) * 0.14, 0.45, 0.72 + rng() * 0.25);
+        const c = new THREE.Color().setHSL(0.56 + (rng() - 0.5) * 0.16, 0.45, 0.72 + rng() * 0.25);
         c.toArray(col, i * 3);
       }
       const sGeo = new THREE.BufferGeometry();
@@ -235,8 +346,7 @@
       sGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
       sb.scene.add(glowPoints(sGeo, 2.2, 0.82));
 
-      // 3D 时空弯曲网格 (48x48 细平面，实时受全天体引力势向下弯曲！)
-      const gGeo = new THREE.PlaneGeometry(240, 240, 48, 48);
+      const gGeo = new THREE.PlaneGeometry(250, 250, 48, 48);
       gGeo.rotateX(-Math.PI / 2);
       const gCount = gGeo.attributes.position.count;
       gGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(gCount * 3), 3));
@@ -245,7 +355,6 @@
       sb.gridMesh.position.y = -6.5;
       sb.scene.add(sb.gridMesh);
 
-      // 动态 3 带宜居带平面（内赤红过热 / 中翡翠绿液态水宜居带 / 外湛蓝冰冻区）
       const hzMat = new THREE.ShaderMaterial({
         uniforms: { uInner: { value: 0.28 }, uOuter: { value: 0.56 } },
         vertexShader: `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
@@ -267,23 +376,31 @@
       sb.hzMesh.position.y = -0.35;
       sb.scene.add(sb.hzMesh);
 
-      // 拖拽弹射轨道预览虚线
       const pGeo = new THREE.BufferGeometry();
       pGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(80 * 3), 3));
-      sb.previewLine = new THREE.Line(pGeo, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.9 }));
-      sb.previewLine.visible = false;
-      sb.previewLine.frustumCulled = false;
+      sb.previewLine = new THREE.Line(pGeo, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.92 }));
+      sb.previewLine.visible = false; sb.previewLine.frustumCulled = false;
       sb.scene.add(sb.previewLine);
 
-      // 激光 / 冰冻射线实时光束
       const lGeo = new THREE.BufferGeometry();
       lGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
-      sb.laserLine = new THREE.Line(lGeo, new THREE.LineBasicMaterial({ color: 0xff5a1f, transparent: true, opacity: 0.92 }));
+      sb.laserLine = new THREE.Line(lGeo, new THREE.LineBasicMaterial({ color: 0xff5a1f, transparent: true, opacity: 0.95 }));
       sb.laserLine.visible = false;
       sb.scene.add(sb.laserLine);
     }
 
-    function sbUpdateGravityGridAndHZ() {
+    function sbSpawnGravWave(centerPos, amp = 5.5) {
+      sb.waves.push({ pos: centerPos.clone(), r: 2, amp, age: 0, maxAge: 4.2 });
+      sbSpawnExplosion(centerPos, 0xa855f7, 8.5, true);
+      sbUnlockAch('gw');
+    }
+
+    function sbUpdateGravityGridAndHZ(dt) {
+      for (let i = sb.waves.length - 1; i >= 0; i--) {
+        const w = sb.waves[i];
+        w.age += dt; w.r += dt * 46;
+        if (w.age >= w.maxAge) sb.waves.splice(i, 1);
+      }
       if (sb.gridMesh) {
         sb.gridMesh.visible = sb.showGrid;
         if (sb.showGrid) {
@@ -297,10 +414,17 @@
               const d = Math.sqrt(dx * dx + dz * dz + 36);
               well += (b.mass * sb.gravity) / d;
             }
-            const depth = Math.min(28, well * 1.15);
-            pos.setXYZ(i, bx, -depth, bz);
-            const t = Math.min(1, depth / 16);
-            col.setXYZ(i, 0.14 + t * 0.72, 0.56 - t * 0.24, 0.95);
+            let ripple = 0;
+            for (let w = 0; w < sb.waves.length; w++) {
+              const gw = sb.waves[w], d = Math.hypot(bx - gw.pos.x, bz - gw.pos.z);
+              const env = Math.exp(-Math.pow((d - gw.r) * 0.14, 2)) * (1 - gw.age / gw.maxAge);
+              ripple += Math.sin((d - gw.r) * 0.85) * gw.amp * env;
+            }
+            const depth = THREE.MathUtils.clamp(well * 0.95, -18, 32);
+            pos.setXYZ(i, bx, -depth + ripple, bz);
+            const t = Math.min(1, Math.abs(depth) / 18);
+            const wt = Math.min(1, Math.abs(ripple) * 0.35);
+            col.setXYZ(i, Math.min(1, 0.14 + t * 0.72 + wt * 0.5), Math.min(1, 0.56 - t * 0.22 + wt * 0.35), 0.96);
           }
           pos.needsUpdate = true; col.needsUpdate = true;
         }
@@ -310,20 +434,87 @@
         sb.hzMesh.visible = sb.showHZ && !!star;
         if (star && sb.showHZ) {
           sb.hzMesh.position.set(star.pos.x, star.pos.y - 0.4, star.pos.z);
-          const lumScale = Math.pow(Math.max(0.15, star.mass / 120), 0.75);
-          const sc = THREE.MathUtils.clamp(lumScale, 0.4, 2.4);
+          const lumScale = Math.pow(Math.max(0.15, (star.mass / SB_SOLAR_M) * sb.lumMult), 0.65);
+          const sc = THREE.MathUtils.clamp(lumScale, 0.38, 2.5);
           sb.hzMesh.scale.set(sc, sc, 1);
         }
       }
     }
 
     // -------------------------------------------------------------------------
-    // 8 大经典 Universe Sandbox 2 预设宇宙场景
+    // 潮汐撕裂粒子流（黑洞/中子星意大利面化螺旋吸积带！）
+    // -------------------------------------------------------------------------
+    function sbSpawnTidalStream(victim, primary) {
+      if (sb.tidalStreams.length > 160) return;
+      const toP = primary.pos.clone().sub(victim.pos).normalize();
+      const side = new THREE.Vector3(-toP.z, (Math.random() - 0.5) * 0.4, toP.x).normalize();
+      const start = victim.pos.clone().addScaledVector(toP, victim.radius * (0.6 + Math.random() * 0.7)).addScaledVector(side, (Math.random() - 0.5) * victim.radius * 0.7);
+      const colHex = victim.kind === 'star' ? new THREE.Color(...victim.color).lerp(new THREE.Color(0xffffff), 0.35).getHex()
+        : victim.kind === 'gas' ? 0xf59e0b : 0xff6b2b;
+      const sz = Math.max(0.28, Math.min(1.15, victim.radius * 0.22));
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(sz, 7, 6),
+        new THREE.MeshBasicMaterial({ color: colHex, transparent: true, opacity: 0.92, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      mesh.position.copy(start);
+      sb.scene.add(mesh);
+      // 切向+向内螺旋速度，形成华丽的潮汐吸积漩涡！
+      const vel = victim.vel.clone().addScaledVector(toP, 4.5 + Math.random() * 4.0).addScaledVector(side, 5.2 + Math.random() * 3.5);
+      sb.tidalStreams.push({ mesh, pos: start, vel, target: primary, age: 0, maxAge: 2.4 });
+    }
+
+    function sbUpdateTidalStreams(dt) {
+      for (let i = sb.tidalStreams.length - 1; i >= 0; i--) {
+        const s = sb.tidalStreams[i];
+        s.age += dt;
+        if (!s.target || !s.target.alive || s.age >= s.maxAge) {
+          disposeTree(s.mesh); sb.tidalStreams.splice(i, 1); continue;
+        }
+        const toT = s.target.pos.clone().sub(s.pos);
+        const d = toT.length();
+        if (d < s.target.radius * 1.25) {
+          s.target.diskFlare = Math.min(2.2, (s.target.diskFlare || 0) + 0.16);
+          disposeTree(s.mesh); sb.tidalStreams.splice(i, 1); continue;
+        }
+        toT.normalize();
+        const swirl = new THREE.Vector3(-toT.z, 0, toT.x);
+        s.vel.addScaledVector(toT, dt * (55 + s.target.mass * 0.08) / Math.max(1.5, d * 0.35));
+        s.vel.addScaledVector(swirl, dt * 8.5);
+        s.vel.multiplyScalar(Math.pow(0.92, dt * 10));
+        s.pos.addScaledVector(s.vel, dt);
+        s.mesh.position.copy(s.pos);
+        s.mesh.scale.setScalar(Math.max(0.2, 1 - s.age / s.maxAge));
+        s.mesh.material.opacity = Math.max(0, 0.92 * (1 - s.age / s.maxAge));
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 科学洛希极限 & 潮汐瓦解半径计算
+    // -------------------------------------------------------------------------
+    function sbRocheRadius(primary, victim) {
+      const pRank = sbCompactRank(primary.kind), vRank = sbCompactRank(victim.kind);
+      if (pRank <= vRank && primary.mass < victim.mass * 2.5) return 0;
+      if (primary.kind === 'bh' || primary.kind === 'ns') {
+        const ratio = Math.cbrt(Math.max(1.0, primary.mass / Math.max(0.02, victim.mass)));
+        return THREE.MathUtils.clamp(primary.radius * 3.2 + victim.radius * ratio * 0.55, primary.radius * 3.0, 34);
+      }
+      if (primary.kind === 'wd' && victim.kind !== 'bh' && victim.kind !== 'ns') {
+        return THREE.MathUtils.clamp(primary.radius * 3.8 + victim.radius * 1.4, 8, 22);
+      }
+      if (primary.kind === 'gas' && victim.kind === 'planet') {
+        // 真实刚体/流体洛希极限：d ≈ 2.44 * R_p * (rho_p / rho_v)^(1/3)
+        return Math.max(primary.radius * 2.35, 2.44 * primary.radius * Math.cbrt(Math.max(0.2, (primary.density || 1.3) / Math.max(0.5, victim.density || 3.3))));
+      }
+      return 0;
+    }
+
+    // -------------------------------------------------------------------------
+    // 经典预设 + 大爆炸奇点创世 + 自定义星系锻造炉
     // -------------------------------------------------------------------------
     function sbCircularVel(pos, star) {
       const rVec = pos.clone().sub(star.pos);
       const r = Math.max(2, rVec.length());
-      const vMag = Math.sqrt((sb.G_CONST * Math.max(0.1, sb.gravity) * star.mass) / r);
+      const vMag = Math.sqrt((sb.G_CONST * Math.max(0.15, Math.abs(sb.gravity)) * star.mass) / r);
       return new THREE.Vector3(-rVec.z, 0, rVec.x).normalize().multiplyScalar(vMag).add(star.vel);
     }
 
@@ -337,204 +528,327 @@
       if (name === 'solar') {
         const sun = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '太阳', pos: [0, 0, 0], vel: [0, 0, 0] });
         const defs = [
-          ['水星', 'planet', 0.008, 0.85, 16, 170, 0, 0, [0.65, 0.62, 0.58]],
-          ['金星', 'planet', 0.038, 1.55, 24, 465, 0, 4.2, [0.90, 0.74, 0.42]],
-          ['地球', 'planet', 0.045, 1.75, 36, 15, 71, 1.0, [0.22, 0.52, 0.26]],
-          ['火星', 'planet', 0.015, 1.25, 48, -55, 10, 0.2, [0.80, 0.36, 0.20]],
-          ['木星', 'gas', 0.95, 3.45, 68, -110, 0, 3.5, [0.85, 0.64, 0.44]],
-          ['土星', 'gas', 0.62, 3.00, 88, -140, 0, 3.2, [0.88, 0.78, 0.56], true]
+          ['水星', 'planet', 0.008, 0.85, 16, 170, 0, 0, 5.43, [0.65, 0.62, 0.58]],
+          ['金星', 'planet', 0.038, 1.52, 24, 465, 0, 4.2, 5.24, [0.90, 0.74, 0.42]],
+          ['地球', 'planet', 0.045, 1.72, 36, 15, 71, 1.0, 5.51, [0.22, 0.52, 0.26]],
+          ['火星', 'planet', 0.015, 1.25, 48, -55, 10, 0.2, 3.93, [0.80, 0.36, 0.20]],
+          ['木星', 'gas', 0.95, 3.35, 68, -110, 0, 3.5, 1.33, [0.85, 0.64, 0.44]],
+          ['土星', 'gas', 0.62, 2.95, 88, -140, 0, 3.2, 0.69, [0.88, 0.78, 0.56], true]
         ];
-        defs.forEach(([nm, kind, mass, radius, dist, temp, water, atmo, color, ring], idx) => {
+        defs.forEach(([nm, kind, mass, radius, dist, temp, water, atmo, density, color, ring], idx) => {
           const ang = idx * 1.15 + 0.4;
           const p = new THREE.Vector3(Math.cos(ang) * dist, 0, Math.sin(ang) * dist);
           const v = sbCircularVel(p, sun);
-          sbCreateBody({ name: nm, badge: kind === 'gas' ? '气态巨行星' : '岩质行星', kind, mass, radius, pos: p.toArray(), vel: v.toArray(), temp, water, atmo, color, ring });
+          sbCreateBody({ name: nm, badge: kind === 'gas' ? '气态巨行星' : '岩质行星', kind, mass, radius, pos: p.toArray(), vel: v.toArray(), temp, water, atmo, density, color, ring });
         });
-        sbSelectBody(sb.bodies[3]); // 默认选中地球展示宜居率
-        sb.camera.position.set(0, 88, 115); sb.controls.target.set(0, 0, 0);
-      } else if (name === 'earth_moon') {
-        const sun = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '太阳', pos: [-95, 0, 0], vel: [0, 0, 0] });
-        const earth = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '地球', mass: 18, radius: 4.6, pos: [0, 0, 0], vel: [0, 0, 0] });
-        const mp = new THREE.Vector3(24, 0, 0);
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'moon'), name: '月球', mass: 0.45, radius: 1.5, pos: mp.toArray(), vel: sbCircularVel(mp, earth).toArray() });
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'mars'), name: '流浪忒伊亚', mass: 2.2, radius: 2.4, pos: [-38, 4, 28], vel: [1.35, -0.14, -0.92] });
-        sbSelectBody(earth);
-        sb.camera.position.set(0, 42, 62); sb.controls.target.set(0, 0, 0);
-      } else if (name === 'three_body') {
-        const m = 95, r = 24, v = 1.42;
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '恒星 α', mass: m, radius: 4.8, pos: [r, 0, 0], vel: [0, 0.25, v] });
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'reddwarf'), name: '恒星 β', mass: m * 0.9, radius: 4.2, pos: [-r * 0.5, 0, r * 0.86], vel: [-v * 0.86, -0.2, -v * 0.5] });
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'bluegiant'), name: '恒星 γ', mass: m * 1.1, radius: 5.2, pos: [-r * 0.5, 0, -r * 0.86], vel: [v * 0.86, 0.1, -v * 0.5] });
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '三体行星', mass: 0.05, radius: 1.8, pos: [0, 2, 52], vel: [-2.15, 0, 0.2] });
         sbSelectBody(sb.bodies[3]);
-        sb.camera.position.set(0, 78, 95); sb.controls.target.set(0, 0, 0);
+      } else if (name === 'bh_tde') {
+        // 专属展示：黑洞潮汐撕裂蓝超巨星（TDE 意大利面化 + 螺旋吸积！）
+        const bh = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'smbh'), name: '人马座 A* 黑洞', mass: 1800, radius: 4.4, pos: [0, 0, 0], vel: [0, 0, 0] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'bluegiant'), name: '蓝超巨星', mass: 360, radius: 6.4, pos: [34, 0, 8], vel: [-1.4, 0, -4.6] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '伴随行星', pos: [46, 0, 14], vel: [-1.2, 0, -4.4] });
+        sbSelectBody(sb.bodies[1]);
+        sbToast('🕳️ 观察蓝超巨星进入黑洞潮汐半径后被实时拉长撕裂并螺旋吸入吸积盘！');
+      } else if (name === 'roche_ring') {
+        // 专属展示：卫星闯入巨行星洛希极限被潮汐撕碎成光环！
+        const jup = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'jupiter'), name: '巨行星', mass: 90, radius: 5.2, pos: [0, 0, 0], vel: [0, 0, 0] });
+        const m1 = new THREE.Vector3(14, 0, 0);
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'moon'), name: '洛希厄运卫星', mass: 0.02, radius: 1.4, pos: m1.toArray(), vel: sbCircularVel(m1, jup).multiplyScalar(0.86).toArray() });
+        const m2 = new THREE.Vector3(-28, 0, 4);
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '外围安全卫星', pos: m2.toArray(), vel: sbCircularVel(m2, jup).toArray() });
+        sbSelectBody(sb.bodies[1]);
+        sbToast('🪐 洛希厄运卫星正螺旋逼近巨行星洛希极限，即将被潮汐撕碎化作壮丽行星环！');
+      } else if (name === 'kilonova') {
+        // 专属展示：双中子星旋进并合 -> 千新星爆发 + 引力波涟漪 + 坍缩为黑洞！
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'neutron'), name: '中子星 PSR-A', mass: 220, radius: 1.55, pos: [-11, 0, 0], vel: [0.35, 0, 2.7] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'neutron'), name: '中子星 PSR-B', mass: 215, radius: 1.55, pos: [11, 0, 0], vel: [-0.35, 0, -2.7] });
+        sbSelectBody(sb.bodies[0]);
+        sbToast('⚡ 双脉冲中子星正在相互旋进，碰撞瞬间将触发千新星爆发、时空引力波并坍缩成黑洞！');
+      } else if (name === 'earth_moon') {
+        const earth = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '原始地球', mass: 60, radius: 4.5, pos: [0, 0, 0], vel: [0, 0, 0] });
+        const mPos = new THREE.Vector3(24, 0, 0);
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'moon'), name: '月球', mass: 0.9, radius: 1.5, pos: mPos.toArray(), vel: sbCircularVel(mPos, earth).toArray() });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'mars'), name: '忒伊亚原行星', mass: 7.5, radius: 2.3, pos: [-46, 0, 14], vel: [3.2, 0, -0.75] });
+        sbSelectBody(earth);
+      } else if (name === 'three_body') {
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '恒星 α', mass: 135, radius: 5.0, pos: [-26, 0, -14], vel: [0.65, 0, 1.55], color: [1.0, 0.84, 0.35] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'reddwarf'), name: '恒星 β', mass: 115, radius: 4.4, pos: [26, 0, -10], vel: [-0.85, 0, -1.25], color: [1.0, 0.36, 0.18] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'bluegiant'), name: '恒星 γ', mass: 165, radius: 5.2, pos: [0, 0, 26], vel: [0.25, 0, -0.35], color: [0.55, 0.86, 1.0] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '三体行星', mass: 0.05, radius: 1.65, pos: [-26, 0, 5], vel: [3.1, 0, 1.6] });
+        sbSelectBody(sb.bodies[3]);
       } else if (name === 'bh_eat') {
         const sun = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '太阳', pos: [0, 0, 0], vel: [0, 0, 0] });
-        [24, 38, 56, 74].forEach((dist, i) => {
-          const p = new THREE.Vector3(Math.cos(i * 1.6) * dist, 0, Math.sin(i * 1.6) * dist);
-          sbCreateBody({ ...SB_TEMPLATES[i === 1 ? 3 : i === 2 ? 4 : 2], name: ['金星', '地球', '木星', '土星'][i], pos: p.toArray(), vel: sbCircularVel(p, sun).toArray(), ring: i === 3 });
-        });
-        const bh = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: '流浪黑洞', mass: 680, radius: 4.2, pos: [-95, 10, -45], vel: [1.85, -0.18, 0.85] });
-        sbSelectBody(bh);
-        sb.camera.position.set(0, 96, 128); sb.controls.target.set(0, 0, 0);
-      } else if (name === 'jupiter_slingshot') {
-        const jup = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'jupiter'), name: '木星', mass: 85, radius: 6.2, pos: [0, 0, 0], vel: [0, 0, 0] });
-        [['木卫一', 14, 1.1, [0.95, 0.82, 0.28]], ['木卫二', 21, 1.0, [0.85, 0.90, 0.95]], ['木卫三', 30, 1.4, [0.68, 0.65, 0.60]], ['木卫四', 42, 1.3, [0.52, 0.48, 0.45]]].forEach(([nm, d, rad, col], i) => {
+        [20, 32, 46, 62].forEach((d, i) => {
           const p = new THREE.Vector3(Math.cos(i * 1.5) * d, 0, Math.sin(i * 1.5) * d);
-          sbCreateBody({ name: nm, badge: '伽利略卫星', kind: 'planet', mass: 0.08, radius: rad, pos: p.toArray(), vel: sbCircularVel(p, jup).toArray(), temp: -135, water: i === 1 ? 95 : 10, atmo: 0.1, color: col });
+          const tpl = SB_TEMPLATES[i === 1 ? 3 : i === 2 ? 4 : i === 3 ? 5 : 2];
+          sbCreateBody({ ...tpl, name: ['金星', '地球', '木星', '土星'][i], pos: p.toArray(), vel: sbCircularVel(p, sun).toArray() });
         });
-        for (let k = 0; k < 6; k++) {
-          sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'comet'), name: `彗星 #${k + 1}`, pos: [-68 - k * 7, (k - 2.5) * 3, -18 + k * 4], vel: [2.6, 0, 0.45] });
-        }
-        sbSelectBody(jup);
-        sb.camera.position.set(0, 62, 85); sb.controls.target.set(0, 0, 0);
-      } else if (name === 'planet_crash') {
-        const e1 = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'earth'), name: '原始地球', mass: 24, radius: 5.2, pos: [-24, 0, 0], vel: [0.95, 0, 0.22] });
-        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'mars'), name: '忒伊亚行星', mass: 12, radius: 3.8, pos: [24, 1.5, -5], vel: [-1.45, -0.05, 0.12] });
-        sbSelectBody(e1);
-        sb.camera.position.set(0, 38, 58); sb.controls.target.set(0, 0, 0);
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: '流浪黑洞', mass: 780, radius: 3.6, pos: [-82, 0, 22], vel: [2.7, 0, -0.55] });
+        sbSelectBody(sb.bodies[sb.bodies.length - 1]);
       } else if (name === 'galaxy_merge') {
-        const c1 = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: '星系核 A', mass: 220, radius: 3.2, pos: [-38, 0, -14], vel: [0.85, 0, 0.35] });
-        const c2 = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: '星系核 B', mass: 180, radius: 2.8, pos: [38, 4, 14], vel: [-0.95, -0.05, -0.35] });
-        const rng = deterministicRandom(909);
-        for (const [core, col] of [[c1, [0.55, 0.82, 1.0]], [c2, [1.0, 0.72, 0.42]]]) {
-          for (let i = 0; i < 22; i++) {
-            const r = 10 + rng() * 24, a = rng() * Math.PI * 2;
-            const p = core.pos.clone().add(new THREE.Vector3(Math.cos(a) * r, (rng() - 0.5) * 3, Math.sin(a) * r));
-            sbCreateBody({ name: '星团恒星', badge: '星团成员', kind: 'star', mass: 0.25, radius: 0.65 + rng() * 0.4, pos: p.toArray(), vel: sbCircularVel(p, core).toArray(), temp: 5800, color: col });
+        const c1 = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: '星系核 A', mass: 460, radius: 3.1, pos: [-44, 0, -14], vel: [1.4, 0, 0.6] });
+        const c2 = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: '星系核 B', mass: 460, radius: 3.1, pos: [44, 0, 14], vel: [-1.4, 0, -0.6] });
+        [c1, c2].forEach((core, ci) => {
+          for (let i = 0; i < 12; i++) {
+            const r = 12 + (i % 4) * 5.8 + (i * 0.4), ang = i * 0.55;
+            const p = core.pos.clone().add(new THREE.Vector3(Math.cos(ang) * r, (Math.random() - 0.5) * 2, Math.sin(ang) * r));
+            const v = sbCircularVel(p, core);
+            sbCreateBody({ name: `恒星 ${ci ? 'B' : 'A'}${i + 1}`, badge: '旋臂恒星', kind: 'star', mass: 0.25, radius: 1.0, pos: p.toArray(), vel: v.toArray(), temp: 6000, color: ci ? [0.65, 0.85, 1] : [1, 0.78, 0.42], isDebris: true });
           }
-        }
+        });
         sbSelectBody(c1);
-        sb.camera.position.set(0, 92, 120); sb.controls.target.set(0, 0, 0);
       } else {
         sbSelectBody(null);
-        sb.camera.position.set(0, 72, 95); sb.controls.target.set(0, 0, 0);
       }
-      sbToast(`已载入预设场景：${sb$('sb-preset-select').selectedOptions[0]?.textContent || name}`);
+      sb.camera.position.set(0, 72, 108);
+      sb.controls.target.set(0, 0, 0);
+      sb.controls.update();
+      sbSyncInspector();
     }
 
     // -------------------------------------------------------------------------
-    // 特效：撞击爆炸、离心甩裂与超新星爆发！
+    // ✨ 创世造物主：大爆炸奇点创世 & 自定义星系锻造炉
     // -------------------------------------------------------------------------
-    function sbSpawnExplosion(pos, colorHex, scale = 8, isSupernova = false) {
-      const grp = new THREE.Group(); grp.position.copy(pos);
-      const ringMat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
-      const ring = new THREE.Mesh(new THREE.RingGeometry(scale * 0.4, scale * 1.15, 48), ringMat);
-      ring.rotation.x = Math.PI * 0.45;
-      const flash = glowSprite(colorHex, scale * (isSupernova ? 6.5 : 3.2), 0.95);
-      grp.add(ring, flash);
+    function sbRunBigBang() {
+      sbClearAll();
+      sb.preset = 'blank';
+      const origin = new THREE.Vector3(0, 0, 0);
+      sbSpawnExplosion(origin, 0xfef08a, 14, true);
+      sbSpawnGravWave(origin, 7.5);
+      sbToast('💥 奇点大爆炸！暴胀冷却中，原初星云正在凝聚为恒星与行星系统…');
+      sbUnlockAch('genesis');
+      setTimeout(() => {
+        if (!sb.open) return;
+        sbForgeUniverse(false, true);
+        sbToast('✨ 创世完成！新的恒星与行星系已从大爆炸余烬中诞生！');
+      }, 650);
+    }
 
-      const pN = isSupernova ? 280 : 90, pPos = new Float32Array(pN * 3), pCol = new Float32Array(pN * 3), pVel = new Float32Array(pN * 3);
-      const cA = new THREE.Color(colorHex), cB = new THREE.Color(0xfff4c2);
-      for (let i = 0; i < pN; i++) {
-        const a = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1), spd = (isSupernova ? 18 : 7) * (0.35 + Math.random() * 0.9);
-        pVel[i * 3] = Math.sin(ph) * Math.cos(a) * spd; pVel[i * 3 + 1] = Math.cos(ph) * spd; pVel[i * 3 + 2] = Math.sin(ph) * Math.sin(a) * spd;
-        cA.clone().lerp(cB, Math.random() * 0.6).toArray(pCol, i * 3);
+    function sbForgeUniverse(guaranteeCradle = false, fromBigBang = false) {
+      if (!fromBigBang) sbClearAll();
+      const centerType = sb$('sb-gen-center')?.value || 'sun';
+      const numPlanets = Number(sb$('sb-gen-planets')?.value || 7);
+      const beltCount = Number(sb$('sb-gen-belt')?.value || 24);
+      const chaos = Number(sb$('sb-gen-chaos')?.value || 0.15);
+
+      let primary = null;
+      if (centerType === 'binary') {
+        primary = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '双星主星 A', mass: 120, radius: 4.8, pos: [-9, 0, 0], vel: [0, 0, 2.0] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'reddwarf'), name: '双星伴星 B', mass: 95, radius: 4.0, pos: [11, 0, 0], vel: [0, 0, -2.5] });
+      } else if (centerType === 'trinary') {
+        primary = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '创世恒星 α', mass: 115, radius: 4.6, pos: [-16, 0, -10], vel: [0.5, 0, 1.5] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'reddwarf'), name: '创世恒星 β', mass: 95, radius: 4.0, pos: [16, 0, -8], vel: [-0.7, 0, -1.2] });
+        sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'bluegiant'), name: '创世恒星 γ', mass: 140, radius: 5.0, pos: [0, 0, 18], vel: [0.2, 0, -0.3] });
+      } else if (centerType === 'smbh') {
+        primary = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'smbh'), name: '创世超大质量黑洞', mass: 1400, radius: 4.8, pos: [0, 0, 0], vel: [0, 0, 0] });
+      } else if (centerType === 'bluegiant') {
+        primary = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'bluegiant'), name: '创世蓝超巨星', mass: 320, radius: 7.2, pos: [0, 0, 0], vel: [0, 0, 0] });
+      } else {
+        primary = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'sun'), name: '创世主序星', mass: 125, radius: 5.5, pos: [0, 0, 0], vel: [0, 0, 0] });
+      }
+
+      const centerProxy = { pos: new THREE.Vector3(0, 0, 0), vel: new THREE.Vector3(0, 0, 0), mass: centerType === 'binary' ? 215 : centerType === 'trinary' ? 350 : primary.mass };
+      const names = ['曦光', '赤岩', '蔚蓝', '翠微', '琉璃', '苍岚', '玄冰', '星环', '霜降', '紫微', '天枢', '玉衡'];
+      let cradleBody = null;
+
+      for (let i = 0; i < numPlanets; i++) {
+        const dist = (centerType === 'smbh' ? 24 : 18) + i * (76 / Math.max(1, numPlanets));
+        const ang = Math.random() * Math.PI * 2;
+        const p = new THREE.Vector3(Math.cos(ang) * dist, (Math.random() - 0.5) * chaos * 8, Math.sin(ang) * dist);
+        const v = sbCircularVel(p, centerProxy).multiplyScalar(1 + (Math.random() - 0.5) * chaos * 0.55);
+        const isHabSlot = guaranteeCradle && i === Math.min(2, numPlanets - 1);
+        const isGas = !isHabSlot && i >= Math.floor(numPlanets * 0.55);
+        const body = sbCreateBody({
+          name: isHabSlot ? '生命摇篮·新地球' : `${names[i % names.length]}-${i + 1}`,
+          badge: isHabSlot ? '生命摇篮' : isGas ? '气态巨行星' : '创世岩质星',
+          kind: isGas ? 'gas' : 'planet',
+          mass: isHabSlot ? 0.048 : isGas ? (0.45 + Math.random() * 0.8) : (0.01 + Math.random() * 0.06),
+          radius: isHabSlot ? 1.85 : isGas ? (2.6 + Math.random() * 1.1) : (1.0 + Math.random() * 0.9),
+          density: isGas ? 1.1 : 5.2,
+          pos: p.toArray(), vel: v.toArray(),
+          temp: isHabSlot ? 18 : Math.max(-180, 320 - dist * 4.5),
+          water: isHabSlot ? 74 : (dist > 28 && dist < 52 ? 55 : 5),
+          atmo: isHabSlot ? 1.1 : isGas ? 3.4 : (0.3 + Math.random() * 1.2),
+          color: isHabSlot ? [0.20, 0.54, 0.28] : isGas ? [0.75 + Math.random() * 0.2, 0.55 + Math.random() * 0.3, 0.35 + Math.random() * 0.3] : [0.45 + Math.random() * 0.4, 0.35 + Math.random() * 0.35, 0.30 + Math.random() * 0.35],
+          ring: isGas && Math.random() < 0.45
+        });
+        if (isHabSlot) {
+          cradleBody = body;
+          const mP = p.clone().add(new THREE.Vector3(4.2, 0, 0));
+          sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'moon'), name: '摇篮伴月', pos: mP.toArray(), vel: sbCircularVel(mP, body).toArray() });
+        }
+      }
+
+      // 真实受引力扰动的星子/小行星带
+      const beltR = 54;
+      for (let k = 0; k < Math.min(60, beltCount); k++) {
+        const r = beltR + (Math.random() - 0.5) * 14, ang = (k / Math.max(1, beltCount)) * Math.PI * 2 + Math.random() * 0.2;
+        const p = new THREE.Vector3(Math.cos(ang) * r, (Math.random() - 0.5) * 2.4, Math.sin(ang) * r);
+        const v = sbCircularVel(p, centerProxy);
+        sbCreateBody({ name: `星子-${k + 1}`, badge: '小行星带', kind: 'planet', mass: 0.0002, radius: 0.42, pos: p.toArray(), vel: v.toArray(), temp: -90, color: [0.58, 0.54, 0.48], isDebris: true });
+      }
+
+      sbSelectBody(cradleBody || sb.bodies[1] || sb.bodies[0]);
+      sbUnlockAch('genesis');
+      if (cradleBody) sbUnlockAch('cradle');
+      sb.camera.position.set(0, 78, 114);
+      sb.controls.target.set(0, 0, 0);
+      sb.controls.update();
+      sbToast(`✨ 已创世生成 ${sb.bodies.length} 颗天体的全新星系！`);
+    }
+
+    // -------------------------------------------------------------------------
+    // 爆炸 / 超新星 / 千新星 / 霍金喷流过载特效
+    // -------------------------------------------------------------------------
+    function sbSpawnExplosion(pos, colorHex, scale = 5, isSupernova = false) {
+      const grp = new THREE.Group(); grp.position.copy(pos);
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(scale * 0.2, scale * 1.15, 56),
+        new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.92, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      ring.rotation.x = Math.PI * 0.48; grp.add(ring);
+      const flash = glowSprite(colorHex, scale * (isSupernova ? 13 : 6), 0.96); grp.add(flash);
+      const cnt = isSupernova ? 280 : 95;
+      const pPos = new Float32Array(cnt * 3), pVel = new Float32Array(cnt * 3);
+      for (let i = 0; i < cnt; i++) {
+        const a = Math.random() * Math.PI * 2, el = (Math.random() - 0.5) * Math.PI;
+        const sp = (isSupernova ? 26 : 12) * (0.3 + Math.random());
+        pVel[i * 3] = Math.cos(a) * Math.cos(el) * sp; pVel[i * 3 + 1] = Math.sin(el) * sp; pVel[i * 3 + 2] = Math.sin(a) * Math.cos(el) * sp;
       }
       const pGeo = new THREE.BufferGeometry();
       pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-      pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-      const pts = glowPoints(pGeo, isSupernova ? 1.8 : 0.95, 0.95);
+      const pts = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: colorHex, size: isSupernova ? 2.6 : 1.5, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }));
       grp.add(pts);
       sb.scene.add(grp);
-      sb.effects.push({ grp, ring, flash, pts, pVel, age: 0, duration: isSupernova ? 5.5 : 2.6, isSupernova });
-      audioEngine?.playImpact?.(isSupernova ? 1.5 : 0.75);
+      sb.effects.push({ grp, ring, flash, pts, pVel, age: 0, duration: isSupernova ? 2.8 : 1.35, isSupernova });
     }
 
     function sbTriggerSupernova(body) {
       if (!body || !body.alive) return;
-      const pos = body.pos.clone(), isStar = body.kind === 'star';
-      sbSpawnExplosion(pos, isStar ? 0x7dd3fc : 0xff6b2b, body.radius * (isStar ? 3.8 : 2.2), true);
-      // 冲击波推开并剧烈加热周围行星！
-      sb.bodies.forEach(other => {
-        if (other === body || !other.alive) return;
-        const dir = other.pos.clone().sub(pos);
-        const d = Math.max(4, dir.length());
-        const impulse = (isStar ? 220 : 65) / (d * 0.6 + 4);
-        other.vel.addScaledVector(dir.normalize(), impulse);
-        other.temp = Math.min(4000, other.temp + (isStar ? 2800 : 1200) / (d * 0.08 + 1));
-      });
-      if (isStar) {
-        // 恒星超新星爆发后坍缩为脉冲中子星或黑洞！
-        const toBH = body.mass >= 240;
-        const oldName = body.name;
-        sbRemoveBody(body);
-        const rem = sbCreateBody({
-          ...(toBH ? SB_TEMPLATES.find(t => t.id === 'blackhole') : SB_TEMPLATES.find(t => t.id === 'neutron')),
-          name: oldName + (toBH ? '（坍缩黑洞）' : '（中子星残骸）'),
-          pos: pos.toArray(), vel: [0, 0, 0]
-        });
-        sbSelectBody(rem);
-        sbToast(`💥 ${oldName} 发生超新星爆发，坍缩为${toBH ? '黑洞' : '脉冲中子星'}！`);
-      } else {
-        // 行星爆碎成 8 块飞散熔岩碎片
-        const massPiece = Math.max(0.0004, body.mass / 10), radPiece = Math.max(0.45, body.radius * 0.34), vel0 = body.vel.clone();
-        const oldName = body.name;
-        sbRemoveBody(body);
-        if (sb.bodies.length < 130) {
-          for (let k = 0; k < 8; k++) {
-            const a = (k / 8) * Math.PI * 2;
-            const d = new THREE.Vector3(Math.cos(a), (Math.random() - 0.5) * 0.4, Math.sin(a)).normalize();
-            sbCreateBody({
-              name: `${oldName}残骸`, badge: '熔岩碎片', kind: 'planet',
-              mass: massPiece, radius: radPiece,
-              pos: pos.clone().addScaledVector(d, radPiece * 3.5).toArray(),
-              vel: vel0.clone().addScaledVector(d, 1.6 + Math.random() * 1.4).toArray(),
-              temp: 1650, water: 0, atmo: 0, color: [0.42, 0.25, 0.18]
-            });
-          }
-        }
-        sbToast(`💥 ${oldName} 已爆碎为 8 块炽热熔岩残骸！`);
+      const p = body.pos.clone(), v = body.vel.clone();
+      // 黑洞绝不会被炸成石头！而是激发相对论喷流过载脉冲！
+      if (body.kind === 'bh') {
+        body.diskFlare = 2.6;
+        sbSpawnExplosion(p, 0x93c5fd, body.radius * 3.5, true);
+        sbToast(`🌀 ${body.name} 爆发相对论喷流过载脉冲！（黑洞受事件视界保护，不会被常规爆破粉碎）`);
+        return;
       }
+      if (body.kind === 'star' || body.kind === 'wd' || body.kind === 'ns') {
+        const isIa = body.kind === 'wd';
+        sbSpawnExplosion(p, isIa ? 0xe0f2fe : 0x7dd3fc, body.radius * 2.8, true);
+        sbSpawnExplosion(p, 0xff9a2e, body.radius * 1.9, true);
+        sb.bodies.forEach(o => {
+          if (o === body || !o.alive) return;
+          const d = Math.max(4, o.pos.distanceTo(p));
+          const push = o.pos.clone().sub(p).normalize().multiplyScalar(220 / (d + 8));
+          o.vel.add(push);
+          if (o.kind !== 'bh') o.temp = Math.min(4000, o.temp + 14000 / d);
+        });
+        sbUnlockAch('chandra');
+        if (isIa) {
+          sbRemoveBody(body);
+          sbToast(`💥 Ia 型超新星爆发！${body.name} 突破 1.44 M☉ 钱德拉塞卡极限彻底热核瓦解！`);
+          return;
+        }
+        const becomeBH = body.mass >= SB_SOLAR_M * 3.2 || body.kind === 'ns';
+        sbRemoveBody(body);
+        const rem = sbCreateBody(becomeBH
+          ? { ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: `${body.name}·坍缩黑洞`, mass: Math.max(420, body.mass * 0.72), radius: 3.1, pos: p.toArray(), vel: v.toArray() }
+          : { ...SB_TEMPLATES.find(t => t.id === 'neutron'), name: `${body.name}·中子星残骸`, mass: 205, radius: 1.5, pos: p.toArray(), vel: v.toArray() }
+        );
+        sbSelectBody(rem);
+        sbToast(`💥 超新星大爆发！核心已引力坍缩为「${rem.name}」并烤焦周边行星！`);
+      } else {
+        sbSpawnExplosion(p, 0xff6b2b, body.radius * 3.2, false);
+        for (let i = 0; i < 6; i++) {
+          const ang = (i / 6) * Math.PI * 2;
+          const dir = new THREE.Vector3(Math.cos(ang), (Math.random() - 0.5) * 0.45, Math.sin(ang)).normalize();
+          sbCreateBody({
+            name: `${body.name.replace(/碎片+$/g, '').slice(0, 6)}碎片`, badge: '撞击碎片', kind: 'planet',
+            mass: Math.max(0.0002, body.mass * 0.08), radius: Math.max(0.42, body.radius * 0.34),
+            pos: p.clone().addScaledVector(dir, body.radius * 1.4).toArray(),
+            vel: v.clone().addScaledVector(dir, 3.6 + Math.random() * 2.2).toArray(),
+            temp: 1600, water: 0, atmo: 0, color: [0.52, 0.28, 0.18], isDebris: true
+          });
+        }
+        sbRemoveBody(body);
+        sbToast(`💥 ${body.name} 核心爆破粉碎成炽热熔岩碎片！`);
+      }
+      if (typeof audioEngine !== 'undefined' && audioEngine.enabled) audioEngine.playExplosion(true);
     }
 
     // -------------------------------------------------------------------------
-    // N体速度 Verlet 积分 + 碰撞融合/碎片化 + 实时气候温度与宜居率计算
+    // 生命宜居度 & 表面生态状态
     // -------------------------------------------------------------------------
-    function sbLifeLikelihood(body) {
-      if (body.kind !== 'planet') return 0;
-      const tempScore = Math.max(0, 1 - Math.abs(body.temp - 18) / 55);
-      const waterScore = body.water > 5 ? Math.min(1, body.water / 55) * (body.water > 96 ? 0.85 : 1) : 0;
-      const atmoScore = body.atmo > 0.15 ? Math.max(0, 1 - Math.abs(body.atmo - 1.1) / 2.6) : 0;
-      return Math.round(tempScore * waterScore * atmoScore * 100);
+    function sbLifeLikelihood(b) {
+      if (!b || b.kind !== 'planet') return 0;
+      const tScore = Math.max(0, 1 - Math.abs(b.temp - 18) / 62);
+      const wScore = b.water <= 0 ? 0 : b.water > 96 ? 0.72 : Math.min(1, b.water / 45);
+      const aScore = b.atmo < 0.15 ? 0.1 : b.atmo > 3.5 ? 0.25 : 1 - Math.abs(b.atmo - 1.0) / 3.0;
+      const mScore = b.mass >= 0.008 && b.mass <= 0.25 ? 1 : 0.45;
+      return Math.round(THREE.MathUtils.clamp(tScore * 0.45 + wScore * 0.30 + aScore * 0.15 + mScore * 0.10, 0, 1) * 100);
     }
 
-    function sbSurfaceStateText(body) {
-      if (body.kind === 'star') return body.mass > 280 ? '蓝超巨星（接近超新星临界）' : body.mass < 60 ? '红矮星对流光球' : '主序星核聚变稳定期';
-      if (body.kind === 'bh') return '奇点事件视界 · 吞噬一切物质';
-      if (body.kind === 'gas') return body.temp > 700 ? '炽热膨胀热木星大气' : '氢氦巨行星风暴云带';
-      if (body.temp > 700) return '🌋 全球熔岩火海（岩浆表面）';
-      if (body.temp > 105) return '♨️ 高温沸腾 · 海洋蒸发为蒸汽';
-      if (body.temp < -10) return body.water > 10 ? '❄️ 冰封雪球世界（全球冰盖）' : '🧊 极寒冰冻荒漠';
-      const life = sbLifeLikelihood(body);
-      return life >= 55 ? '🌱 黄金宜居带 · 液态海洋与生命繁荣' : body.water > 10 ? '🌊 存在液态水 · 具备生命潜力' : '🏜️ 温带干燥岩质地表';
+    function sbSurfaceStateText(b) {
+      if (!b) return '—';
+      if (b.tidalStress > 0.15) return '⚠️ 洛希极限内：剧烈潮汐撕裂（意大利面化）';
+      if (b.kind === 'bh') return '奇点视界 · 光子环与多普勒吸积盘';
+      if (b.kind === 'ns') return '中子简并超流体 · 强磁场相对论喷流';
+      if (b.kind === 'wd') return '电子简并碳氧核（>1.44 M☉ 将引发 Ia 超新星）';
+      if (b.kind === 'star') return b.mass > SB_SOLAR_M * 3 ? 'O 型大质量聚变（寿命极短，易超新星爆发）' : '主序星核聚变稳定期';
+      if (b.kind === 'gas') return b.temp > 600 ? '炽热膨胀气态包层（热木星）' : '厚重氢氦大气与高速风暴带';
+      if (b.temp > 650) return '全球熔岩海与炽热岩浆裂谷';
+      if (b.temp > 110) return '海洋完全沸腾汽化 · 失控温室炼狱';
+      if (b.temp < -18) return b.water > 15 ? '全球冰封雪球世界（冰川覆盖）' : '极寒荒漠岩质表面';
+      if (b.water >= 20 && b.atmo >= 0.3) return '黄金宜居带 · 液态海洋与生命繁荣';
+      return '温和干燥岩质荒漠（补充液态水可孕育生命）';
     }
 
-    function sbStepPhysics(dt) {
+    // -------------------------------------------------------------------------
+    // Velocity-Verlet N体引力积分 + 洛希极限意大利面化撕裂 + 致密天体科学碰撞
+    // -------------------------------------------------------------------------
+    function sbComputeAcc(G) {
       const n = sb.bodies.length;
-      const G = sb.G_CONST * sb.gravity;
-      // 计算全部 N 体相互引力加速度
       for (let i = 0; i < n; i++) sb.bodies[i].acc.set(0, 0, 0);
       for (let i = 0; i < n; i++) {
         const a = sb.bodies[i];
         for (let j = i + 1; j < n; j++) {
           const b = sb.bodies[j];
           const dx = b.pos.x - a.pos.x, dy = b.pos.y - a.pos.y, dz = b.pos.z - a.pos.z;
-          const distSq = dx * dx + dy * dy + dz * dz + 1.8;
+          const distSq = dx * dx + dy * dy + dz * dz + 1.4;
           const invD = 1 / Math.sqrt(distSq);
           const f = G * invD * invD * invD;
           a.acc.x += dx * f * b.mass; a.acc.y += dy * f * b.mass; a.acc.z += dz * f * b.mass;
           b.acc.x -= dx * f * a.mass; b.acc.y -= dy * f * a.mass; b.acc.z -= dz * f * a.mass;
         }
       }
-      // 推进位置与速度
+    }
+
+    function sbStepPhysics(dt) {
+      const n = sb.bodies.length;
+      if (!n) return;
+      const G = sb.G_CONST * sb.gravity;
+
+      // Velocity-Verlet 辛积分（比普通欧拉法更精确守恒椭圆轨道能量！）
+      sbComputeAcc(G);
       for (let i = 0; i < n; i++) {
         const b = sb.bodies[i];
-        b.vel.addScaledVector(b.acc, dt);
+        if (b === sb.grabBody) continue;
+        b.vel.addScaledVector(b.acc, dt * 0.5);
         b.pos.addScaledVector(b.vel, dt);
+      }
+      sbComputeAcc(G);
+      for (let i = 0; i < n; i++) {
+        const b = sb.bodies[i];
+        if (b === sb.grabBody) continue;
+        b.vel.addScaledVector(b.acc, dt * 0.5);
         b.grp.position.copy(b.pos);
         b.mesh.rotation.y += b.spin * dt;
-        // 轨迹更新
+        // 渐进重置潮汐拉伸状态
+        b.tidalStress = Math.max(0, b.tidalStress - dt * 1.6);
+        b.tidalTarget = null;
+        if (b.diskFlare > 0) b.diskFlare = Math.max(0, b.diskFlare - dt * 0.55);
+
         const ta = b.trail.geometry.attributes.position, tc = ta.count;
         if (b.trailCount < tc) {
           for (let k = b.trailCount; k < tc; k++) ta.setXYZ(k, b.pos.x, b.pos.y, b.pos.z);
@@ -546,66 +860,219 @@
         }
         ta.needsUpdate = true;
         b.trail.visible = sb.showTrails;
-        b.velArrow.visible = sb.showVel;
-        if (sb.showVel && b.vel.lengthSq() > 1e-4) {
+        b.velArrow.visible = sb.showVel && !b.isDebris;
+        if (b.velArrow.visible && b.vel.lengthSq() > 1e-4) {
           b.velArrow.position.copy(b.pos);
           b.velArrow.setDirection(b.vel.clone().normalize());
-          b.velArrow.setLength(Math.min(18, b.vel.length() * 3.5 + 2.5));
+          b.velArrow.setLength(Math.min(18, b.vel.length() * 3.2 + 2.4));
         }
       }
 
-      // 实时碰撞检测（质量合并 + 温度飙升 + 碎片飞散）
+      // 1. 广义相对论致密双星引力波旋进阻尼（双中子星/双黑洞近距离辐射引力波导致轨道收缩旋进！）
+      for (let i = 0; i < sb.bodies.length; i++) {
+        const a = sb.bodies[i];
+        if (a.kind !== 'ns' && a.kind !== 'bh') continue;
+        for (let j = i + 1; j < sb.bodies.length; j++) {
+          const b = sb.bodies[j];
+          if (b.kind !== 'ns' && b.kind !== 'bh') continue;
+          const d = a.pos.distanceTo(b.pos);
+          if (d < 34 && d > 1) {
+            const damp = Math.max(0.92, 1 - dt * (1.8 / Math.max(2, d * 0.25)));
+            const vcm = a.vel.clone().multiplyScalar(a.mass).addScaledVector(b.vel, b.mass).divideScalar(a.mass + b.mass);
+            a.vel.sub(vcm).multiplyScalar(damp).add(vcm);
+            b.vel.sub(vcm).multiplyScalar(damp).add(vcm);
+          }
+        }
+      }
+
+      // 2. 真实洛希极限 & 黑洞/中子星意大利面化潮汐撕裂 (TDE Spaghettification)
+      if (sb.rocheEnabled) {
+        for (let i = sb.bodies.length - 1; i >= 0; i--) {
+          const a = sb.bodies[i]; if (!a || !a.alive) continue;
+          for (let j = i - 1; j >= 0; j--) {
+            const b = sb.bodies[j]; if (!b || !b.alive) continue;
+            const rA = sbCompactRank(a.kind), rB = sbCompactRank(b.kind);
+            if (rA === rB && (a.kind === 'bh' || a.kind === 'ns')) continue;
+            const primary = rA > rB ? a : rB > rA ? b : (a.mass >= b.mass ? a : b);
+            const victim = primary === a ? b : a;
+            if (victim.kind === 'bh') continue;
+            const rRoche = sbRocheRadius(primary, victim);
+            if (rRoche <= 0) continue;
+            const dist = primary.pos.distanceTo(victim.pos);
+            if (dist < rRoche) {
+              const stress = THREE.MathUtils.clamp((rRoche - dist) / Math.max(1.5, rRoche - primary.radius), 0.08, 1.0);
+              victim.tidalStress = Math.max(victim.tidalStress, stress);
+              victim.tidalTarget = primary;
+              // 潮汐摩擦剧烈升温
+              victim.temp = Math.min(4000, victim.temp + dt * stress * 1650);
+              // 连续剥离质量并产生螺旋等离子潮汐带！
+              if (Math.random() < 0.35 + stress * 0.55) sbSpawnTidalStream(victim, primary);
+              const dm = victim.mass * dt * (0.28 + stress * 0.85);
+              victim.mass = Math.max(0.0001, victim.mass - dm);
+              primary.mass += dm;
+              primary.diskFlare = Math.min(2.5, (primary.diskFlare || 0) + dt * 2.2);
+              const shrink = Math.max(0.28, Math.cbrt(Math.max(0.05, 1 - dt * (0.26 + stress * 0.72))));
+              victim.radius *= shrink;
+
+              // 如果闯入气态巨行星的洛希极限且已被撕碎大半 -> 凝聚成壮丽行星光环！
+              if (primary.kind === 'gas' && victim.kind === 'planet' && (victim.radius < victim.baseRadius * 0.52 || dist < primary.radius * 1.45)) {
+                sbAttachRing(primary.grp, primary, new THREE.Color(...victim.color).lerp(new THREE.Color(0xfde68a), 0.45).getHex());
+                sbSpawnExplosion(victim.pos, 0xfbbf24, victim.radius * 2.4, false);
+                sbToast(`🪐 洛希极限瓦解！${victim.name} 已被 ${primary.name} 潮汐撕碎并凝聚为全新行星光环！`);
+                sbUnlockAch('roche');
+                sbRemoveBody(victim);
+                break;
+              }
+              // 黑洞 / 中子星 / 白矮星持续意大利面化撕裂抽干
+              if ((primary.kind === 'bh' || primary.kind === 'ns' || primary.kind === 'wd') && victim.radius < victim.baseRadius * 0.36) {
+                sbSpawnExplosion(victim.pos, primary.kind === 'bh' ? 0xc084fc : 0x38bdf8, Math.max(3.8, victim.baseRadius * 1.8), false);
+                sbToast(`🕳️ 潮汐瓦解事件 (TDE)！${victim.name} 已被 ${primary.name} 彻底意大利面化撕裂吞噬！`);
+                sbUnlockAch('tde');
+                sbRemoveBody(victim);
+                // 检查白矮星钱德拉塞卡极限 / 中子星 TOV 极限
+                sbCheckCompactCollapse(primary);
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // 2. 严格遵循致密天体物理层级的直接碰撞处理
       for (let i = sb.bodies.length - 1; i >= 0; i--) {
         const a = sb.bodies[i]; if (!a || !a.alive) continue;
         for (let j = i - 1; j >= 0; j--) {
           const b = sb.bodies[j]; if (!b || !b.alive) continue;
           const dist = a.pos.distanceTo(b.pos);
-          if (dist < (a.radius + b.radius) * 0.88) {
-            const big = a.mass >= b.mass ? a : b;
-            const small = a.mass >= b.mass ? b : a;
+          if (dist < (a.radius + b.radius) * 0.86) {
             const relV = a.vel.distanceTo(b.vel);
+            // 弹性碰撞模式
+            if (sb.collideMode === 'bounce' && a.kind !== 'bh' && b.kind !== 'bh') {
+              const norm = b.pos.clone().sub(a.pos).normalize();
+              const rv = b.vel.clone().sub(a.vel).dot(norm);
+              if (rv < 0) {
+                const imp = (-(1 + 0.85) * rv) / (1 / a.mass + 1 / b.mass);
+                a.vel.addScaledVector(norm, -imp / a.mass);
+                b.vel.addScaledVector(norm, imp / b.mass);
+              }
+              continue;
+            }
+            // 双黑洞并合 -> 引力波涟漪！
+            if (a.kind === 'bh' && b.kind === 'bh') {
+              const big = a.mass >= b.mass ? a : b, small = big === a ? b : a;
+              const totM = (big.mass + small.mass) * 0.95; // 5% 质量转化为引力波能量辐射！
+              big.vel.multiplyScalar(big.mass).addScaledVector(small.vel, small.mass).divideScalar(big.mass + small.mass);
+              big.mass = totM;
+              big.radius = Math.min(9.5, Math.hypot(big.radius, small.radius));
+              big.mesh.scale.setScalar(big.radius / big.baseRadius);
+              big.diskFlare = 2.8;
+              sbSpawnGravWave(big.pos, 7.2);
+              sbToast(`〰️ 双黑洞并合！5% 质量转化为引力波震荡时空网格！`);
+              sbRemoveBody(small);
+              break;
+            }
+            // 双中子星并合 -> 千新星爆发 (Kilonova) + 引力波 + 坍缩成新黑洞！
+            if (a.kind === 'ns' && b.kind === 'ns') {
+              const mid = a.pos.clone().lerp(b.pos, 0.5);
+              const totM = a.mass + b.mass;
+              const newVel = a.vel.clone().multiplyScalar(a.mass).addScaledVector(b.vel, b.mass).divideScalar(totM);
+              sbSpawnGravWave(mid, 6.2);
+              sbSpawnExplosion(mid, 0xfbbf24, 9.5, true);
+              sbUnlockAch('kilonova');
+              sbRemoveBody(a); sbRemoveBody(b);
+              const newBH = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: '千新星新生黑洞', mass: totM * 0.94, radius: 3.1, pos: mid.toArray(), vel: newVel.toArray() });
+              sbSelectBody(newBH);
+              sbToast(`⚡ 双中子星千新星爆发 (Kilonova)！喷射重金属元素并坍缩诞生新黑洞！`);
+              break;
+            }
+            // 致密天体严格优先级：BH > NS > WD > Star > Gas > Planet（蓝超巨星绝不能吃黑洞或中子星！）
+            const rA = sbCompactRank(a.kind), rB = sbCompactRank(b.kind);
+            const big = rA > rB ? a : rB > rA ? b : (a.mass >= b.mass ? a : b);
+            const small = big === a ? b : a;
             const totalM = big.mass + small.mass;
             big.vel.multiplyScalar(big.mass).addScaledVector(small.vel, small.mass).divideScalar(totalM);
             big.mass = totalM;
-            const newRad = Math.min(12, Math.cbrt(big.radius ** 3 + small.radius ** 3 * 0.65));
-            const ratio = newRad / big.radius;
-            big.radius = newRad;
-            big.mesh.scale.multiplyScalar(ratio);
-            if (big.kind !== 'bh') big.temp = Math.min(4000, big.temp + Math.min(2400, (small.mass / Math.max(0.01, big.mass)) * 1800 + relV * 240));
-            const hitPos = small.pos.clone().lerp(big.pos, 0.45);
-            sbSpawnExplosion(hitPos, big.kind === 'bh' ? 0xc084fc : 0xff7b29, Math.max(3.5, small.radius * 2.8), false);
-            // 高速撞击且两体质量接近时生成 4 块轨道熔岩碎片（不递归分裂碎片，保障 60 FPS）
-            if (relV > 1.8 && small.mass > big.mass * 0.08 && small.badge !== '撞击碎片' && big.badge !== '撞击碎片' && sb.bodies.length < 48 && big.kind !== 'bh') {
-              const baseName = small.name.replace(/(残骸|碎片)+$/g, '').slice(0, 8) || '天体';
-              for (let f = 0; f < 4; f++) {
-                const ang = Math.random() * Math.PI * 2;
-                const d = new THREE.Vector3(Math.cos(ang), (Math.random() - 0.5) * 0.5, Math.sin(ang)).normalize();
-                sbCreateBody({
-                  name: `${baseName}碎片`, badge: '撞击碎片', kind: 'planet',
-                  mass: Math.max(0.0003, small.mass * 0.06), radius: Math.max(0.45, small.radius * 0.28),
-                  pos: hitPos.clone().addScaledVector(d, big.radius * 1.45).toArray(),
-                  vel: big.vel.clone().addScaledVector(d, relV * 0.55 + 0.8).toArray(),
-                  temp: 1500, water: 0, atmo: 0, color: [0.48, 0.28, 0.20]
-                });
+
+            if (big.kind === 'bh') {
+              big.radius = Math.min(10.5, big.radius * Math.cbrt(totalM / Math.max(1, totalM - small.mass)));
+              big.mesh.scale.setScalar(big.radius / big.baseRadius);
+              big.diskFlare = 2.6;
+              for (let s = 0; s < 10; s++) sbSpawnTidalStream(small, big);
+              sbSpawnExplosion(small.pos, 0xc084fc, Math.max(4.5, small.radius * 2.0), false);
+              sbToast(`🕳️ ${big.name} 潮汐撕裂并吞噬了 ${small.name}！（事件视界扩张至 ${(big.mass / SB_SOLAR_M).toFixed(1)} M☉）`);
+              sbUnlockAch('tde');
+            } else if (big.kind === 'ns' || big.kind === 'wd') {
+              big.diskFlare = 2.0;
+              sbSpawnExplosion(small.pos, 0x38bdf8, Math.max(4.2, small.radius * 2.2), false);
+              sbToast(`⚡ 致密天体吸积！${big.name} 撕裂吞噬了低密度的 ${small.name}！`);
+              sbUnlockAch('tde');
+            } else {
+              const newRad = Math.min(12, Math.cbrt(big.radius ** 3 + small.radius ** 3 * 0.65));
+              big.radius = newRad;
+              big.mesh.scale.setScalar(newRad / big.baseRadius);
+              big.temp = Math.min(4000, big.temp + Math.min(2400, (small.mass / Math.max(0.01, big.mass)) * 1800 + relV * 240));
+              // 冰彗星撞击岩质行星 -> 为荒漠行星送水造海！
+              if (big.kind === 'planet' && small.water > 50) {
+                big.water = Math.min(100, big.water + 18);
+                big.atmo = Math.min(5, big.atmo + 0.15);
               }
+              const hitPos = small.pos.clone().lerp(big.pos, 0.45);
+              sbSpawnExplosion(hitPos, 0xff7b29, Math.max(3.5, small.radius * 2.6), false);
+              if ((sb.collideMode === 'shatter' || (relV > 1.8 && small.mass > big.mass * 0.08)) && !small.isDebris && !big.isDebris && sb.bodies.length < 48) {
+                const baseName = small.name.replace(/(残骸|碎片)+$/g, '').slice(0, 6) || '天体';
+                for (let f = 0; f < 4; f++) {
+                  const ang = Math.random() * Math.PI * 2;
+                  const d = new THREE.Vector3(Math.cos(ang), (Math.random() - 0.5) * 0.5, Math.sin(ang)).normalize();
+                  sbCreateBody({
+                    name: `${baseName}碎片`, badge: '撞击碎片', kind: 'planet',
+                    mass: Math.max(0.0002, small.mass * 0.05), radius: Math.max(0.42, small.radius * 0.28),
+                    pos: hitPos.clone().addScaledVector(d, big.radius * 1.45).toArray(),
+                    vel: big.vel.clone().addScaledVector(d, relV * 0.55 + 0.8).toArray(),
+                    temp: 1500, water: 0, atmo: 0, color: [0.48, 0.28, 0.20], isDebris: true
+                  });
+                }
+              }
+              sbToast(`💥 碰撞合并！${big.name} 吸积了 ${small.name}（温度升至 ${Math.round(big.temp)}°C）`);
             }
-            sbToast(`💥 碰撞！${big.name} 吞并了 ${small.name}（温度升至 ${Math.round(big.temp)}°C）`);
             sbRemoveBody(small);
+            sbCheckCompactCollapse(big);
             break;
           }
         }
       }
 
-      // 实时热力学气候平衡（受所有恒星辐射与温室效应影响）
+      // 3. 实时热力学辐射平衡 + 意大利面化几何形变渲染 + 黑洞吸积盘更新
       const stars = sb.bodies.filter(b => b.kind === 'star');
       const keyStar = stars[0];
       for (const b of sb.bodies) {
         if (b.mat?.uniforms?.uTime) b.mat.uniforms.uTime.value += dt;
+        if (b.diskMat) {
+          b.diskMat.uniforms.uTime.value += dt * (1 + (b.diskFlare || 0) * 1.5);
+          b.diskMat.uniforms.uFlare.value = b.diskFlare || 0;
+        }
+        if (b.photonRing && sb.camera) b.photonRing.lookAt(sb.camera.position);
+        if (b.jetMesh && b.kind === 'bh') {
+          const fl = b.diskFlare || 0;
+          b.jetMesh.scale.set(1 + fl * 0.35, 1 + fl * 0.9, 1 + fl * 0.35);
+          b.jetMesh.material.opacity = Math.min(0.95, 0.22 + fl * 0.35);
+        }
+        // 应用意大利面化拉伸形变（沿指向黑洞/中子星的径向拉长！）
+        const baseSc = b.radius / b.baseRadius;
+        if (b.tidalStress > 0.05 && b.tidalTarget && b.tidalTarget.alive) {
+          const dir = b.tidalTarget.pos.clone().sub(b.pos).normalize();
+          const stretch = 1 + b.tidalStress * 2.1;
+          const squash = 1 / Math.sqrt(stretch);
+          b.mesh.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), dir);
+          b.mesh.scale.set(baseSc * stretch, baseSc * squash, baseSc * squash);
+        } else {
+          b.mesh.scale.setScalar(baseSc);
+        }
+
         if (b.kind === 'planet' || b.kind === 'gas') {
           let flux = 0;
           for (const st of stars) {
             const d = Math.max(st.radius + 2, b.pos.distanceTo(st.pos));
-            const lum = Math.pow(Math.max(0.15, st.mass / 120), 1.5);
+            const lum = Math.pow(Math.max(0.15, st.mass / SB_SOLAR_M), 1.5) * sb.lumMult;
             flux += lum * (36 * 36) / (d * d);
           }
           const eqK = Math.max(25, 255 * Math.pow(Math.max(0.001, flux), 0.25) * (1 + b.atmo * 0.14));
@@ -622,8 +1089,22 @@
       sb.simYears += dt * 0.045;
     }
 
+    function sbCheckCompactCollapse(b) {
+      if (!b || !b.alive) return;
+      if (b.kind === 'wd' && b.mass >= SB_SOLAR_M * 1.44) {
+        sbTriggerSupernova(b);
+      } else if (b.kind === 'ns' && b.mass >= SB_SOLAR_M * 2.8) {
+        const p = b.pos.clone(), v = b.vel.clone(), m = b.mass;
+        sbSpawnGravWave(p, 5.5);
+        sbRemoveBody(b);
+        const bh = sbCreateBody({ ...SB_TEMPLATES.find(t => t.id === 'blackhole'), name: `${b.name}·TOV坍缩黑洞`, mass: m, radius: 3.1, pos: p.toArray(), vel: v.toArray() });
+        sbSelectBody(bh);
+        sbToast(`🕳️ 突破 2.8 M☉ TOV 极限！中子星发生引力坍缩成为全新黑洞！`);
+      }
+    }
+
     // -------------------------------------------------------------------------
-    // 交互工具：点击选择、拖拽弹射与预测轨、激光加热/冰冻、强制自旋甩裂、一键脉冲引爆
+    // 8 大交互神之工具（含引力牵引抓星甩飞 & 流星雨轰炸）
     // -------------------------------------------------------------------------
     function sbPointerNDC(e) {
       const rect = sb.renderer.domElement.getBoundingClientRect();
@@ -650,8 +1131,8 @@
         const acc = new THREE.Vector3();
         for (const b of sb.bodies) {
           const d = b.pos.clone().sub(p);
-          const distSq = d.lengthSq() + 1.8;
-          acc.addScaledVector(d, (G * b.mass) / (distSq * Math.sqrt(distSq)));
+          const dSq = d.lengthSq() + 1.8;
+          acc.addScaledVector(d, (G * b.mass) / (dSq * Math.sqrt(dSq)));
         }
         v.addScaledVector(acc, h); p.addScaledVector(v, h);
       }
@@ -659,13 +1140,46 @@
       sb.previewLine.visible = true;
     }
 
-    function sbActiveSpawnTemplate() {
+    function sbGetSpawnTemplate() {
       if (sb.spawnId === '__custom__' && sb.customTemplate) return sb.customTemplate;
       return SB_TEMPLATES.find(t => t.id === sb.spawnId) || SB_TEMPLATES[3];
     }
 
+    function sbSpawnAt(pos, velOverride = null) {
+      const tpl = sbGetSpawnTemplate();
+      const dominant = sb.bodies.filter(b => !b.isDebris).sort((a, b) => b.mass - a.mass)[0];
+      // 支持一次投放 12 颗小行星环群！
+      if (tpl.kind === 'belt') {
+        const center = dominant || { pos: new THREE.Vector3(0, 0, 0), vel: new THREE.Vector3(0, 0, 0), mass: 120 };
+        const baseR = Math.max(12, pos.distanceTo(center.pos));
+        for (let i = 0; i < 12; i++) {
+          const ang = (i / 12) * Math.PI * 2 + Math.random() * 0.2;
+          const r = baseR + (Math.random() - 0.5) * 4;
+          const p = center.pos.clone().add(new THREE.Vector3(Math.cos(ang) * r, (Math.random() - 0.5) * 1.5, Math.sin(ang) * r));
+          sbCreateBody({ name: `环群星子`, badge: '小行星带', kind: 'planet', mass: 0.0003, radius: 0.45, pos: p.toArray(), vel: sbCircularVel(p, center).toArray(), temp: -80, color: [0.62, 0.56, 0.48], isDebris: true });
+        }
+        sbToast('🪨 已投放 12 颗受引力扰动的轨道小行星环群！');
+        return;
+      }
+      let vel = new THREE.Vector3(0, 0, 0);
+      if (velOverride) vel.copy(velOverride);
+      else if (sb.launchMode === 'orbit' && dominant && dominant.pos.distanceTo(pos) > 3) vel.copy(sbCircularVel(pos, dominant));
+      const body = sbCreateBody({ ...tpl, pos: pos.toArray(), vel: vel.toArray() });
+      sbSelectBody(body);
+      sbToast(`🚀 已投放「${body.name}」（${sbRankLabel(body)}）`);
+    }
+
     function sbBindCanvasEvents() {
       const dom = sb.renderer.domElement;
+      dom.addEventListener('dblclick', e => {
+        const hit = sbPickBody(e);
+        if (hit) {
+          sbSelectBody(hit);
+          sb.followBody = hit;
+          sb$('sb-follow-btn')?.setAttribute('aria-pressed', 'true');
+          sbToast(`🎯 双击锁定跟踪：${hit.name}`);
+        }
+      });
       dom.addEventListener('pointerdown', e => {
         if (e.button !== 0) return;
         const hit = sbPickBody(e);
@@ -673,123 +1187,181 @@
           if (hit) sbSelectBody(hit);
           return;
         }
-        if (sb.tool === 'pulse') {
-          if (hit) sbTriggerSupernova(hit);
-          return;
-        }
-        if (['heat', 'freeze', 'spin'].includes(sb.tool)) {
+        if (sb.tool === 'grab') {
           if (hit) {
             sbSelectBody(hit);
-            sb.activeBeamTarget = hit;
+            sb.grabBody = hit;
+            sb.grabPrevPos.copy(hit.pos);
+            sb.grabVel.set(0, 0, 0);
             sb.controls.enabled = false;
+            sbUnlockAch('grab');
           }
           return;
         }
+        if (sb.tool === 'barrage') {
+          const pt = hit ? hit.pos.clone() : sbPlanePoint(e);
+          if (pt) { sb.barrageActive = true; sb.barragePos.copy(pt); sb.controls.enabled = false; }
+          return;
+        }
+        if (sb.tool === 'explode') {
+          if (hit) sbTriggerSupernova(hit);
+          else sbToast('请点击一颗天体进行脉冲引爆 / 超新星坍缩');
+          return;
+        }
+        if (['laser', 'freeze', 'spin'].includes(sb.tool)) {
+          if (hit) { sbSelectBody(hit); sb.activeBeamTarget = hit; sb.controls.enabled = false; }
+          return;
+        }
         if (sb.tool === 'launch') {
-          const pt = sbPlanePoint(e);
-          if (!pt) return;
-          const tpl = sbActiveSpawnTemplate();
-          if (sb.launchMode === 'sling') {
-            sb.dragState = { start: pt.clone(), cur: pt.clone(), tpl };
+          const pt = sbPlanePoint(e); if (!pt) return;
+          if (sb.launchMode === 'drag') {
+            sb.dragState = { start: pt.clone(), cur: pt.clone() };
             sb.controls.enabled = false;
-            sbUpdatePreviewOrbit(pt, new THREE.Vector3());
           } else {
-            let vel = new THREE.Vector3();
-            if (sb.launchMode === 'orbit') {
-              const domBody = sb.bodies.filter(b => b.alive).sort((a, b) => b.mass - a.mass)[0];
-              if (domBody && pt.distanceTo(domBody.pos) > domBody.radius + tpl.radius + 1) vel = sbCircularVel(pt, domBody);
-            }
-            const created = sbCreateBody({ ...tpl, pos: pt.toArray(), vel: vel.toArray() });
-            sbSelectBody(created);
-            sbToast(`🚀 已投放 ${created.name}（${sb.launchMode === 'orbit' ? '自动圆轨道' : '静止放置'}）`);
+            sbSpawnAt(pt);
           }
         }
       });
 
       dom.addEventListener('pointermove', e => {
-        if (sb.dragState) {
+        if (sb.grabBody && sb.grabBody.alive) {
           const pt = sbPlanePoint(e);
           if (pt) {
-            sb.dragState.cur.copy(pt);
-            const vel = sb.dragState.start.clone().sub(pt).multiplyScalar(0.14);
-            sbUpdatePreviewOrbit(sb.dragState.start, vel);
+            sb.grabVel.copy(pt).sub(sb.grabPrevPos).multiplyScalar(10);
+            sb.grabPrevPos.copy(pt);
+            sb.grabBody.pos.copy(pt);
+            sb.grabBody.grp.position.copy(pt);
+            sb.grabBody.vel.copy(sb.grabVel);
           }
+          return;
         }
+        if (sb.barrageActive) {
+          const pt = sbPlanePoint(e);
+          if (pt) sb.barragePos.copy(pt);
+          return;
+        }
+        if (!sb.dragState) return;
+        const pt = sbPlanePoint(e); if (!pt) return;
+        sb.dragState.cur.copy(pt);
+        const vel = sb.dragState.start.clone().sub(pt).multiplyScalar(0.32);
+        sbUpdatePreviewOrbit(sb.dragState.start, vel);
       });
 
       window.addEventListener('pointerup', () => {
+        if (sb.grabBody) {
+          sb.grabBody.vel.copy(sb.grabVel.clampLength(0, 14));
+          sb.grabBody = null; sb.controls.enabled = true;
+        }
+        if (sb.barrageActive) { sb.barrageActive = false; sb.controls.enabled = true; }
         if (sb.dragState) {
-          const vel = sb.dragState.start.clone().sub(sb.dragState.cur).multiplyScalar(0.14);
-          const created = sbCreateBody({ ...sb.dragState.tpl, pos: sb.dragState.start.toArray(), vel: vel.toArray() });
-          sbSelectBody(created);
-          sb.previewLine.visible = false;
-          sb.dragState = null;
-          sb.controls.enabled = true;
-          sbToast(`🏹 已弹射 ${created.name}（初速 ${(vel.length() * 14).toFixed(1)} km/s）`);
+          const vel = sb.dragState.start.clone().sub(sb.dragState.cur).multiplyScalar(0.32);
+          sbSpawnAt(sb.dragState.start, vel);
+          sb.dragState = null; sb.previewLine.visible = false; sb.controls.enabled = true;
         }
         if (sb.activeBeamTarget) {
-          sb.activeBeamTarget = null;
-          sb.laserLine.visible = false;
-          sb.controls.enabled = true;
+          sb.activeBeamTarget = null; sb.laserLine.visible = false; sb.controls.enabled = true;
         }
       });
     }
 
     function sbTickActiveTool(dt) {
-      const target = sb.activeBeamTarget;
-      if (!target || !target.alive) { sb.laserLine.visible = false; return; }
-      const la = sb.laserLine.geometry.attributes.position;
-      const origin = sb.camera.position.clone().add(new THREE.Vector3(0, -4, 0));
-      la.setXYZ(0, origin.x, origin.y, origin.z);
-      la.setXYZ(1, target.pos.x, target.pos.y, target.pos.z);
-      la.needsUpdate = true;
-      sb.laserLine.visible = true;
-      if (sb.tool === 'heat') {
-        sb.laserLine.material.color.setHex(0xff5a1f);
-        target.temp = Math.min(4000, target.temp + dt * 680);
-        target.water = Math.max(0, target.water - dt * 16);
+      if (sb.barrageActive) {
+        sb.barrageTimer += dt;
+        if (sb.barrageTimer > 0.14 && sb.bodies.length < 72) {
+          sb.barrageTimer = 0;
+          const off = new THREE.Vector3((Math.random() - 0.5) * 28, 12 + Math.random() * 8, (Math.random() - 0.5) * 28);
+          const start = sb.barragePos.clone().add(off);
+          const dir = sb.barragePos.clone().sub(start).normalize();
+          const isIce = Math.random() < 0.45;
+          sbCreateBody({
+            name: isIce ? '冰晶陨彗' : '陨石', badge: '撞击碎片', kind: 'planet',
+            mass: 0.0005, radius: 0.48, pos: start.toArray(), vel: dir.multiplyScalar(14).toArray(),
+            temp: isIce ? -180 : 120, water: isIce ? 95 : 0, color: isIce ? [0.65, 0.88, 1] : [0.65, 0.52, 0.40], isDebris: true
+          });
+        }
+      }
+      const t = sb.activeBeamTarget;
+      if (!t || !t.alive) { sb.laserLine.visible = false; return; }
+      const src = sb.camera.position.clone().lerp(t.pos, 0.18).add(new THREE.Vector3(0, -3, 0));
+      const attr = sb.laserLine.geometry.attributes.position;
+      attr.setXYZ(0, src.x, src.y, src.z); attr.setXYZ(1, t.pos.x, t.pos.y, t.pos.z);
+      attr.needsUpdate = true; sb.laserLine.visible = true;
+
+      if (sb.tool === 'laser') {
+        sb.laserLine.material.color.setHex(0xff4d1a);
+        if (t.kind !== 'bh') {
+          t.temp = Math.min(4000, t.temp + dt * 950);
+          if (t.temp > 180) t.water = Math.max(0, t.water - dt * 24);
+        }
       } else if (sb.tool === 'freeze') {
-        sb.laserLine.material.color.setHex(0x7dd3fc);
-        target.temp = Math.max(-250, target.temp - dt * 420);
+        sb.laserLine.material.color.setHex(0x38bdf8);
+        if (t.kind !== 'bh') t.temp = Math.max(-250, t.temp - dt * 850);
       } else if (sb.tool === 'spin') {
         sb.laserLine.material.color.setHex(0xc084fc);
-        target.spin += dt * 14;
-        if (target.spin > 22) {
-          sb.activeBeamTarget = null; sb.laserLine.visible = false; sb.controls.enabled = true;
-          sbTriggerSupernova(target);
-          sbToast(`🌀 ${target.name} 自转过快，已被离心力撕成碎片环！`);
+        t.spin += dt * 16;
+        if (t.spin > 22 && t.kind !== 'bh') {
+          sbToast(`🌀 离心力超过引力结合能！${t.name} 被高速自旋彻底甩裂！`);
+          sbTriggerSupernova(t);
+          sb.activeBeamTarget = null;
         }
       }
       sbSyncInspector();
     }
 
     // -------------------------------------------------------------------------
-    // 检视器同步 + 存档系统（SQLite /api/sandbox/saves + localStorage 降级）
+    // 检视器同步 + 实时温度/速率遥测 Sparkline + SQLite 存档
     // -------------------------------------------------------------------------
     function sbSelectBody(body) {
       sb.selected = body;
       sbSyncInspector();
     }
 
+    function sbDrawSparkline(b) {
+      const cvs = sb$('sb-sparkline'); if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      const w = cvs.width, h = cvs.height;
+      ctx.clearRect(0, 0, w, h);
+      if (!b || b.tempHist.length < 2) return;
+      const drawLine = (arr, color) => {
+        let min = Math.min(...arr), max = Math.max(...arr);
+        if (max - min < 1e-3) { min -= 1; max += 1; }
+        ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.beginPath();
+        arr.forEach((v, i) => {
+          const x = (i / (arr.length - 1)) * (w - 4) + 2;
+          const y = h - 4 - ((v - min) / (max - min)) * (h - 8);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      };
+      drawLine(b.tempHist, '#f97316');
+      drawLine(b.velHist, '#38bdf8');
+    }
+
     function sbSyncInspector() {
       const b = sb.selected;
+      const warn = sb$('sb-roche-warn');
       if (!b || !b.alive) {
         sb$('sb-sel-name').textContent = '未选中天体';
         sb$('sb-sel-badge').textContent = '点击画布中任意天体';
         sb$('sb-life-pct').textContent = '0%';
         sb$('sb-life-bar').style.width = '0%';
+        if (warn) warn.hidden = true;
         return;
       }
+      if (warn) warn.hidden = !(b.tidalStress > 0.12);
       sb$('sb-sel-name').textContent = b.name;
       sb$('sb-sel-badge').textContent = b.badge;
       const life = sbLifeLikelihood(b);
+      if (life >= 85 && b.kind === 'planet') sbUnlockAch('cradle');
       sb$('sb-life-pct').textContent = life + '%';
       sb$('sb-life-bar').style.width = life + '%';
       sb$('sb-surface-state').textContent = sbSurfaceStateText(b);
-      sb$('sb-m-mass').textContent = b.mass >= 20 ? `${(b.mass / 120).toFixed(2)} M☉` : `${(b.mass / 0.045).toFixed(2)} M⊕`;
-      sb$('sb-m-temp').textContent = `${Math.round(b.temp)} °C`;
+      sb$('sb-m-mass').textContent = b.mass >= 20 ? `${(b.mass / SB_SOLAR_M).toFixed(2)} M☉` : `${(b.mass / SB_EARTH_M).toFixed(2)} M⊕`;
+      sb$('sb-m-temp').textContent = b.kind === 'bh' ? '0 K (视界)' : `${Math.round(b.temp)} °C`;
+      sb$('sb-m-dens').textContent = sbDensityText(b);
       sb$('sb-m-vel').textContent = `${(b.vel.length() * 14.5).toFixed(1)} km/s`;
-      sb$('sb-m-esc').textContent = `${(Math.sqrt(2 * sb.G_CONST * b.mass / Math.max(0.4, b.radius)) * 18).toFixed(1)} km/s`;
+      sb$('sb-m-esc').textContent = b.kind === 'bh' ? '≥ 3.0×10⁵ km/s' : `${(Math.sqrt(2 * sb.G_CONST * b.mass / Math.max(0.4, b.radius)) * 18).toFixed(1)} km/s`;
+      sb$('sb-m-rank').textContent = sbRankLabel(b);
       sb$('sb-ed-temp').value = String(Math.round(THREE.MathUtils.clamp(b.temp, -250, 4000)));
       sb$('sb-ed-temp-val').textContent = `${Math.round(b.temp)} °C`;
       sb$('sb-ed-water').value = String(Math.round(b.water));
@@ -799,16 +1371,17 @@
       const rScale = THREE.MathUtils.clamp(b.radius / b.baseRadius, 0.4, 3.0);
       sb$('sb-ed-radius').value = rScale.toFixed(2);
       sb$('sb-ed-radius-val').textContent = `${rScale.toFixed(2)}×`;
-      sb$('sb-supernova-btn').textContent = b.kind === 'star' ? '💥 引爆超新星' : '💥 粉碎星球';
+      sb$('sb-supernova-btn').textContent = b.kind === 'bh' ? '🌀 喷流脉冲' : (b.kind === 'star' || b.kind === 'wd' || b.kind === 'ns') ? '💥 引爆超新星' : '💥 粉碎星球';
+      sbDrawSparkline(b);
     }
 
     function sbSerializeUniverse() {
       return {
-        preset: sb.preset, gravity: sb.gravity, speed: sb.speed,
+        preset: sb.preset, gravity: sb.gravity, speed: sb.speed, lumMult: sb.lumMult,
         bodies: sb.bodies.filter(b => b.alive).map(b => ({
-          name: b.name, badge: b.badge, kind: b.kind, mass: b.mass, radius: b.radius,
+          name: b.name, badge: b.badge, kind: b.kind, mass: b.mass, radius: b.radius, density: b.density,
           pos: b.pos.toArray(), vel: b.vel.toArray(), temp: b.temp, water: b.water, atmo: b.atmo,
-          color: b.color, ring: b.hasRing, pulsar: b.pulsar
+          color: b.color, ring: b.hasRing, pulsar: b.pulsar, isDebris: b.isDebris
         }))
       };
     }
@@ -851,24 +1424,28 @@
     }
 
     async function sbSaveUniverse() {
-      const name = (sb$('sb-save-name').value || '').trim() || `我的宇宙 #${Math.floor(Math.random() * 90 + 10)}`;
+      const inp = sb$('sb-save-name');
+      const name = (inp?.value || '').trim() || `我的宇宙 ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`;
       const data = sbSerializeUniverse();
       try {
-        const r = await fetch('/api/sandbox/saves', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, preset: sb.preset, data }) });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        sb$('sb-save-name').value = '';
+        const res = await fetch('/api/sandbox/saves', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, preset: sb.preset, data })
+        });
+        if (!res.ok) throw new Error();
         sbToast(`💾 已保存到数据库：「${name}」`);
       } catch {
         const loc = JSON.parse(localStorage.getItem('cosmic-sb-saves') || '[]');
-        loc.unshift({ id: 'loc_' + Date.now(), name, body_count: data.bodies.length, data });
-        localStorage.setItem('cosmic-sb-saves', JSON.stringify(loc.slice(0, 20)));
-        sbToast(`💾 已离线保存到本机：「${name}」`);
+        loc.unshift({ id: 'loc-' + Date.now(), name, preset: sb.preset, body_count: data.bodies.length, data });
+        localStorage.setItem('cosmic-sb-saves', JSON.stringify(loc.slice(0, 30)));
+        sbToast(`💾 已保存到本地离线存档：「${name}」`);
       }
+      if (inp) inp.value = '';
       sbRefreshSaves();
     }
 
     // -------------------------------------------------------------------------
-    // 渲染循环 + 浮动标签 + 初始化绑定
+    // 主循环 & 初始化 / 开关生命周期
     // -------------------------------------------------------------------------
     let sbPrevTime = 0, sbUiTick = 0;
     function sbLoop(now) {
@@ -884,13 +1461,13 @@
       }
 
       if (!sb.paused) {
-        const simDt = rawDt * sb.speed * 1.4;
+        const simDt = rawDt * sb.speed * 1.35;
         const sub = Math.max(1, Math.min(8, Math.ceil(simDt / 0.04)));
         for (let k = 0; k < sub; k++) sbStepPhysics(simDt / sub);
       }
       sbTickActiveTool(rawDt);
+      sbUpdateTidalStreams(rawDt);
 
-      // 更新爆炸/超新星特效
       for (let i = sb.effects.length - 1; i >= 0; i--) {
         const e = sb.effects[i]; e.age += rawDt;
         const u = Math.min(1, e.age / e.duration);
@@ -903,7 +1480,7 @@
         if (u >= 1) { disposeTree(e.grp); sb.effects.splice(i, 1); }
       }
 
-      sbUpdateGravityGridAndHZ();
+      sbUpdateGravityGridAndHZ(rawDt);
 
       if (sb.followBody && sb.followBody.alive) {
         const d = sb.followBody.pos.clone().sub(sb.controls.target);
@@ -912,11 +1489,10 @@
       sb.controls.update();
       sb.renderer.render(sb.scene, sb.camera);
 
-      // 投影标签
       const wrap = sb$('sb-canvas-wrap'), w = wrap.clientWidth, h = wrap.clientHeight;
       const proj = new THREE.Vector3();
       for (const b of sb.bodies) {
-        if (!sb.showLabels || (b.badge === '撞击碎片' && b !== sb.selected)) { b.labelEl.hidden = true; continue; }
+        if (!sb.showLabels || (b.isDebris && b !== sb.selected)) { b.labelEl.hidden = true; continue; }
         proj.copy(b.pos).project(sb.camera);
         const x = (proj.x * 0.5 + 0.5) * w, y = (-proj.y * 0.5 + 0.5) * h;
         const off = proj.z > 1 || proj.z < -1 || x < 24 || x > w - 24 || y < 24 || y > h - 24;
@@ -930,9 +1506,21 @@
       sbUiTick += rawDt;
       if (sbUiTick > 0.25) {
         sbUiTick = 0;
+        if (sb.selected && sb.selected.alive) {
+          sb.selected.tempHist.push(sb.selected.temp);
+          sb.selected.velHist.push(sb.selected.vel.length() * 14.5);
+          if (sb.selected.tempHist.length > 48) { sb.selected.tempHist.shift(); sb.selected.velHist.shift(); }
+        }
         sb$('sb-stats-line').textContent = `天体 ${sb.bodies.length} 颗 · 模拟历元 ${sb.simYears.toFixed(2)} 年 · ${sb.fpsVal} FPS`;
         sbSyncInspector();
       }
+    }
+
+    function sbSwitchLeftTab(tab) {
+      ['spawn', 'genesis', 'saves'].forEach(t => { sb$('sb-tab-' + t).hidden = (t !== tab); });
+      document.querySelectorAll('[data-sb-left-tab]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.sbLeftTab === tab)));
+      sb$('sb-save-toggle')?.setAttribute('aria-pressed', String(tab === 'saves'));
+      if (tab === 'saves') sbRefreshSaves();
     }
 
     function sbInit() {
@@ -940,76 +1528,97 @@
       sb.inited = true;
       const wrap = sb$('sb-canvas-wrap');
       sb.scene = new THREE.Scene();
-      sb.scene.background = new THREE.Color(0x02050d);
-      sb.camera = new THREE.PerspectiveCamera(48, Math.max(1, wrap.clientWidth) / Math.max(1, wrap.clientHeight), 0.2, 3000);
+      sb.scene.background = new THREE.Color(0x020611);
+      sb.camera = new THREE.PerspectiveCamera(48, Math.max(1, wrap.clientWidth) / Math.max(1, wrap.clientHeight), 0.2, 2400);
       sb.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-      sb.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8));
+      sb.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
       sb.renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-      wrap.prepend(sb.renderer.domElement);
+      wrap.insertBefore(sb.renderer.domElement, wrap.firstChild);
       sb.controls = new OrbitControls(sb.camera, sb.renderer.domElement);
-      sb.controls.enableDamping = true; sb.controls.dampingFactor = 0.07; sb.controls.maxDistance = 680;
+      sb.controls.enableDamping = true; sb.controls.dampingFactor = 0.08;
+      sb.controls.minDistance = 6; sb.controls.maxDistance = 420;
+
       sbBuildEnvironment();
       sbBindCanvasEvents();
+      sbRenderAchievements();
 
-      // 渲染 14 种天体发射库按钮
       const grid = sb$('sb-spawn-grid');
-      grid.innerHTML = SB_TEMPLATES.map(t => `<button class="sb-spawn-item" data-sb-spawn="${t.id}" aria-pressed="${t.id === sb.spawnId}"><strong>${t.icon} ${t.name}</strong><small>${t.badge}</small></button>`).join('');
-      grid.querySelectorAll('button').forEach(btn => btn.onclick = () => {
-        sb.spawnId = btn.dataset.sbSpawn;
-        grid.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
-        sbSetTool('launch');
-      });
-
-      // 工具切换
-      function sbSetTool(tool) {
-        sb.tool = tool;
-        document.querySelectorAll('[data-sb-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sbTool === tool)));
-        const hints = {
-          select: '当前工具：选择 / 观察 · 点击任意天体编辑质量、温度、水覆盖率或进行一键行星改造',
-          launch: '当前工具：发射天体 · 在空间任意位置点击（自动圆轨）或按住拖拽弹射（带实时引力轨迹预测！）',
-          heat:   '当前工具：加热激光 · 按住左键照射任意行星或恒星，将海洋煮沸、地壳熔融成岩浆火海！',
-          freeze: '当前工具：绝对零度冰冻射线 · 按住左键照射行星，瞬间将其冰封为雪球世界！',
-          spin:   '当前工具：强制自旋 · 按住左键不断加速行星自转，直至离心力将其彻底甩裂成碎片环！',
-          pulse:  '当前工具：脉冲引爆 · 点击恒星引爆超新星并坍缩为中子星/黑洞，点击行星直接炸成熔岩碎片！'
+      SB_TEMPLATES.forEach(tpl => {
+        const btn = document.createElement('button');
+        btn.className = 'sb-spawn-item';
+        btn.dataset.spawnId = tpl.id;
+        btn.setAttribute('aria-pressed', String(tpl.id === sb.spawnId));
+        btn.innerHTML = `<strong>${tpl.icon} ${tpl.name}</strong><small>${tpl.badge}</small>`;
+        btn.onclick = () => {
+          sb.spawnId = tpl.id;
+          grid.querySelectorAll('.sb-spawn-item').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+          setTool('launch');
         };
-        sb$('sb-hint').textContent = hints[tool] || '';
-      }
-      window._sbSetTool = sbSetTool;
-      document.querySelectorAll('[data-sb-tool]').forEach(b => b.onclick = () => sbSetTool(b.dataset.sbTool));
-      document.querySelectorAll('[data-sb-lmode]').forEach(b => b.onclick = () => {
-        sb.launchMode = b.dataset.sbLmode;
-        document.querySelectorAll('[data-sb-lmode]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-        sbSetTool('launch');
+        grid.appendChild(btn);
       });
 
-      // 预设与顶部开关
+      const hints = {
+        select: '当前工具：选择 / 观察 · 双击天体快速锁定跟踪，或切至「创世」一键创造全新宇宙',
+        launch: '当前工具：发射天体 · 点击空间自动圆轨投放，或切至「拖拽弹射」拉出 80 步引力预测轨',
+        grab:   '当前工具：引力牵引神手 · 按住并拖拽任意星球/黑洞直接移动或甩飞！',
+        barrage:'当前工具：流星轰炸 · 在画布任意位置按住连发高能陨石/冰晶彗星雨（可为荒漠星球送水）',
+        laser:  '当前工具：高能激光 · 按住天体持续加热，汽化海洋并熔化地壳',
+        freeze: '当前工具：冰冻射线 · 按住天体迅速降温至冰封雪球世界',
+        spin:   '当前工具：强制自旋 · 按住天体加速旋转直至离心力超过引力结合能而甩裂！',
+        explode:'当前工具：脉冲引爆 · 点击恒星引发超新星坍缩，点击黑洞激发相对论喷流过载！'
+      };
+      function setTool(t) {
+        sb.tool = t;
+        document.querySelectorAll('[data-sb-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sbTool === t)));
+        sb$('sb-tool-hint').textContent = hints[t] || '';
+      }
+      window._sbSetTool = setTool;
+
+      document.querySelectorAll('[data-sb-tool]').forEach(b => b.onclick = () => setTool(b.dataset.sbTool));
+      document.querySelectorAll('[data-sb-launch]').forEach(b => b.onclick = () => {
+        sb.launchMode = b.dataset.sbLaunch;
+        document.querySelectorAll('[data-sb-launch]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        setTool('launch');
+      });
+
       sb$('sb-preset-select').onchange = e => sbLoadPreset(e.target.value);
       sb$('sb-reset-scene').onclick = () => sbLoadPreset(sb.preset);
-      const togMap = [['sb-tog-trails', 'showTrails'], ['sb-tog-hz', 'showHZ'], ['sb-tog-grid', 'showGrid'], ['sb-tog-vel', 'showVel'], ['sb-tog-labels', 'showLabels']];
-      togMap.forEach(([id, key]) => sb$(id).onclick = () => { sb[key] = !sb[key]; sb$(id).setAttribute('aria-pressed', String(sb[key])); });
+      [['sb-tog-trails', 'showTrails'], ['sb-tog-hz', 'showHZ'], ['sb-tog-grid', 'showGrid'], ['sb-tog-vel', 'showVel'], ['sb-tog-labels', 'showLabels']].forEach(([id, key]) => {
+        sb$(id).onclick = () => { sb[key] = !sb[key]; sb$(id).setAttribute('aria-pressed', String(sb[key])); };
+      });
 
-      // 左侧标签与存档
-      const setLeftTab = tab => {
-        document.querySelectorAll('[data-sb-left]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sbLeft === tab)));
-        sb$('sb-tab-spawn').hidden = tab !== 'spawn';
-        sb$('sb-tab-saves').hidden = tab !== 'saves';
-        sb$('sb-save-toggle').setAttribute('aria-pressed', String(tab === 'saves'));
-        if (tab === 'saves') sbRefreshSaves();
-      };
-      document.querySelectorAll('[data-sb-left]').forEach(b => b.onclick = () => setLeftTab(b.dataset.sbLeft));
-      sb$('sb-save-toggle').onclick = () => setLeftTab(sb$('sb-tab-saves').hidden ? 'saves' : 'spawn');
+      document.querySelectorAll('[data-sb-left-tab]').forEach(b => b.onclick = () => sbSwitchLeftTab(b.dataset.sbLeftTab));
+      sb$('sb-save-toggle').onclick = () => sbSwitchLeftTab(sb$('sb-tab-saves').hidden ? 'saves' : 'spawn');
       sb$('sb-save-btn').onclick = sbSaveUniverse;
 
-      // 时间与引力控制
+      // 成就弹窗
+      sb$('sb-ach-btn').onclick = () => { sbRenderAchievements(); sb$('sb-ach-pop').hidden = !sb$('sb-ach-pop').hidden; };
+      sb$('sb-ach-close').onclick = () => { sb$('sb-ach-pop').hidden = true; };
+
+      // 创世造物主与宇宙法则绑定
+      sb$('sb-bigbang-btn').onclick = sbRunBigBang;
+      sb$('sb-forge-btn').onclick = () => sbForgeUniverse(false, false);
+      sb$('sb-forge-cradle').onclick = () => sbForgeUniverse(true, false);
+      sb$('sb-gen-planets').oninput = e => { sb$('sb-gen-planets-val').textContent = e.target.value + ' 颗'; };
+      sb$('sb-gen-belt').oninput = e => { sb$('sb-gen-belt-val').textContent = e.target.value + ' 颗'; };
+      sb$('sb-gen-chaos').oninput = e => { sb$('sb-gen-chaos-val').textContent = Number(e.target.value).toFixed(2); };
+      sb$('sb-law-lum').oninput = e => { sb.lumMult = +e.target.value; sb$('sb-law-lum-val').textContent = sb.lumMult.toFixed(1) + '×'; };
+      sb$('sb-law-collide').onchange = e => { sb.collideMode = e.target.value; };
+      sb$('sb-law-roche').onchange = e => { sb.rocheEnabled = e.target.checked; };
+
+      // 时间与引力常数（支持负引力暗能量排斥！）
       sb$('sb-pause-btn').onclick = () => {
         sb.paused = !sb.paused;
         sb$('sb-pause-btn').setAttribute('aria-pressed', String(sb.paused));
         sb$('sb-pause-btn').textContent = sb.paused ? '▶ 继续' : 'Ⅱ 暂停';
       };
       sb$('sb-speed').oninput = e => { sb.speed = +e.target.value; sb$('sb-speed-val').textContent = sb.speed.toFixed(1) + '×'; };
-      sb$('sb-gravity').oninput = e => { sb.gravity = +e.target.value; sb$('sb-gravity-val').textContent = sb.gravity.toFixed(1) + '×'; };
+      sb$('sb-gravity').oninput = e => {
+        sb.gravity = +e.target.value;
+        sb$('sb-gravity-val').textContent = sb.gravity < 0 ? `${sb.gravity.toFixed(1)}× 反引力` : `${sb.gravity.toFixed(1)}×`;
+      };
 
-      // 右侧属性实时编辑
+      // 右侧检视器
       sb$('sb-follow-btn').onclick = () => {
         sb.followBody = sb.followBody === sb.selected ? null : sb.selected;
         sb$('sb-follow-btn').setAttribute('aria-pressed', String(!!sb.followBody));
@@ -1018,12 +1627,13 @@
       sb$('sb-supernova-btn').onclick = () => { if (sb.selected) sbTriggerSupernova(sb.selected); };
       document.querySelectorAll('[data-sb-mass]').forEach(btn => btn.onclick = () => {
         const b = sb.selected; if (!b) return;
-        b.mass = THREE.MathUtils.clamp(b.mass * (+btn.dataset.sbMass), 0.0002, 2000);
+        b.mass = THREE.MathUtils.clamp(b.mass * (+btn.dataset.sbMass), 0.0002, 4800);
         if (b.kind === 'star') {
-          const col = b.mass > 260 ? [0.55, 0.84, 1.0] : b.mass < 55 ? [1.0, 0.34, 0.16] : [1.0, 0.82, 0.36];
+          const col = b.mass > 320 ? [0.55, 0.84, 1.0] : b.mass < 55 ? [1.0, 0.34, 0.16] : [1.0, 0.82, 0.36];
           b.color = col; b.mat.uniforms.uColor.value.setRGB(...col);
-          if (b.mass > 960) sbTriggerSupernova(b);
+          if (b.mass > SB_SOLAR_M * 8) sbTriggerSupernova(b);
         }
+        sbCheckCompactCollapse(b);
         sbSyncInspector();
       });
       sb$('sb-ed-temp').oninput = e => { if (!sb.selected) return; sb.selected.temp = +e.target.value; sbSyncInspector(); };
@@ -1035,13 +1645,12 @@
         sb.selected.mesh.scale.setScalar(sc); sbSyncInspector();
       };
 
-      // 一键行星改造 (Terraform)
       document.querySelectorAll('[data-sb-tf]').forEach(btn => btn.onclick = () => {
         const b = sb.selected; if (!b) return;
         const m = btn.dataset.sbTf;
         if (m === 'ring') { sbAttachRing(b.grp, b); sbToast(`🪐 已为 ${b.name} 生成壮丽行星环！`); return; }
         if (b.kind !== 'planet') { sbToast('行星改造仅适用于岩质行星/卫星'); return; }
-        if (m === 'earth') { b.temp = 18; b.water = 72; b.atmo = 1.1; b.color = [0.22, 0.54, 0.26]; }
+        if (m === 'earth') { b.temp = 18; b.water = 72; b.atmo = 1.1; b.color = [0.22, 0.54, 0.26]; sbUnlockAch('cradle'); }
         else if (m === 'snowball') { b.temp = -95; b.water = 92; b.atmo = 0.5; }
         else if (m === 'lava') { b.temp = 1380; b.water = 0; b.atmo = 0.6; }
         else if (m === 'ocean') { b.temp = 24; b.water = 98; b.atmo = 1.3; }
@@ -1076,29 +1685,27 @@
       sb.renderer.setSize(wrap.clientWidth, wrap.clientHeight);
 
       if (importObj) {
-        // 支持从「星海百科」或「首页档案」直接把任意天体传送到宇宙沙盘中发射！
-        const isStar = importObj.kind === 'star' || ['star', 'dyson', 'pulsar', 'binary'].includes(importObj.visual?.preset);
         const isBH = importObj.kind === 'blackhole' || importObj.visual?.preset === 'blackhole';
+        const isNS = importObj.visual?.preset === 'pulsar';
+        const isStar = !isBH && !isNS && (importObj.kind === 'star' || ['star', 'dyson', 'binary'].includes(importObj.visual?.preset));
         const isGas = ['gas', 'ring', 'ringworld'].includes(importObj.visual?.preset);
         const tempC = importObj.facts?.tempK ? (Number(importObj.facts.tempK) - 273.15) : (isStar ? 5800 : 18);
         sb.customTemplate = {
-          id: '__custom__', icon: isBH ? '🕳️' : isStar ? '⭐' : '🪐',
+          id: '__custom__', icon: isBH ? '🕳️' : isNS ? '⚡' : isStar ? '⭐' : '🪐',
           name: importObj.name || '百科天体',
-          badge: importObj.subtype || (isBH ? '黑洞' : isStar ? '恒星' : '百科行星'),
-          kind: isBH ? 'bh' : isStar ? 'star' : isGas ? 'gas' : 'planet',
-          mass: isBH ? 520 : isStar ? 160 : isGas ? 0.9 : 0.055,
-          radius: isBH ? 3.4 : isStar ? 6.0 : isGas ? 3.2 : 1.85,
+          badge: importObj.subtype || (isBH ? '黑洞' : isNS ? '脉冲中子星' : isStar ? '恒星' : '百科行星'),
+          kind: isBH ? 'bh' : isNS ? 'ns' : isStar ? 'star' : isGas ? 'gas' : 'planet',
+          mass: isBH ? 720 : isNS ? 216 : isStar ? 160 : isGas ? 0.9 : 0.055,
+          radius: isBH ? 3.4 : isNS ? 1.5 : isStar ? 5.8 : isGas ? 3.2 : 1.85,
+          density: isBH ? 1e16 : isNS ? 4e14 : isStar ? 1.4 : isGas ? 1.2 : 5.2,
           temp: tempC,
-          water: (!isStar && !isBH && !isGas && tempC > -50 && tempC < 90) ? 65 : 0,
+          water: (!isStar && !isBH && !isNS && !isGas && tempC > -50 && tempC < 90) ? 65 : 0,
           atmo: isGas ? 3.2 : 1.0,
           color: isStar ? (tempC > 9000 ? [0.6, 0.85, 1] : tempC < 4000 ? [1, 0.35, 0.18] : [1, 0.82, 0.36]) : [0.32, 0.62, 0.85],
           ring: importObj.visual?.preset === 'ring'
         };
         sb.spawnId = '__custom__';
-        sb$('sb-tab-spawn').hidden = false;
-        sb$('sb-tab-saves').hidden = true;
-        document.querySelectorAll('[data-sb-left-tab]').forEach(t => t.setAttribute('aria-pressed', String(t.dataset.sbLeftTab === 'spawn')));
-        sb$('sb-save-toggle')?.setAttribute('aria-pressed', 'false');
+        sbSwitchLeftTab('spawn');
         sb$('sb-custom-import').hidden = false;
         sb$('sb-import-name').textContent = `${sb.customTemplate.icon} ${sb.customTemplate.name}`;
         sb$('sb-import-meta').textContent = `${sb.customTemplate.badge} · 已装填至发射器，点击画布即可投放！`;
