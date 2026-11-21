@@ -111,6 +111,17 @@ npm start
 ```
 启动后访问：`http://localhost:8090`（Windows 用户也可直接双击 `启动星海百科.cmd`）。
 
+### 1.1 一键打包 Windows 全屏独立桌面 `.exe`（无需浏览器）
+已配置 Electron 独立桌面构建脚本 [desktop/build_desktop.mjs](desktop/build_desktop.mjs)（工具安装在 `D:\RuanJian\CosmicDesktopTools`）：
+```bash
+npm run build
+npm run build:exe
+```
+构建完成后将在 `dist_exe/` 生成：
+- **`dist_exe/万象寰宇-宇宙沙盘2-单文件直接运行版.exe`**（110 MB，单文件便携独立版，拷贝到任意 Windows 电脑双击直接全屏游玩）
+- **`dist_exe/win-unpacked/万象寰宇-宇宙沙盘2.exe`**（免解压秒开绿色版目录）
+- 桌面端原生支持 **`F11` / `Alt+Enter` 切换全屏或窗口**、顶部 **`🖥️ F11全屏 / ✕ 退出`** 按钮，所有百科与沙盘存档自动保存至 `%APPDATA%\万象寰宇-宇宙沙盘2\cosmic-data\`，完全离线独立运行。
+
 ### 2. 手机局域网访问
 电脑与手机处于同一 Wi-Fi 时：
 ```bash
