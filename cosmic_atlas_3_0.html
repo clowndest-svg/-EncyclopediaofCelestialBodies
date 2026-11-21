@@ -7189,13 +7189,19 @@ function normalizeSandboxUniverse(value) {
         const sp = glowSprite(colHex, sz, op); sp.position.set(...p); sb.scene.add(sp);
       });
 
-      const gGeo = new THREE.PlaneGeometry(250, 250, 48, 48);
+      const gGeo = new THREE.PlaneGeometry(250, 250, 52, 52);
       gGeo.rotateX(-Math.PI / 2);
       const gCount = gGeo.attributes.position.count;
       gGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(gCount * 3), 3));
       sb.gridBasePos = new Float32Array(gGeo.attributes.position.array);
-      sb.gridMesh = new THREE.Mesh(gGeo, new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true, transparent: true, opacity: 0.28, depthWrite: false, blending: THREE.AdditiveBlending }));
+      const gridMat = new THREE.ShaderMaterial({
+        vertexShader: `attribute vec3 color;varying vec3 vCol;varying vec2 vUv;void main(){vCol=color;vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+        fragmentShader: `varying vec3 vCol;varying vec2 vUv;void main(){float r=length((vUv-0.5)*2.0);float fade=smoothstep(1.0,0.36,r);if(fade<0.01)discard;gl_FragColor=vec4(vCol,fade*0.32);}`,
+        wireframe: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+      });
+      sb.gridMesh = new THREE.Mesh(gGeo, gridMat);
       sb.gridMesh.position.y = -6.5;
+      sb.gridMesh.frustumCulled = false;
       sb.scene.add(sb.gridMesh);
 
       const hzMat = new THREE.ShaderMaterial({
@@ -7270,19 +7276,34 @@ function normalizeSandboxUniverse(value) {
       if (sb.gridMesh) {
         sb.gridMesh.visible = sb.showGrid;
         if (sb.showGrid) {
-          const pos = sb.gridMesh.geometry.attributes.position, col = sb.gridMesh.geometry.attributes.color, base = sb.gridBasePos;
           const massive = sb.bodies.filter(b => b.mass >= 0.02);
+          const refBodies = sb.bodies.filter(b => !b.isDebris);
+          let cx = sb.controls ? sb.controls.target.x : 0, cz = sb.controls ? sb.controls.target.z : 0, maxR = 125;
+          if (refBodies.length) {
+            cx = 0; cz = 0;
+            for (const b of refBodies) { cx += b.pos.x; cz += b.pos.z; }
+            cx /= refBodies.length; cz /= refBodies.length;
+            let span = 90;
+            for (const b of refBodies) span = Math.max(span, Math.hypot(b.pos.x - cx, b.pos.z - cz) + 45);
+            maxR = THREE.MathUtils.clamp(span * 1.35, 125, 2800);
+          }
+          const sc = maxR / 125;
+          sb.gridMesh.position.set(cx, -6.5, cz);
+          sb.gridMesh.scale.set(sc, 1, sc);
+          const pos = sb.gridMesh.geometry.attributes.position, col = sb.gridMesh.geometry.attributes.color, base = sb.gridBasePos;
+          const softSq = 36 * sc;
           for (let i = 0; i < pos.count; i++) {
             const bx = base[i * 3], bz = base[i * 3 + 2];
+            const wx = cx + bx * sc, wz = cz + bz * sc;
             let well = 0;
             for (let j = 0; j < massive.length; j++) {
-              const b = massive[j], dx = bx - b.pos.x, dz = bz - b.pos.z;
-              const d = Math.sqrt(dx * dx + dz * dz + 36);
+              const b = massive[j], dx = wx - b.pos.x, dz = wz - b.pos.z;
+              const d = Math.sqrt(dx * dx + dz * dz + softSq);
               well += (b.mass * sb.gravity) / d;
             }
             let ripple = 0;
             for (let w = 0; w < sb.waves.length; w++) {
-              const gw = sb.waves[w], d = Math.hypot(bx - gw.pos.x, bz - gw.pos.z);
+              const gw = sb.waves[w], d = Math.hypot(wx - gw.pos.x, wz - gw.pos.z);
               const env = Math.exp(-Math.pow((d - gw.r) * 0.14, 2)) * (1 - gw.age / gw.maxAge);
               ripple += Math.sin((d - gw.r) * 0.85) * gw.amp * env;
             }
