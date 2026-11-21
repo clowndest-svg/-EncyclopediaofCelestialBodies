@@ -147,9 +147,25 @@ test('switching tools cancels automatic barrage and releasing a destroyed target
   run('sb.renderer={domElement:document.createElement(\'canvas\')};sbBindCanvasEvents();sb.pointerDownBeam=true;sb.activeBeamTarget=null;sb.controls.enabled=false;');
   windowEvents.get('pointerup')();assert(run('sb.controls.enabled'));assert.equal(run('sb.pointerDownBeam'),false);
 });
-test('explicit toolbar heating works once while natural evolution is paused',()=>{
-  const {run}=fixture();run("sbLoadPreset('solar');sb.paused=true;globalThis.before=sb.selected.temp;setTool('laser',true)");
-  assert(run('sb.selected.temp')>run('before'));assert.equal(run('sb.autoBeamTimer'),0);assert.equal(run('sb.activeBeamTarget'),null);
+test('selecting toolbar action tools does not auto-fire until user clicks a planet',()=>{
+  const {run}=fixture();run("sbLoadPreset('solar');globalThis.before=sb.selected.temp;setTool('laser',true)");
+  assert.equal(run('sb.tool'),'laser');
+  assert.equal(run('sb.selected.temp'),run('before'));
+  assert.equal(run('sb.activeBeamTarget'),null);
+  assert.equal(run('sb.autoBeamTimer'),0);
+});
+test('black hole and white hole form Einstein-Rosen bridge and annihilate on horizon contact',()=>{
+  const {run}=fixture();
+  run("sbLoadPreset('blank');sbCreateBody({...SB_TEMPLATES.find(t=>t.id==='blackhole'),pos:[0,0,0],vel:[0,0,0]});sbCreateBody({...SB_TEMPLATES.find(t=>t.id==='whitehole'),pos:[18,0,0],vel:[0,0,0]});sbStepPhysics(.016)");
+  assert(run('sb.achievements.has("wormhole")'));
+  run("sb.bodies[1].pos.set(2,0,0);sbStepPhysics(.016)");
+  assert(run('sb.bodies.some(b=>b.name==="湮灭新生恒星")'));
+});
+test('spawning a macro galaxy in solar system auto-switches to galactic scale cleanly',()=>{
+  const {run}=fixture();
+  run("sbLoadPreset('solar');sb.spawnId='galaxy';sbSpawnAt(new THREE.Vector3(10,0,0))");
+  assert.equal(run('sb.bodies.length'),1);
+  assert.equal(run('sb.bodies[0].kind'),'galaxy');
 });
 test('sandbox navigation captures S before unrelated shortcuts',()=>{
   const {run,windowEvents}=fixture();run('sbBindExtendedControls()');

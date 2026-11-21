@@ -6767,7 +6767,9 @@ function normalizeSandboxUniverse(value) {
       { id: 'kilonova', icon: '⚡', title: '千新星炼金术师',   desc: '触发双中子星并合千新星爆发并坍缩诞生新黑洞' },
       { id: 'chandra',  icon: '💥', title: '超新星引爆者',     desc: '触发恒星超新星或白矮星钱德拉塞卡极限 Ia 型爆发' },
       { id: 'genesis',  icon: '✨', title: '创世奇点神明',     desc: '使用「大爆炸创世」或「星系锻造炉」创造全新宇宙' },
-      { id: 'grab',     icon: '🧲', title: '执掌星辰之手',     desc: '使用「引力牵引」亲手拖拽并甩动一颗天体改变轨道' }
+      { id: 'grab',     icon: '🧲', title: '执掌星辰之手',     desc: '使用「引力牵引」亲手拖拽并甩动一颗天体改变轨道' },
+      { id: 'wormhole', icon: '🌀', title: '爱因斯坦-罗森桥',  desc: '让黑洞与白洞相遇形成虫洞光桥或触发视界湮灭' },
+      { id: 'impact',   icon: '☄️', title: '造月大撞击',       desc: '引发两颗行星剧烈碰撞并喷射炽热熔岩碎片羽流' }
     ];
 
     // 科学致密天体层级：高致密层级永远潮汐撕裂并吸积低致密层级（蓝超巨星绝不可吞噬黑洞或中子星！）
@@ -7094,6 +7096,9 @@ function normalizeSandboxUniverse(value) {
       sb.effects.forEach(e => disposeTree(e.grp));
       sb.tidalStreams.forEach(t => disposeTree(t.mesh));
       sb.effects = []; sb.tidalStreams = []; sb.waves = [];
+      if (sb.tidalRibbonLine) sb.tidalRibbonLine.visible = false;
+      if (sb.wormholeLine) sb.wormholeLine.visible = false;
+      if (sb.hoverRing) sb.hoverRing.visible = false;
       sb.simYears = 0;
     }
 
@@ -7190,6 +7195,28 @@ function normalizeSandboxUniverse(value) {
       sb.laserLine.visible = false;
       sb.laserLine.frustumCulled = false;
       sb.scene.add(sb.laserLine);
+
+      // 3D 黑洞潮汐撕裂连续螺旋光带（肉眼可见的恒星拉丝吸积纽带）
+      const trGeo = new THREE.BufferGeometry();
+      trGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(42 * 3), 3));
+      sb.tidalRibbonLine = new THREE.Line(trGeo, new THREE.LineBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.92, blending: THREE.AdditiveBlending }));
+      sb.tidalRibbonLine.visible = false; sb.tidalRibbonLine.frustumCulled = false;
+      sb.scene.add(sb.tidalRibbonLine);
+
+      // 爱因斯坦-罗森桥（黑洞 ↔ 白洞时空虫洞光桥）
+      const whGeo = new THREE.BufferGeometry();
+      whGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(36 * 3), 3));
+      sb.wormholeLine = new THREE.Line(whGeo, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.92, blending: THREE.AdditiveBlending }));
+      sb.wormholeLine.visible = false; sb.wormholeLine.frustumCulled = false;
+      sb.scene.add(sb.wormholeLine);
+
+      // 3D 悬停瞄准锁定圈（选择右下角工具后滑过任意星球高亮提示，指哪打哪！）
+      sb.hoverRing = new THREE.Mesh(
+        new THREE.RingGeometry(1.18, 1.38, 48),
+        new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.88, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      sb.hoverRing.visible = false;
+      sb.scene.add(sb.hoverRing);
     }
 
     function sbSpawnGravWave(centerPos, amp = 5.5) {
@@ -7759,14 +7786,74 @@ function normalizeSandboxUniverse(value) {
         }
       }
 
-      // 2. 严格遵循致密天体物理层级的直接碰撞处理
+      // 2.5 黑洞 × 白洞理论物理联动：爱因斯坦-罗森桥（虫洞光桥）与视界奇点湮灭！
+      let activeWormhole = null;
+      for (let i = sb.bodies.length - 1; i >= 0; i--) {
+        const a = sb.bodies[i]; if (!a || !a.alive) continue;
+        for (let j = i - 1; j >= 0; j--) {
+          const b = sb.bodies[j]; if (!b || !b.alive) continue;
+          const isBHWH = (a.kind === 'bh' && b.kind === 'whitehole') || (a.kind === 'whitehole' && b.kind === 'bh');
+          if (!isBHWH) continue;
+          const bh = a.kind === 'bh' ? a : b, wh = a.kind === 'whitehole' ? a : b;
+          const d = bh.pos.distanceTo(wh.pos);
+          // 视界直接对撞 -> 虫洞坍缩奇点湮灭爆发 + 诞生新生原初恒星！
+          if (d < (sbInteractionRadius(bh) + sbInteractionRadius(wh)) * 1.15) {
+            const mid = bh.pos.clone().lerp(wh.pos, 0.5);
+            sbSpawnGravWave(mid, 8.5);
+            sbSpawnExplosion(mid, 0x38bdf8, 13, true);
+            sbSpawnExplosion(mid, 0xfde047, 9, true);
+            sbUnlockAch('wormhole');
+            sbRemoveBody(bh); sbRemoveBody(wh);
+            for (let k = 0; k < 5 && sb.bodies.length < SANDBOX_MAX_BODIES; k++) {
+              const ang = (k / 5) * Math.PI * 2;
+              const dir = new THREE.Vector3(Math.cos(ang), (Math.random() - 0.5) * 0.45, Math.sin(ang)).normalize();
+              const tpl = k === 0 ? SB_TEMPLATES.find(t => t.id === 'sun') : SB_TEMPLATES.find(t => t.id === (k % 2 ? 'earth' : 'crystal_world'));
+              sbCreateBody({ ...tpl, name: k === 0 ? '湮灭新生恒星' : `虫洞喷射星-${k}`, pos: mid.clone().addScaledVector(dir, 9 + k * 2.5).toArray(), vel: dir.multiplyScalar(4.5 + k * 0.8).toArray() });
+            }
+            sbToast('🌀 黑洞 × 白洞视界对撞湮灭！爱因斯坦-罗森桥坍缩并喷射出新生恒星与行星！');
+            break;
+          }
+          // 近距形成爱因斯坦-罗森虫洞光桥（黑洞吸积能量经虫洞传输给白洞加速外流喷发！）
+          if (d < 46) {
+            activeWormhole = { bh, wh };
+            bh.diskFlare = Math.min(2.6, (bh.diskFlare || 0) + dt * 1.8);
+            sbUnlockAch('wormhole');
+            // 虫洞相互弱引力/斥力平衡并激发白洞喷射发光物质流
+            if (Math.random() < 0.35) sbSpawnTidalStream(wh, bh);
+          }
+        }
+      }
+      if (sb.wormholeLine) {
+        if (activeWormhole && activeWormhole.bh.alive && activeWormhole.wh.alive) {
+          const { bh, wh } = activeWormhole;
+          const attr = sb.wormholeLine.geometry.attributes.position, cnt = attr.count;
+          const dir = wh.pos.clone().sub(bh.pos), len = dir.length();
+          const up = Math.abs(dir.y / Math.max(0.1, len)) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
+          const s1 = new THREE.Vector3().crossVectors(dir, up).normalize();
+          const s2 = new THREE.Vector3().crossVectors(dir, s1).normalize();
+          const phase = sb.simYears * 26;
+          for (let k = 0; k < cnt; k++) {
+            const u = k / (cnt - 1);
+            const waist = Math.sin(u * Math.PI) * 1.6 + 0.35;
+            const ang = u * Math.PI * 6 + phase;
+            const p = bh.pos.clone().lerp(wh.pos, u).addScaledVector(s1, Math.cos(ang) * waist).addScaledVector(s2, Math.sin(ang) * waist);
+            attr.setXYZ(k, p.x, p.y, p.z);
+          }
+          attr.needsUpdate = true;
+          sb.wormholeLine.visible = true;
+        } else {
+          sb.wormholeLine.visible = false;
+        }
+      }
+
+      // 3. 严格遵循致密天体物理层级的直接碰撞处理（1.0 真实表面接触，不再互相穿模！）
       const collisionBodies=[...sb.bodies];
       for (let i = collisionBodies.length - 1; i >= 0; i--) {
         const a = collisionBodies[i]; if (!a || !a.alive) continue;
         for (let j = i - 1; j >= 0; j--) {
           const b = collisionBodies[j]; if (!b || !b.alive) continue;
           if(['galaxy','nebula','darkmatter','whitehole'].includes(a.kind)||['galaxy','nebula','darkmatter','whitehole'].includes(b.kind))continue;
-          const contactRadius=(sbInteractionRadius(a)+sbInteractionRadius(b))*.86;
+          const contactRadius=(sbInteractionRadius(a)+sbInteractionRadius(b))*1.0;
           const contact=sbSegmentContact(a.previousPos||a.pos,a.pos,b.previousPos||b.pos,b.pos,contactRadius);
           if (contact !== null) {
             if(contact>0) {a.pos.lerpVectors(a.previousPos,a.pos,contact);b.pos.lerpVectors(b.previousPos,b.pos,contact);}
@@ -7848,7 +7935,10 @@ function normalizeSandboxUniverse(value) {
                 big.atmo = Math.min(5, big.atmo + 0.15);
               }
               const hitPos = small.pos.clone().lerp(big.pos, 0.45);
-              sbSpawnExplosion(hitPos, 0xff7b29, Math.max(3.5, small.radius * 2.6), false);
+              sbSpawnExplosion(hitPos, 0xff7b29, Math.max(4.8, (small.radius + big.radius) * 2.2), false);
+              sbSpawnExplosion(hitPos, 0xfef08a, Math.max(3.2, small.radius * 1.8), false);
+              big.manualTempLock = 8.0;
+              if (big.kind === 'planet' && small.kind === 'planet' && !small.isDebris) sbUnlockAch('impact');
               if ((sb.collideMode === 'shatter' || (relV > 1.8 && small.mass > big.mass * 0.08)) && !small.isDebris && !big.isDebris && sb.bodies.length < 48) {
                 const baseName = small.name.replace(/(残骸|碎片)+$/g, '').slice(0, 6) || '天体';
                 const ejectAngle=Math.random()*Math.PI*2;
@@ -7874,10 +7964,14 @@ function normalizeSandboxUniverse(value) {
         }
       }
 
-      // 3. 实时热力学辐射平衡 + 意大利面化几何形变渲染 + 黑洞吸积盘更新
+      // 3. 实时热力学辐射平衡 + 意大利面化几何形变渲染 + 黑洞连续螺旋撕裂光带 + 吸积盘更新
       const stars = sb.bodies.filter(b => b.kind === 'star');
       const keyStar = stars[0];
+      let tidalLead = null;
       for (const b of sb.bodies) {
+        if (b.tidalStress > 0.12 && b.tidalTarget && b.tidalTarget.alive && (b.tidalTarget.kind === 'bh' || b.tidalTarget.kind === 'ns')) {
+          if (!tidalLead || b.tidalStress > tidalLead.tidalStress) tidalLead = b;
+        }
         b.grp.position.copy(b.pos);
         if (b.cloud) b.cloud.rotation.y += dt*.035;
         if (b.mat?.uniforms?.uTime) b.mat.uniforms.uTime.value += dt;
@@ -7927,6 +8021,31 @@ function normalizeSandboxUniverse(value) {
       }
       sbUpdateGalaxyMergers(dt);
       sb.simYears += dt * 0.045;
+      // 更新黑洞连续 3D 对数螺旋撕裂光带
+      if (sb.tidalRibbonLine) {
+        if (tidalLead) {
+          const pri = tidalLead.tidalTarget, attr = sb.tidalRibbonLine.geometry.attributes.position, cnt = attr.count;
+          const v2p = pri.pos.clone().sub(tidalLead.pos), dist = v2p.length();
+          const up = Math.abs(v2p.y / Math.max(0.1, dist)) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
+          const s1 = new THREE.Vector3().crossVectors(v2p, up).normalize();
+          const s2 = new THREE.Vector3().crossVectors(v2p, s1).normalize();
+          const phase = sb.simYears * 22;
+          for (let k = 0; k < cnt; k++) {
+            const u = k / (cnt - 1);
+            const r = dist * Math.pow(1 - u, 1.35) + pri.radius * 0.9;
+            const ang = u * Math.PI * 3.6 + phase;
+            const center = pri.pos.clone().lerp(tidalLead.pos, Math.pow(1 - u, 1.5));
+            const swirl = Math.sin(u * Math.PI) * (pri.radius * 1.65);
+            const p = center.addScaledVector(s1, Math.cos(ang) * swirl).addScaledVector(s2, Math.sin(ang) * swirl * 0.35);
+            attr.setXYZ(k, p.x, p.y, p.z);
+          }
+          attr.needsUpdate = true;
+          sb.tidalRibbonLine.material.color.setRGB(...(tidalLead.kind === 'star' ? tidalLead.color : [1, 0.58, 0.22]));
+          sb.tidalRibbonLine.visible = true;
+        } else {
+          sb.tidalRibbonLine.visible = false;
+        }
+      }
     }
 
     function sbCheckCompactCollapse(b) {
@@ -8068,10 +8187,27 @@ function normalizeSandboxUniverse(value) {
 
     function sbSpawnAt(pos, velOverride = null) {
       if(sb.bodies.length+(sb.spawnId==='belt'?12:1)>SANDBOX_MAX_BODIES) {sbToast('已达到 260 颗天体上限。');return;}
+      // 科学尺度隔离：防止在「恒星/行星尺度（如太阳系）」直接投放十万光年的「螺旋星系/星系群」导致太阳比星系还大！
+      const macroIds = ['galaxy', 'darkmatter', 'sys_galaxy', 'sys_galaxy_cluster', 'sys_supercluster'];
+      const isSpawningMacro = macroIds.includes(sb.spawnId);
+      const hasStellarScene = sb.bodies.some(b => ['planet', 'gas', 'star'].includes(b.kind) && !b.isDebris);
+      const hasMacroScene = sb.bodies.some(b => ['galaxy', 'darkmatter'].includes(b.kind));
+      if (isSpawningMacro && hasStellarScene) {
+        sbClearAll();
+        pos = new THREE.Vector3(0, 0, 0);
+        velOverride = new THREE.Vector3(0, 0, 0);
+        sbToast('🌌 尺度自动切换：星系直径达十万光年（比太阳大万亿倍），已切换至「星系宏尺度」投放！');
+      } else if (!isSpawningMacro && hasMacroScene && !['bh', 'whitehole'].includes(sbGetSpawnTemplate().kind)) {
+        sbClearAll();
+        pos = new THREE.Vector3(0, 0, 0);
+        velOverride = new THREE.Vector3(0, 0, 0);
+        sbToast('🪐 尺度自动切换：已从「星系宏尺度」切换回「恒星系尺度」以保持科学比例！');
+      }
       if (String(sb.spawnId).startsWith('sys_')) {
         const dominant = sb.bodies.filter(b => !b.isDebris && ['star','bh','ns','wd','darkmatter'].includes(b.kind)).sort((a, b) => b.mass - a.mass)[0];
         const baseV = velOverride || (sb.launchMode === 'orbit' && dominant && dominant.pos.distanceTo(pos) > 25 ? sbCircularVel(pos, dominant) : new THREE.Vector3());
         sbStampSystem(sb.spawnId, pos, baseV);
+        if (isSpawningMacro && typeof sbOverview === 'function') sbOverview();
         return;
       }
       const tpl = sbGetSpawnTemplate();
@@ -8139,8 +8275,8 @@ function normalizeSandboxUniverse(value) {
           return;
         }
         if (['laser', 'freeze', 'spin'].includes(sb.tool)) {
-          const tgt = hit || sb.selected;
-          if (tgt && tgt.alive) { sbSelectBody(tgt); sb.activeBeamTarget = tgt; sb.pointerDownBeam = true; sb.controls.enabled = false; }
+          if (hit && hit.alive) { sbSelectBody(hit); sb.activeBeamTarget = hit; sb.pointerDownBeam = true; sb.controls.enabled = false; }
+          else sbToast('请直接点击或按住画布中的目标星球以施放光束！');
           return;
         }
         if (sb.tool === 'launch') {
@@ -8173,7 +8309,22 @@ function normalizeSandboxUniverse(value) {
           if (pt) sb.barragePos.copy(pt);
           return;
         }
-        if (!sb.dragState) return;
+        if (!sb.dragState) {
+          // 悬停瞄准锁定圈：当选中任意交互工具时滑过星球实时高亮显示瞄准圈
+          if (sb.hoverRing) {
+            const h = sb.tool !== 'select' && sb.tool !== 'launch' ? sbPickBody(e) : null;
+            if (h && h.alive) {
+              sb.hoverRing.visible = true;
+              sb.hoverRing.position.copy(h.pos);
+              sb.hoverRing.scale.setScalar(Math.max(1.2, sbVisualRadius(h)));
+              sb.hoverRing.lookAt(sb.camera.position);
+              sb.hoverRing.material.color.setHex(sb.tool === 'explode' ? 0xfb7185 : sb.tool === 'freeze' ? 0x38bdf8 : sb.tool === 'laser' ? 0xf97316 : 0xfde047);
+            } else {
+              sb.hoverRing.visible = false;
+            }
+          }
+          return;
+        }
         const pt = sbPlanePoint(e); if (!pt) return;
         sb.dragState.cur.copy(pt);
         if(Math.hypot(e.clientX-sb.dragState.x,e.clientY-sb.dragState.y)>5)sb.dragState.moved=true;
@@ -8502,29 +8653,12 @@ function normalizeSandboxUniverse(value) {
         sb.tool = t;
         document.querySelectorAll('[data-sb-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sbTool === t)));
         sb$('sb-tool-hint').textContent = hints[t] || '';
-        // 用户直接点击右下角功能按钮时：对当前选中的天体立即施放一次直观效果，同时进入画布点选模式！
-        if (fromBtnClick) {
-          const target = (sb.selected && sb.selected.alive) ? sb.selected : sb.bodies.find(x => !x.isDebris && x.kind !== 'bh') || sb.bodies[0];
-          if (target) {
-            sbSelectBody(target);
-            if (t === 'laser' || t === 'freeze' || t === 'spin') {
-              sb.activeBeamTarget = target;
-              sb.autoBeamTimer = 1.25;
-              sbToast(t === 'laser' ? `🔥 高能激光正在照射「${target.name}」（也可在画布按住任意天体持续照射）`
-                : t === 'freeze' ? `❄️ 冰冻射线正在急速冷却「${target.name}」（也可在画布按住任意天体）`
-                : `🌀 正在对「${target.name}」施加角动量自旋加速（连续点击或按住可甩裂星球！）`);
-            } else if (t === 'barrage') {
-              sb.barragePos.copy(target.pos);
-              sb.barrageActive = true;
-              sb.autoBeamTimer = 1.1;
-              sbToast(`☄️ 已向「${target.name}」召唤流星与冰彗星雨轰炸！`);
-            } else if (t === 'explode') {
-              sbTriggerSupernova(target);
-            }
-          }
-        }
-        if(fromBtnClick&&sb.paused&&['laser','freeze','spin','barrage'].includes(t)) {
-          sbTickActiveTool(.14);sbCancelInteraction();sbSyncInspector();
+        const dom = sb.renderer?.domElement;
+        if (dom) dom.style.cursor = t === 'select' ? 'default' : t === 'grab' ? 'grab' : 'crosshair';
+        // 严格遵循「先选工具 → 再点击画布中任意目标星球执行」，绝不误伤当前默认选中的地球！
+        if (fromBtnClick && ['laser', 'freeze', 'spin', 'barrage', 'explode', 'grab'].includes(t)) {
+          const names = { laser: '🔥 高能激光', freeze: '❄️ 冰冻射线', spin: '🌀 强制甩裂', barrage: '☄️ 流星轰炸', explode: '💥 脉冲引爆', grab: '🧲 引力牵引' };
+          sbToast(`已切换「${names[t]}」工具：请在 3D 星空点击或按住目标星球执行！`);
         }
       }
       window._sbSetTool = setTool;
