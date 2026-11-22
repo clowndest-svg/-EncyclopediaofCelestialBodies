@@ -107,7 +107,7 @@
         float macro = fbm(p * 7.5 + vec3(1.2, -0.7, 2.4));
         float r1 = ridge(p * 18.0 + vec3(3.1, -1.7, 0.9));
         float r2 = ridge(p * 42.0 - vec3(1.2, 4.3, 2.1));
-        float dunes = sin(p.x * 130.0 + fbm(p * 16.0) * 8.0) * 0.5 + 0.5;
+        float dunes = sin(p.x * 130.0 + vnoise(p * 16.0) * 8.0) * 0.5 + 0.5;
         return landMask * (macro * 0.25 + (r1 * 0.6 + r2 * 0.35) * (0.28 + mtnMask * 1.65) + aridMask * dunes * 0.14);
       }
 
@@ -126,7 +126,7 @@
           ? smoothstep(0.015, 0.10, (tex.b - max(tex.r * 1.24, tex.g * 1.01))) * (1.0 - smoothstep(0.21, 0.34, tex.r))
           : vOcean;
         float landMask = 1.0 - isOcean;
-        float polarIce = smoothstep(69.0, 81.0, abs(lat) + (fbm(p * 9.0) - 0.5) * 8.0);
+        float polarIce = smoothstep(69.0, 81.0, abs(lat) + (vnoise(p * 9.0) - 0.5) * 8.0);
         float greenland = belt(lat, lon, 72.0, -42.0, 11.0, 16.0);
         float iceMask = clamp(max(polarIce, greenland * landMask * 0.95), 0.0, 1.0);
 
@@ -166,7 +166,7 @@
           float w1 = sin(p.x * 95.0 + p.z * 75.0 - uTime * 2.6 + swell * 5.0);
           float w2 = cos(p.y * 110.0 - p.x * 85.0 + uTime * 2.1 + swell * 4.0);
           float waveH = (w1 * 0.5 + w2 * 0.5) * 0.5 + 0.5;
-          float currentStream = smoothstep(0.68, 0.94, fbm(p * 11.0 + vec3(uTime * 0.22 * gyreDir, 0.0, uTime * 0.14))) *
+          float currentStream = smoothstep(0.68, 0.94, vnoise(p * 11.0 + vec3(uTime * 0.22 * gyreDir, 0.0, uTime * 0.14))) *
                                 smoothstep(0.56, 0.88, sin(p.y * 42.0 + swell * 6.5 - uTime * 1.4) * 0.5 + 0.5);
 
           vec3 deepSea = mix(vec3(0.018, 0.095, 0.27), tex * vec3(0.75, 1.05, 1.35), 0.55);
@@ -184,17 +184,19 @@
         } else {
           // 陆地：精细地质地貌（高山岩壁、雪峰冰川、风蚀沙丘、雨林、动态流动河流与内陆湖泊）
           float h0 = terrainHeight(p, landMask, mtnMask, aridMask);
-          float hT = terrainHeight(normalize(p + T * eps), landMask, mtnMask, aridMask);
-          float hB = terrainHeight(normalize(p + B * eps), landMask, mtnMask, aridMask);
+          float bumpScale = 0.28 + mtnMask * 1.65;
+          float bumpBase = ridge(p * 18.0 + vec3(3.1, -1.7, 0.9)) * bumpScale;
+          float hT = ridge(normalize(p + T * eps) * 18.0 + vec3(3.1, -1.7, 0.9)) * bumpScale;
+          float hB = ridge(normalize(p + B * eps) * 18.0 + vec3(3.1, -1.7, 0.9)) * bumpScale;
           float bumpStrength = 2.6 + mtnMask * 2.2 + aridMask * 0.9;
-          Np = normalize(N + T * ((h0 - hT) * bumpStrength) + B * ((h0 - hB) * bumpStrength));
+          Np = normalize(N + T * ((bumpBase - hT) * bumpStrength) + B * ((bumpBase - hB) * bumpStrength));
 
           float rDetail = ridge(p * 34.0 + vec3(1.7));
-          float strata = sin(h0 * 48.0 + fbm(p * 26.0) * 3.0) * 0.5 + 0.5;
+          float strata = sin(h0 * 48.0 + vnoise(p * 26.0) * 3.0) * 0.5 + 0.5;
           // 增强真实地质色阶
           vec3 baseLand = mix(tex * 1.15, vec3(0.10, 0.34, 0.14), lushMask * 0.28);
           vec3 granite = mix(vec3(0.32, 0.29, 0.27), vec3(0.56, 0.50, 0.44), strata);
-          vec3 sandDune = mix(vec3(0.72, 0.54, 0.30), vec3(0.88, 0.72, 0.46), sin(p.x * 145.0 + fbm(p * 18.0) * 6.0) * 0.5 + 0.5);
+          vec3 sandDune = mix(vec3(0.72, 0.54, 0.30), vec3(0.88, 0.72, 0.46), sin(p.x * 145.0 + vnoise(p * 18.0) * 6.0) * 0.5 + 0.5);
           vec3 glacierSnow = vec3(0.74, 0.80, 0.87);
 
           col = mix(baseLand, sandDune, aridMask * 0.46);
@@ -209,18 +211,18 @@
           float nileZone = belt(lat, lon, 16.0, 31.5, 16.0, 3.2);
           float riverZone = clamp(lushMask * 0.95 + amazonZone * 1.4 + asiaRivers * 1.15 + nileZone * 1.25, 0.0, 1.5);
 
-          vec3 warp = vec3(fbm(p * 7.0), fbm(p * 7.0 + 4.2), fbm(p * 7.0 - 3.1)) * 0.22;
+          vec3 warp = vec3(vnoise(p * 7.0), vnoise(p * 7.0 + 4.2), vnoise(p * 7.0 - 3.1)) * 0.22;
           float riverNoise = abs(fbm(p * 12.5 + warp) - 0.5);
           float riverWidth = 0.011 + amazonZone * 0.014 + nileZone * 0.010;
           float riverMask = (1.0 - smoothstep(riverWidth * 0.45, riverWidth, riverNoise)) * smoothstep(0.15, 0.65, riverZone) * (1.0 - snowLine * 0.8) * (1.0 - iceMask);
 
-          float lakeNoise = fbm(p * 16.0 - vec3(2.8, 1.1, 4.5));
+          float lakeNoise = vnoise(p * 16.0 - vec3(2.8, 1.1, 4.5));
           float lakeMask = smoothstep(0.755, 0.785, lakeNoise) * smoothstep(0.25, 0.7, lushMask + asiaRivers * 0.8) * (1.0 - mtnMask * 0.5) * (1.0 - iceMask);
           float freshWater = clamp(max(riverMask, lakeMask), 0.0, 1.0);
 
           if (freshWater > 0.02) {
             // 沿河道与湖面可见的动态水流波光
-            float flowRipple = sin((p.x + p.z - p.y) * 140.0 - uTime * 4.5 + fbm(p * 24.0) * 6.0) * 0.5 + 0.5;
+            float flowRipple = sin((p.x + p.z - p.y) * 140.0 - uTime * 4.5 + vnoise(p * 24.0) * 6.0) * 0.5 + 0.5;
             vec3 waterCol = mix(vec3(0.05, 0.46, 0.68), vec3(0.28, 0.82, 0.94), flowRipple * 0.65 + riverMask * 0.25);
             col = mix(col, waterCol, freshWater * 0.92);
             Np = normalize(mix(Np, normalize(N + T * (flowRipple - 0.5) * 0.14), freshWater));
@@ -252,18 +254,18 @@
 
         // 16 槽位 Solar Smash 级 3D 凿穿挖空 + 焦黑裂缘 + 炽热熔岩裂谷
         float craterEmissive = 0.0;
+        float jagBase = vnoise(p * 14.0);
+        float crackNoise = vnoise(p * 28.0) * 0.65 + vnoise(p * 56.0) * 0.35;
+        float rayNoise = vnoise(p * 11.0);
         for (int i = 0; i < 16; i++) {
           float rad = uImpactRadii[i];
           if (rad > 0.001) {
             vec3 cDir = normalize(uImpactPoints[i]);
             float d = acos(clamp(dot(p, cDir), -1.0, 1.0));
-            float jagNoise = fbm(p * 14.0 + cDir * 3.1);
-            float jagRad = rad * (0.78 + 0.44 * jagNoise);
+            float jagRad = rad * (0.78 + 0.44 * jagBase);
             // 重击/大坑直接穿透地壳挖出参差不齐的立体缺口，露出星球内部的炽热地幔与白热内核！
             if (rad > 0.13 && d < jagRad * 0.68) discard;
             if (d < rad * 2.55) {
-              float crackNoise = fbm(p * 28.0);
-              float rayNoise = fbm(p * 11.0 + cDir * 5.0);
               float core = smoothstep(jagRad * 1.15, jagRad * 0.55, d);
               float lipHot = (rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
               float rimC = smoothstep(jagRad * 1.72, jagRad * 1.02, d) * smoothstep(jagRad * 0.68, jagRad * 1.02, d);

@@ -31,6 +31,33 @@ copyRecursive(path.join(ROOT, 'models'), path.join(STAGE, 'models'));
 copyRecursive(path.join(ROOT, 'desktop'), path.join(STAGE, 'desktop'));
 copyRecursive(path.join(ROOT, 'node_modules'), path.join(STAGE, 'node_modules'));
 
+// Prune optional DB drivers (desktop uses local SQLite only) and non-runtime docs/types/tests to speed up portable extraction
+const PRUNE_NM_DIRS = new Set([
+  'pg', 'pg-cloudflare', 'pg-connection-string', 'pg-int8', 'pg-pool', 'pg-protocol', 'pg-types', 'pgpass',
+  'postgres-array', 'postgres-bytea', 'postgres-date', 'postgres-interval',
+  'ioredis', '@ioredis', 'redis-errors', 'redis-parser', 'cluster-key-slot', 'standard-as-callback', 'denque', '.bin'
+]);
+for (const name of fs.readdirSync(path.join(STAGE, 'node_modules'))) {
+  if (PRUNE_NM_DIRS.has(name)) {
+    fs.rmSync(path.join(STAGE, 'node_modules', name), { recursive: true, force: true });
+  }
+}
+function pruneNonRuntimeFiles(dir) {
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) {
+      if (['test', 'tests', '__tests__', 'docs', 'doc', 'example', 'examples', '.github'].includes(ent.name.toLowerCase())) {
+        fs.rmSync(full, { recursive: true, force: true });
+      } else {
+        pruneNonRuntimeFiles(full);
+      }
+    } else if (/\.(md|markdown|ts|tsx|map|flow)$/i.test(ent.name) || /^(license|licence|changelog|history|readme)/i.test(ent.name)) {
+      fs.rmSync(full, { force: true });
+    }
+  }
+}
+pruneNonRuntimeFiles(path.join(STAGE, 'node_modules'));
+
 // Copy server runtime excluding tests and user's local sandbox-saves.sqlite
 fs.mkdirSync(path.join(STAGE, 'server', 'data'), { recursive: true });
 for (const entry of fs.readdirSync(path.join(ROOT, 'server'))) {
@@ -49,6 +76,7 @@ for (const entry of fs.readdirSync(path.join(ROOT, 'server'))) {
 }
 
 const rootPkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+const desktopDeps = Object.fromEntries(Object.entries(rootPkg.dependencies || {}).filter(([k]) => k !== 'pg' && k !== 'ioredis'));
 const stagePkg = {
   name: 'cosmic-atlas-sandbox2',
   productName: '万象寰宇-宇宙沙盘2',
@@ -57,7 +85,7 @@ const stagePkg = {
   author: 'Cosmic Atlas Studio',
   main: 'desktop/main.cjs',
   type: 'module',
-  dependencies: rootPkg.dependencies,
+  dependencies: desktopDeps,
   build: {
     appId: 'com.cosmicatlas.sandbox2',
     productName: '万象寰宇-宇宙沙盘2',

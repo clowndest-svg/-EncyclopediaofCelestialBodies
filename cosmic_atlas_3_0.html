@@ -2786,7 +2786,7 @@ input[type="range"]::-moz-range-thumb {
       float fbm(vec3 p) {
         float v = 0.0;
         float a = 0.5;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
           v += a * vnoise(p);
           p = p * 2.04 + vec3(13.7, 7.1, 19.3);
           a *= 0.5;
@@ -2871,7 +2871,8 @@ input[type="range"]::-moz-range-thumb {
         vec3 L = normalize(uSunPos - vWorldPos);
 
         // 太阳自身着色
-        if (uPlanetType == 0) {
+        #if PLANET_KIND == 0
+        {
           float n1 = fbm(p * 4.5 + vec3(uTime * 0.14, -uTime * 0.1, uTime * 0.08));
           float n2 = fbm(p * 10.5 - vec3(uTime * 0.22, uTime * 0.18, 0.0));
           float gran = n1 * 0.65 + n2 * 0.35;
@@ -2885,8 +2886,8 @@ input[type="range"]::-moz-range-thumb {
           // 受太阳炫光滑块温和控制，避免过曝遮挡内行星
           col *= (0.78 + uSunGlare * 0.55);
           gl_FragColor = vec4(col, 1.0);
-          return;
         }
+        #else
 
         float NdotL = dot(N, L);
         float diffuse = max(NdotL, 0.0);
@@ -2896,7 +2897,8 @@ input[type="range"]::-moz-range-thumb {
         vec3 emissive = vec3(0.0);
 
         // 1: 地球 (高精度大陆、山脉浮雕、湖泊、沙漠、冰盖、海洋反光、夜面灯火)
-        if (uPlanetType == 1) {
+        #if PLANET_KIND == 1
+        {
           float cont = fbm(p * 2.6 + vec3(1.4, -0.5, 2.1));
           float detail = fbm(p * 11.0);
           float h = cont * 0.78 + detail * 0.22;
@@ -2946,7 +2948,8 @@ input[type="range"]::-moz-range-thumb {
           emissive += vec3(0.18, 0.58, 1.0) * rim * (0.28 + 0.55 * diffuse);
         }
         // 2: 月球
-        else if (uPlanetType == 2) {
+        #elif PLANET_KIND == 2
+        {
           float maria = fbm(p * 2.4 + vec3(2.0));
           float craters = abs(vnoise(p * 14.0) - 0.5) * 2.0;
           float micro = fbm(p * 22.0);
@@ -2954,18 +2957,21 @@ input[type="range"]::-moz-range-thumb {
           col *= (0.82 + 0.28 * craters + 0.1 * micro);
         }
         // 3: 水星
-        else if (uPlanetType == 3) {
+        #elif PLANET_KIND == 3
+        {
           float n = fbm(p * 6.0);
           float c = vnoise(p * 18.0);
           col = mix(vec3(0.32, 0.30, 0.28), vec3(0.62, 0.58, 0.53), n) * (0.8 + 0.3 * c);
         }
         // 4: 金星
-        else if (uPlanetType == 4) {
+        #elif PLANET_KIND == 4
+        {
           float swirl = fbm(vec3(p.x * 3.0 + sin(p.y * 5.0 + uTime * 0.05), p.y * 5.0, p.z * 3.0));
           col = mix(vec3(0.76, 0.52, 0.22), vec3(0.96, 0.85, 0.58), swirl);
         }
         // 5: 火星
-        else if (uPlanetType == 5) {
+        #elif PLANET_KIND == 5
+        {
           float n = fbm(p * 3.6 + vec3(4.1, 1.2, 0.8));
           float detail = fbm(p * 12.0);
           col = mix(vec3(0.48, 0.17, 0.08), vec3(0.84, 0.42, 0.22), n * 0.7 + detail * 0.3);
@@ -2973,7 +2979,8 @@ input[type="range"]::-moz-range-thumb {
           col = mix(col, vec3(0.93, 0.92, 0.90), pole);
         }
         // 6: 木星 (湍流云带 + 大红斑)
-        else if (uPlanetType == 6) {
+        #elif PLANET_KIND == 6
+        {
           float turb = fbm(p * 5.5 + vec3(uTime * 0.02, 0.0, 0.0)) * 0.16;
           float band = sin((p.y + turb) * 24.0) * 0.5 + 0.5;
           float band2 = cos((p.y - turb * 0.7) * 11.0) * 0.5 + 0.5;
@@ -2987,39 +2994,43 @@ input[type="range"]::-moz-range-thumb {
           }
         }
         // 7: 土星
-        else if (uPlanetType == 7) {
+        #elif PLANET_KIND == 7
+        {
           float turb = fbm(p * 4.0) * 0.08;
           float band = sin((p.y + turb) * 20.0) * 0.5 + 0.5;
           col = mix(vec3(0.74, 0.65, 0.46), vec3(0.93, 0.87, 0.68), band);
         }
         // 8: 天王星
-        else if (uPlanetType == 8) {
+        #elif PLANET_KIND == 8
+        {
           float band = sin(p.y * 8.0) * 0.5 + 0.5;
           col = mix(vec3(0.45, 0.80, 0.88), vec3(0.66, 0.92, 0.96), band);
         }
         // 9: 海王星
-        else if (uPlanetType == 9) {
+        #elif PLANET_KIND == 9
+        {
           float n = fbm(p * 5.0 + vec3(uTime * 0.03, 0.0, 0.0));
           float band = sin((p.y + n * 0.15) * 14.0) * 0.5 + 0.5;
           col = mix(vec3(0.08, 0.20, 0.62), vec3(0.20, 0.45, 0.92), band);
         }
+        #endif
 
         // ============ 实时陨石撞击坑与熔岩裂纹灼烧 ============
         float craterEmissive = 0.0;
-        bool isSolidBody = (uPlanetType != 0 && uPlanetType != 5 && uPlanetType != 6 && uPlanetType != 7 && uPlanetType != 8);
+        #if PLANET_KIND != 0 && PLANET_KIND != 5 && PLANET_KIND != 6 && PLANET_KIND != 7 && PLANET_KIND != 8
+        float jagBase = vnoise(p * 14.0);
+        float crackNoise = vnoise(p * 28.0) * 0.65 + vnoise(p * 56.0) * 0.35;
+        float rayNoise = vnoise(p * 11.0);
         for (int i = 0; i < 16; i++) {
           float rad = uImpactRadii[i];
           if (rad > 0.001) {
             vec3 cDir = normalize(uImpactPoints[i]);
             float d = acos(clamp(dot(p, cDir), -1.0, 1.0));
-            float jagNoise = fbm(p * 14.0 + cDir * 3.1);
-            float jagRad = rad * (0.78 + 0.44 * jagNoise);
-            if (isSolidBody && rad > 0.13 && d < jagRad * 0.68) discard;
+            float jagRad = rad * (0.78 + 0.44 * jagBase);
+            if (rad > 0.13 && d < jagRad * 0.68) discard;
             if (d < rad * 2.5) {
-              float crackNoise = fbm(p * 28.0);
-              float rayNoise = fbm(p * 11.0 + cDir * 5.0);
               float core = smoothstep(jagRad * 1.15, jagRad * 0.50, d);
-              float lipHot = (isSolidBody && rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
+              float lipHot = (rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
               float rim = smoothstep(jagRad * 1.70, jagRad * 1.02, d) * smoothstep(jagRad * 0.66, jagRad * 1.02, d);
               float rays = smoothstep(0.55, 0.78, rayNoise) * smoothstep(rad * 2.4, rad * 0.9, d) * 0.42;
               col = mix(col, vec3(0.05, 0.04, 0.045), clamp(core * 0.95 + rim * 0.70 + rays, 0.0, 1.0));
@@ -3029,6 +3040,7 @@ input[type="range"]::-moz-range-thumb {
             }
           }
         }
+        #endif
         if (!gl_FrontFacing) {
           gl_FragColor = vec4(vec3(1.0, 0.36, 0.06) * (0.9 + 0.5 * fbm(p * 18.0 + uTime * 0.3)), 1.0);
           return;
@@ -3051,6 +3063,7 @@ input[type="range"]::-moz-range-thumb {
 
         vec3 finalCol = col * (ambient + diffuse * 1.05) + vec3(spec) + emissive;
         gl_FragColor = vec4(finalCol, 1.0);
+        #endif
       }
     `;
 
@@ -3311,7 +3324,7 @@ input[type="range"]::-moz-range-thumb {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, document.body.dataset.layout === "mobile" ? 1.4 : 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, document.body.dataset.layout === "mobile" ? 1.25 : 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     container.appendChild(renderer.domElement);
@@ -3372,7 +3385,7 @@ input[type="range"]::-moz-range-thumb {
     function orbitPoint(orbit, mean, out = new THREE.Vector3()) {
       mean = ((mean % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
       let eccentric = mean;
-      for (let i=0;i<6;i++) eccentric -= (eccentric-orbit.e*Math.sin(eccentric)-mean)/(1-orbit.e*Math.cos(eccentric));
+      for (let i=0;i<3;i++) eccentric -= (eccentric-orbit.e*Math.sin(eccentric)-mean)/(1-orbit.e*Math.cos(eccentric));
       const x = orbit.a*(Math.cos(eccentric)-orbit.e), z = orbit.a*Math.sqrt(1-orbit.e*orbit.e)*Math.sin(eccentric);
       const c = Math.cos(orbit.argument), s = Math.sin(orbit.argument);
       out.set(x*c-z*s, (x*s+z*c)*Math.sin(orbit.inclination), (x*s+z*c)*Math.cos(orbit.inclination));
@@ -3531,13 +3544,27 @@ input[type="range"]::-moz-range-thumb {
     const GALACTIC_DIRECTION=new THREE.Vector3(.494109,.86229,-.11095).normalize();
     const SOLAR_TRAVEL_AU_YEAR=230*YEAR_SECONDS/AU_KM;
 
+    const COS_TILT = Math.cos(ECLIPTIC_TILT), SIN_TILT = Math.sin(ECLIPTIC_TILT);
+    const SOLAR_AU_ANCHORS = [[0,0],[.3871,24],[.7233,34],[1,46],[1.5237,60],[5.2028,92],[9.5388,128],[19.1914,162],[30.0611,192],[50,246]];
+    const _gfPos = new THREE.Vector3(), _gfEx = new THREE.Vector3(), _gfEy = new THREE.Vector3(), _gfEz = new THREE.Vector3();
+    const _tmpLocal = new THREE.Vector3(), _tmpWorld = new THREE.Vector3(), _tmpRel = new THREE.Vector3(), _tmpKepler = new THREE.Vector3(), _tmpExact = new THREE.Vector3(), _tmpOff = new THREE.Vector3(), _tmpOrbit = new THREE.Vector3();
+
+    function galacticFrameInto(years, pos, ex, ey, ez) {
+      const theta=years*GAL_OMEGA, c=Math.cos(theta), s=Math.sin(theta);
+      pos.set(GAL_R*c,0,-GAL_R*s);
+      ex.set(c,0,-s);
+      const tx=-s, tz=-c;
+      ey.set(tx*SIN_TILT, COS_TILT, tz*SIN_TILT).normalize();
+      ez.set(-tx*COS_TILT, SIN_TILT, -tz*COS_TILT).normalize();
+    }
+
     function galacticFrameAt(years) {
       const theta=years*GAL_OMEGA, c=Math.cos(theta), s=Math.sin(theta);
       const pos=new THREE.Vector3(GAL_R*c,0,-GAL_R*s);
       const R=new THREE.Vector3(c,0,-s);         // 径向向外
       const T=new THREE.Vector3(-s,0,-c);        // 前进切向（逆时针绕银心）
       const U=new THREE.Vector3(0,1,0);          // 银道北极
-      const ct=Math.cos(ECLIPTIC_TILT), st=Math.sin(ECLIPTIC_TILT);
+      const ct=COS_TILT, st=SIN_TILT;
       const Ex=R.clone();
       const Ey=U.clone().multiplyScalar(ct).addScaledVector(T,st).normalize();
       const Ez=U.clone().multiplyScalar(st).addScaledVector(T,-ct).normalize();
@@ -3558,7 +3585,7 @@ input[type="range"]::-moz-range-thumb {
       return out.set(x*c-z*s,(x*s+z*c)*Math.sin(orbit.inclination),(x*s+z*c)*Math.cos(orbit.inclination));
     }
     function mapSolarAU(p,out=new THREE.Vector3()) {
-      const r=p.length(),anchors=[[0,0],[.3871,24],[.7233,34],[1,46],[1.5237,60],[5.2028,92],[9.5388,128],[19.1914,162],[30.0611,192],[50,246]];
+      const r=p.length(),anchors=SOLAR_AU_ANCHORS;
       let mapped=246+(r-50)*2;for(let i=1;i<anchors.length;i++)if(r<=anchors[i][0]){const [a,x]=anchors[i-1],[b,y]=anchors[i];mapped=x+(y-x)*(r-a)/(b-a);break;}
       return out.copy(p).multiplyScalar(r>0?mapped/r:0);
     }
@@ -3726,10 +3753,10 @@ input[type="range"]::-moz-range-thumb {
       seedSolarHistory();renderSolarState();
     }
     function seedSolarHistory() {
-      const span=Math.min(10,motion.historyYears),copy=motion.solar.map(b=>({id:b.id,mass:b.mass,p:b.p.clone(),v:b.v.clone()})),samples=[solarSample(motion.years,copy)],interval=span/260;
-      for(let i=1;i<=260;i++){const n=Math.max(1,Math.min(18,Math.ceil(interval*365.25))),h=-interval/n;for(let k=0;k<n;k++)gravitationalStep(copy,h,SOLAR_GM*dynamics.gravity,motion.nbody);samples.push(solarSample(motion.years-i*interval,copy));}
+      const span=Math.min(10,motion.historyYears),copy=motion.solar.map(b=>({id:b.id,mass:b.mass,p:b.p.clone(),v:b.v.clone()})),samples=[solarSample(motion.years,copy)],steps=140,interval=span/steps;
+      for(let i=1;i<=steps;i++){const n=Math.max(1,Math.min(14,Math.ceil(interval*365.25))),h=-interval/n;for(let k=0;k<n;k++)gravitationalStep(copy,h,SOLAR_GM*dynamics.gravity,motion.nbody);samples.push(solarSample(motion.years-i*interval,copy));}
       motion.histories=samples.reverse();motion.lastHistory=motion.years;
-      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.96:b.id==='sun'?.88:.82,420);});
+      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.96:b.id==='sun'?.88:.82,200);});
       renderSolarHistory();
     }
     function renderSolarState() {
@@ -3762,17 +3789,17 @@ input[type="range"]::-moz-range-thumb {
     }
     function renderSolarHistory() {
       if(!motion.solar.length)return;
-      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=420,ext=motion.frame==='external';
+      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=200,ext=motion.frame==='external';
       const samples=motion.histories.concat(solarSample(motion.years));
       // 更新银河年大尺度编织光带（远景/银河年全景下沿太阳身后 150° 银道圆弧延伸）
       if(motion.galacticRibbon&&motion.galacticRibbon.visible){
         if(ext&&dynamics.trails){
           const rAttr=motion.galacticRibbon.geometry.attributes.position, rn=rAttr.count, arcSpan=2.65/GAL_OMEGA;
           for(let i=0;i<rn;i++){
-            const u=i/(rn-1), t=motion.years-(1-u)*arcSpan, gf=galacticFrameAt(t);
-            const swirl=t*3.8, rad=32*(1-u*.15);
-            const p=gf.pos.clone().addScaledVector(gf.Ex,Math.cos(swirl)*rad).addScaledVector(gf.Ez,Math.sin(swirl)*rad);
-            rAttr.setXYZ(i,p.x,p.y,p.z);
+            const u=i/(rn-1), t=motion.years-(1-u)*arcSpan;
+            galacticFrameInto(t,_gfPos,_gfEx,_gfEy,_gfEz);
+            const swirl=t*3.8, rad=32*(1-u*.15), cs=Math.cos(swirl)*rad, ss=Math.sin(swirl)*rad;
+            rAttr.setXYZ(i,_gfPos.x+_gfEx.x*cs+_gfEz.x*ss,_gfPos.y+_gfEx.y*cs+_gfEz.y*ss,_gfPos.z+_gfEx.z*cs+_gfEz.z*ss);
           }
           rAttr.needsUpdate=true;
         }
@@ -3780,18 +3807,24 @@ input[type="range"]::-moz-range-thumb {
       motion.solar.forEach((b,index)=>{
         const attr=b.historyLine.geometry.attributes.position;
         if(ext&&b.orbit){
-          // 沿弯曲银河公转大圆实时绘制丝滑高精度 3D 螺旋轨道（内外八大行星皆为优美三维螺旋）
+          // 沿弯曲银河公转大圆实时绘制丝滑高精度 3D 螺旋轨道（零堆分配路径）
           const span=(PLANET_HELIX_SPAN[b.id]||12)*Math.max(.35,scaleFactor);
           const omega=Math.sqrt(SOLAR_GM*dynamics.gravity/Math.pow(b.orbit.a,3));
-          const curRel=b.p.clone().sub(sunNow.p),curMean=b.body.orbit.mean;
-          const exactCur=mapSolarAU(curRel),keplerCur=mapSolarAU(orbitPoint(b.orbit,curMean));
-          const offset=exactCur.sub(keplerCur);
+          const curMean=b.body.orbit.mean;
+          _tmpRel.copy(b.p).sub(sunNow.p);
+          mapSolarAU(_tmpRel,_tmpExact);
+          mapSolarAU(orbitPoint(b.orbit,curMean,_tmpOrbit),_tmpKepler);
+          _tmpOff.copy(_tmpExact).sub(_tmpKepler);
           for(let i=0;i<N;i++){
             const u=i/(N-1),dtBack=(1-u)*span,t=motion.years-dtBack;
-            const gf=galacticFrameAt(t);
-            const localP=mapSolarAU(orbitPoint(b.orbit,curMean-omega*dtBack)).addScaledVector(offset,u);
-            const worldP=gf.pos.clone().addScaledVector(gf.Ex,localP.x).addScaledVector(gf.Ey,localP.y).addScaledVector(gf.Ez,localP.z);
-            attr.setXYZ(i,worldP.x,worldP.y,worldP.z);
+            galacticFrameInto(t,_gfPos,_gfEx,_gfEy,_gfEz);
+            mapSolarAU(orbitPoint(b.orbit,curMean-omega*dtBack,_tmpOrbit),_tmpLocal).addScaledVector(_tmpOff,u);
+            attr.setXYZ(
+              i,
+              _gfPos.x+_gfEx.x*_tmpLocal.x+_gfEy.x*_tmpLocal.y+_gfEz.x*_tmpLocal.z,
+              _gfPos.y+_gfEx.y*_tmpLocal.x+_gfEy.y*_tmpLocal.y+_gfEz.y*_tmpLocal.z,
+              _gfPos.z+_gfEx.z*_tmpLocal.x+_gfEy.z*_tmpLocal.y+_gfEz.z*_tmpLocal.z
+            );
           }
           attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,N);b.historyLine.visible=dynamics.trails;
           return;
@@ -3799,8 +3832,9 @@ input[type="range"]::-moz-range-thumb {
         if(ext&&b.id==='sun'){
           const span=36*Math.max(.4,scaleFactor);
           for(let i=0;i<N;i++){
-            const u=i/(N-1), t=motion.years-(1-u)*span, gf=galacticFrameAt(t);
-            attr.setXYZ(i,gf.pos.x,gf.pos.y,gf.pos.z);
+            const u=i/(N-1), t=motion.years-(1-u)*span;
+            galacticFrameInto(t,_gfPos,_gfEx,_gfEy,_gfEz);
+            attr.setXYZ(i,_gfPos.x,_gfPos.y,_gfPos.z);
           }
           attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,N);b.historyLine.visible=dynamics.trails;
           return;
@@ -3811,8 +3845,8 @@ input[type="range"]::-moz-range-thumb {
         const slice=samples.slice(firstIdx),count=Math.min(N,slice.length);
         for(let i=0;i<count;i++){
           const s=slice[Math.min(slice.length-1,Math.floor(i*(slice.length-1)/Math.max(1,count-1)))],sun=s.p[0];
-          const pos=b.id==='sun'?new THREE.Vector3():mapSolarAU(s.p[index].clone().sub(sun));
-          attr.setXYZ(i,pos.x,pos.y,pos.z);
+          if(b.id==='sun'){_tmpLocal.set(0,0,0);}else{_tmpRel.copy(s.p[index]).sub(sun);mapSolarAU(_tmpRel,_tmpLocal);}
+          attr.setXYZ(i,_tmpLocal.x,_tmpLocal.y,_tmpLocal.z);
         }
         attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,count);b.historyLine.visible=dynamics.trails&&b.id!=='sun';
       });
@@ -4122,7 +4156,14 @@ input[type="range"]::-moz-range-thumb {
     }
 
     function preloadMonsterModels() {
-      GLB_MODEL_NAMES.forEach(n => loadGLBModel(n));
+      const queue = [...GLB_MODEL_NAMES];
+      let idx = 0;
+      const step = () => {
+        if (idx >= queue.length) return;
+        const name = queue[idx++];
+        loadGLBModel(name).finally(() => setTimeout(step, 80));
+      };
+      setTimeout(step, 1800);
     }
 
     function instantiateGLB(name, scale = 1, fallbackFn = null) {
@@ -9519,7 +9560,7 @@ function normalizeSandboxUniverse(value) {
         float macro = fbm(p * 7.5 + vec3(1.2, -0.7, 2.4));
         float r1 = ridge(p * 18.0 + vec3(3.1, -1.7, 0.9));
         float r2 = ridge(p * 42.0 - vec3(1.2, 4.3, 2.1));
-        float dunes = sin(p.x * 130.0 + fbm(p * 16.0) * 8.0) * 0.5 + 0.5;
+        float dunes = sin(p.x * 130.0 + vnoise(p * 16.0) * 8.0) * 0.5 + 0.5;
         return landMask * (macro * 0.25 + (r1 * 0.6 + r2 * 0.35) * (0.28 + mtnMask * 1.65) + aridMask * dunes * 0.14);
       }
 
@@ -9538,7 +9579,7 @@ function normalizeSandboxUniverse(value) {
           ? smoothstep(0.015, 0.10, (tex.b - max(tex.r * 1.24, tex.g * 1.01))) * (1.0 - smoothstep(0.21, 0.34, tex.r))
           : vOcean;
         float landMask = 1.0 - isOcean;
-        float polarIce = smoothstep(69.0, 81.0, abs(lat) + (fbm(p * 9.0) - 0.5) * 8.0);
+        float polarIce = smoothstep(69.0, 81.0, abs(lat) + (vnoise(p * 9.0) - 0.5) * 8.0);
         float greenland = belt(lat, lon, 72.0, -42.0, 11.0, 16.0);
         float iceMask = clamp(max(polarIce, greenland * landMask * 0.95), 0.0, 1.0);
 
@@ -9578,7 +9619,7 @@ function normalizeSandboxUniverse(value) {
           float w1 = sin(p.x * 95.0 + p.z * 75.0 - uTime * 2.6 + swell * 5.0);
           float w2 = cos(p.y * 110.0 - p.x * 85.0 + uTime * 2.1 + swell * 4.0);
           float waveH = (w1 * 0.5 + w2 * 0.5) * 0.5 + 0.5;
-          float currentStream = smoothstep(0.68, 0.94, fbm(p * 11.0 + vec3(uTime * 0.22 * gyreDir, 0.0, uTime * 0.14))) *
+          float currentStream = smoothstep(0.68, 0.94, vnoise(p * 11.0 + vec3(uTime * 0.22 * gyreDir, 0.0, uTime * 0.14))) *
                                 smoothstep(0.56, 0.88, sin(p.y * 42.0 + swell * 6.5 - uTime * 1.4) * 0.5 + 0.5);
 
           vec3 deepSea = mix(vec3(0.018, 0.095, 0.27), tex * vec3(0.75, 1.05, 1.35), 0.55);
@@ -9596,17 +9637,19 @@ function normalizeSandboxUniverse(value) {
         } else {
           // 陆地：精细地质地貌（高山岩壁、雪峰冰川、风蚀沙丘、雨林、动态流动河流与内陆湖泊）
           float h0 = terrainHeight(p, landMask, mtnMask, aridMask);
-          float hT = terrainHeight(normalize(p + T * eps), landMask, mtnMask, aridMask);
-          float hB = terrainHeight(normalize(p + B * eps), landMask, mtnMask, aridMask);
+          float bumpScale = 0.28 + mtnMask * 1.65;
+          float bumpBase = ridge(p * 18.0 + vec3(3.1, -1.7, 0.9)) * bumpScale;
+          float hT = ridge(normalize(p + T * eps) * 18.0 + vec3(3.1, -1.7, 0.9)) * bumpScale;
+          float hB = ridge(normalize(p + B * eps) * 18.0 + vec3(3.1, -1.7, 0.9)) * bumpScale;
           float bumpStrength = 2.6 + mtnMask * 2.2 + aridMask * 0.9;
-          Np = normalize(N + T * ((h0 - hT) * bumpStrength) + B * ((h0 - hB) * bumpStrength));
+          Np = normalize(N + T * ((bumpBase - hT) * bumpStrength) + B * ((bumpBase - hB) * bumpStrength));
 
           float rDetail = ridge(p * 34.0 + vec3(1.7));
-          float strata = sin(h0 * 48.0 + fbm(p * 26.0) * 3.0) * 0.5 + 0.5;
+          float strata = sin(h0 * 48.0 + vnoise(p * 26.0) * 3.0) * 0.5 + 0.5;
           // 增强真实地质色阶
           vec3 baseLand = mix(tex * 1.15, vec3(0.10, 0.34, 0.14), lushMask * 0.28);
           vec3 granite = mix(vec3(0.32, 0.29, 0.27), vec3(0.56, 0.50, 0.44), strata);
-          vec3 sandDune = mix(vec3(0.72, 0.54, 0.30), vec3(0.88, 0.72, 0.46), sin(p.x * 145.0 + fbm(p * 18.0) * 6.0) * 0.5 + 0.5);
+          vec3 sandDune = mix(vec3(0.72, 0.54, 0.30), vec3(0.88, 0.72, 0.46), sin(p.x * 145.0 + vnoise(p * 18.0) * 6.0) * 0.5 + 0.5);
           vec3 glacierSnow = vec3(0.74, 0.80, 0.87);
 
           col = mix(baseLand, sandDune, aridMask * 0.46);
@@ -9621,18 +9664,18 @@ function normalizeSandboxUniverse(value) {
           float nileZone = belt(lat, lon, 16.0, 31.5, 16.0, 3.2);
           float riverZone = clamp(lushMask * 0.95 + amazonZone * 1.4 + asiaRivers * 1.15 + nileZone * 1.25, 0.0, 1.5);
 
-          vec3 warp = vec3(fbm(p * 7.0), fbm(p * 7.0 + 4.2), fbm(p * 7.0 - 3.1)) * 0.22;
+          vec3 warp = vec3(vnoise(p * 7.0), vnoise(p * 7.0 + 4.2), vnoise(p * 7.0 - 3.1)) * 0.22;
           float riverNoise = abs(fbm(p * 12.5 + warp) - 0.5);
           float riverWidth = 0.011 + amazonZone * 0.014 + nileZone * 0.010;
           float riverMask = (1.0 - smoothstep(riverWidth * 0.45, riverWidth, riverNoise)) * smoothstep(0.15, 0.65, riverZone) * (1.0 - snowLine * 0.8) * (1.0 - iceMask);
 
-          float lakeNoise = fbm(p * 16.0 - vec3(2.8, 1.1, 4.5));
+          float lakeNoise = vnoise(p * 16.0 - vec3(2.8, 1.1, 4.5));
           float lakeMask = smoothstep(0.755, 0.785, lakeNoise) * smoothstep(0.25, 0.7, lushMask + asiaRivers * 0.8) * (1.0 - mtnMask * 0.5) * (1.0 - iceMask);
           float freshWater = clamp(max(riverMask, lakeMask), 0.0, 1.0);
 
           if (freshWater > 0.02) {
             // 沿河道与湖面可见的动态水流波光
-            float flowRipple = sin((p.x + p.z - p.y) * 140.0 - uTime * 4.5 + fbm(p * 24.0) * 6.0) * 0.5 + 0.5;
+            float flowRipple = sin((p.x + p.z - p.y) * 140.0 - uTime * 4.5 + vnoise(p * 24.0) * 6.0) * 0.5 + 0.5;
             vec3 waterCol = mix(vec3(0.05, 0.46, 0.68), vec3(0.28, 0.82, 0.94), flowRipple * 0.65 + riverMask * 0.25);
             col = mix(col, waterCol, freshWater * 0.92);
             Np = normalize(mix(Np, normalize(N + T * (flowRipple - 0.5) * 0.14), freshWater));
@@ -9664,18 +9707,18 @@ function normalizeSandboxUniverse(value) {
 
         // 16 槽位 Solar Smash 级 3D 凿穿挖空 + 焦黑裂缘 + 炽热熔岩裂谷
         float craterEmissive = 0.0;
+        float jagBase = vnoise(p * 14.0);
+        float crackNoise = vnoise(p * 28.0) * 0.65 + vnoise(p * 56.0) * 0.35;
+        float rayNoise = vnoise(p * 11.0);
         for (int i = 0; i < 16; i++) {
           float rad = uImpactRadii[i];
           if (rad > 0.001) {
             vec3 cDir = normalize(uImpactPoints[i]);
             float d = acos(clamp(dot(p, cDir), -1.0, 1.0));
-            float jagNoise = fbm(p * 14.0 + cDir * 3.1);
-            float jagRad = rad * (0.78 + 0.44 * jagNoise);
+            float jagRad = rad * (0.78 + 0.44 * jagBase);
             // 重击/大坑直接穿透地壳挖出参差不齐的立体缺口，露出星球内部的炽热地幔与白热内核！
             if (rad > 0.13 && d < jagRad * 0.68) discard;
             if (d < rad * 2.55) {
-              float crackNoise = fbm(p * 28.0);
-              float rayNoise = fbm(p * 11.0 + cDir * 5.0);
               float core = smoothstep(jagRad * 1.15, jagRad * 0.55, d);
               float lipHot = (rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
               float rimC = smoothstep(jagRad * 1.72, jagRad * 1.02, d) * smoothstep(jagRad * 0.68, jagRad * 1.02, d);
@@ -10059,6 +10102,7 @@ function normalizeSandboxUniverse(value) {
       const mat = new THREE.ShaderMaterial({
         vertexShader: PLANET_CARVE_VERT,
         fragmentShader: PLANET_FRAG,
+        defines: { PLANET_KIND: typeId },
         uniforms,
         side: THREE.DoubleSide
       });
@@ -11799,7 +11843,7 @@ function normalizeSandboxUniverse(value) {
     function resizeViewport(reframe=false) {
       const w=container.clientWidth,h=container.clientHeight;
       camera.aspect=w/h;camera.updateProjectionMatrix();
-      const ratio=Math.min(devicePixelRatio,document.body.dataset.layout==='mobile'?1.4:2);
+      const ratio=Math.min(devicePixelRatio,document.body.dataset.layout==='mobile'?1.25:1.5);
       renderer.setPixelRatio(ratio);renderer.setSize(w,h);composer.setPixelRatio(ratio);composer.setSize(w,h);
       if(reframe||Math.abs(camera.aspect-previousAspect)>.2){
         if(!state.lockedBody){const meta=SCALE_META[state.currentScale];frameOverview();}
@@ -12444,7 +12488,8 @@ function normalizeSandboxUniverse(value) {
     // =========================================================================
     // 18. 启动引导
     // =========================================================================
-    window.onload = function () {
+    window.onload = async function () {
+      const yieldFrame = () => new Promise(r => requestAnimationFrame(() => r()));
       try {
         const bar = document.getElementById('load-progress');
         const status = document.getElementById('load-status');
@@ -12475,13 +12520,27 @@ function normalizeSandboxUniverse(value) {
         refreshQuickBodyNav();
         renderEncyclopedia('sun');
 
+        const isTestRun = new URLSearchParams(location.search).has('test');
+        if (!isTestRun && typeof renderer.compileAsync === 'function') {
+          status.textContent = '正在并行编译相对论着色器与星海光晕…';
+          bar.style.width = '92%';
+          await yieldFrame();
+          await Promise.race([
+            renderer.compileAsync(scaleGroups.L1, camera, scene).catch(() => {}),
+            new Promise(r => setTimeout(r, 8000))
+          ]);
+        }
         bar.style.width = '100%';
         status.textContent = '观测台已就绪 · 引力与轨迹已启用';
-        setTimeout(() => {
+        const dismissLoading = () => {
           const ls = document.getElementById('loading-screen');
+          if (!ls) return;
+          ls.style.pointerEvents = 'none';
           ls.style.opacity = '0';
-          setTimeout(() => ls.remove(), 700);
-        }, 350);
+          setTimeout(() => ls?.remove(), 350);
+        };
+        requestAnimationFrame(() => requestAnimationFrame(dismissLoading));
+        setTimeout(dismissLoading, 1200);
 
         clearTimeout(startupWatch);
         if(new URLSearchParams(location.search).has('test'))window.__atlas={

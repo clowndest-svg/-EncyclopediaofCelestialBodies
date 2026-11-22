@@ -234,7 +234,7 @@
     function resizeViewport(reframe=false) {
       const w=container.clientWidth,h=container.clientHeight;
       camera.aspect=w/h;camera.updateProjectionMatrix();
-      const ratio=Math.min(devicePixelRatio,document.body.dataset.layout==='mobile'?1.4:2);
+      const ratio=Math.min(devicePixelRatio,document.body.dataset.layout==='mobile'?1.25:1.5);
       renderer.setPixelRatio(ratio);renderer.setSize(w,h);composer.setPixelRatio(ratio);composer.setSize(w,h);
       if(reframe||Math.abs(camera.aspect-previousAspect)>.2){
         if(!state.lockedBody){const meta=SCALE_META[state.currentScale];startCamTransition(fittedCameraPosition(meta.camPos),new THREE.Vector3(...meta.target));}

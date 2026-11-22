@@ -17,7 +17,7 @@
     function orbitPoint(orbit, mean, out = new THREE.Vector3()) {
       mean = ((mean % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
       let eccentric = mean;
-      for (let i=0;i<6;i++) eccentric -= (eccentric-orbit.e*Math.sin(eccentric)-mean)/(1-orbit.e*Math.cos(eccentric));
+      for (let i=0;i<3;i++) eccentric -= (eccentric-orbit.e*Math.sin(eccentric)-mean)/(1-orbit.e*Math.cos(eccentric));
       const x = orbit.a*(Math.cos(eccentric)-orbit.e), z = orbit.a*Math.sqrt(1-orbit.e*orbit.e)*Math.sin(eccentric);
       const c = Math.cos(orbit.argument), s = Math.sin(orbit.argument);
       out.set(x*c-z*s, (x*s+z*c)*Math.sin(orbit.inclination), (x*s+z*c)*Math.cos(orbit.inclination));

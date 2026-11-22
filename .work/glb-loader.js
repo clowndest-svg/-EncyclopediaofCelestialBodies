@@ -150,7 +150,14 @@
     }
 
     function preloadMonsterModels() {
-      GLB_MODEL_NAMES.forEach(n => loadGLBModel(n));
+      const queue = [...GLB_MODEL_NAMES];
+      let idx = 0;
+      const step = () => {
+        if (idx >= queue.length) return;
+        const name = queue[idx++];
+        loadGLBModel(name).finally(() => setTimeout(step, 80));
+      };
+      setTimeout(step, 1800);
     }
 
     function instantiateGLB(name, scale = 1, fallbackFn = null) {

@@ -7,13 +7,27 @@
     const GALACTIC_DIRECTION=new THREE.Vector3(.494109,.86229,-.11095).normalize();
     const SOLAR_TRAVEL_AU_YEAR=230*YEAR_SECONDS/AU_KM;
 
+    const COS_TILT = Math.cos(ECLIPTIC_TILT), SIN_TILT = Math.sin(ECLIPTIC_TILT);
+    const SOLAR_AU_ANCHORS = [[0,0],[.3871,24],[.7233,34],[1,46],[1.5237,60],[5.2028,92],[9.5388,128],[19.1914,162],[30.0611,192],[50,246]];
+    const _gfPos = new THREE.Vector3(), _gfEx = new THREE.Vector3(), _gfEy = new THREE.Vector3(), _gfEz = new THREE.Vector3();
+    const _tmpLocal = new THREE.Vector3(), _tmpWorld = new THREE.Vector3(), _tmpRel = new THREE.Vector3(), _tmpKepler = new THREE.Vector3(), _tmpExact = new THREE.Vector3(), _tmpOff = new THREE.Vector3(), _tmpOrbit = new THREE.Vector3();
+
+    function galacticFrameInto(years, pos, ex, ey, ez) {
+      const theta=years*GAL_OMEGA, c=Math.cos(theta), s=Math.sin(theta);
+      pos.set(GAL_R*c,0,-GAL_R*s);
+      ex.set(c,0,-s);
+      const tx=-s, tz=-c;
+      ey.set(tx*SIN_TILT, COS_TILT, tz*SIN_TILT).normalize();
+      ez.set(-tx*COS_TILT, SIN_TILT, -tz*COS_TILT).normalize();
+    }
+
     function galacticFrameAt(years) {
       const theta=years*GAL_OMEGA, c=Math.cos(theta), s=Math.sin(theta);
       const pos=new THREE.Vector3(GAL_R*c,0,-GAL_R*s);
       const R=new THREE.Vector3(c,0,-s);         // 径向向外
       const T=new THREE.Vector3(-s,0,-c);        // 前进切向（逆时针绕银心）
       const U=new THREE.Vector3(0,1,0);          // 银道北极
-      const ct=Math.cos(ECLIPTIC_TILT), st=Math.sin(ECLIPTIC_TILT);
+      const ct=COS_TILT, st=SIN_TILT;
       const Ex=R.clone();
       const Ey=U.clone().multiplyScalar(ct).addScaledVector(T,st).normalize();
       const Ez=U.clone().multiplyScalar(st).addScaledVector(T,-ct).normalize();
@@ -34,7 +48,7 @@
       return out.set(x*c-z*s,(x*s+z*c)*Math.sin(orbit.inclination),(x*s+z*c)*Math.cos(orbit.inclination));
     }
     function mapSolarAU(p,out=new THREE.Vector3()) {
-      const r=p.length(),anchors=[[0,0],[.3871,24],[.7233,34],[1,46],[1.5237,60],[5.2028,92],[9.5388,128],[19.1914,162],[30.0611,192],[50,246]];
+      const r=p.length(),anchors=SOLAR_AU_ANCHORS;
       let mapped=246+(r-50)*2;for(let i=1;i<anchors.length;i++)if(r<=anchors[i][0]){const [a,x]=anchors[i-1],[b,y]=anchors[i];mapped=x+(y-x)*(r-a)/(b-a);break;}
       return out.copy(p).multiplyScalar(r>0?mapped/r:0);
     }
@@ -202,10 +216,10 @@
       seedSolarHistory();renderSolarState();
     }
     function seedSolarHistory() {
-      const span=Math.min(10,motion.historyYears),copy=motion.solar.map(b=>({id:b.id,mass:b.mass,p:b.p.clone(),v:b.v.clone()})),samples=[solarSample(motion.years,copy)],interval=span/260;
-      for(let i=1;i<=260;i++){const n=Math.max(1,Math.min(18,Math.ceil(interval*365.25))),h=-interval/n;for(let k=0;k<n;k++)gravitationalStep(copy,h,SOLAR_GM*dynamics.gravity,motion.nbody);samples.push(solarSample(motion.years-i*interval,copy));}
+      const span=Math.min(10,motion.historyYears),copy=motion.solar.map(b=>({id:b.id,mass:b.mass,p:b.p.clone(),v:b.v.clone()})),samples=[solarSample(motion.years,copy)],steps=140,interval=span/steps;
+      for(let i=1;i<=steps;i++){const n=Math.max(1,Math.min(14,Math.ceil(interval*365.25))),h=-interval/n;for(let k=0;k<n;k++)gravitationalStep(copy,h,SOLAR_GM*dynamics.gravity,motion.nbody);samples.push(solarSample(motion.years-i*interval,copy));}
       motion.histories=samples.reverse();motion.lastHistory=motion.years;
-      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.96:b.id==='sun'?.88:.82,420);});
+      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.96:b.id==='sun'?.88:.82,200);});
       renderSolarHistory();
     }
     function renderSolarState() {
@@ -238,17 +252,17 @@
     }
     function renderSolarHistory() {
       if(!motion.solar.length)return;
-      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=420,ext=motion.frame==='external';
+      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=200,ext=motion.frame==='external';
       const samples=motion.histories.concat(solarSample(motion.years));
       // 更新银河年大尺度编织光带（远景/银河年全景下沿太阳身后 150° 银道圆弧延伸）
       if(motion.galacticRibbon&&motion.galacticRibbon.visible){
         if(ext&&dynamics.trails){
           const rAttr=motion.galacticRibbon.geometry.attributes.position, rn=rAttr.count, arcSpan=2.65/GAL_OMEGA;
           for(let i=0;i<rn;i++){
-            const u=i/(rn-1), t=motion.years-(1-u)*arcSpan, gf=galacticFrameAt(t);
-            const swirl=t*3.8, rad=32*(1-u*.15);
-            const p=gf.pos.clone().addScaledVector(gf.Ex,Math.cos(swirl)*rad).addScaledVector(gf.Ez,Math.sin(swirl)*rad);
-            rAttr.setXYZ(i,p.x,p.y,p.z);
+            const u=i/(rn-1), t=motion.years-(1-u)*arcSpan;
+            galacticFrameInto(t,_gfPos,_gfEx,_gfEy,_gfEz);
+            const swirl=t*3.8, rad=32*(1-u*.15), cs=Math.cos(swirl)*rad, ss=Math.sin(swirl)*rad;
+            rAttr.setXYZ(i,_gfPos.x+_gfEx.x*cs+_gfEz.x*ss,_gfPos.y+_gfEx.y*cs+_gfEz.y*ss,_gfPos.z+_gfEx.z*cs+_gfEz.z*ss);
           }
           rAttr.needsUpdate=true;
         }
@@ -256,18 +270,24 @@
       motion.solar.forEach((b,index)=>{
         const attr=b.historyLine.geometry.attributes.position;
         if(ext&&b.orbit){
-          // 沿弯曲银河公转大圆实时绘制丝滑高精度 3D 螺旋轨道（内外八大行星皆为优美三维螺旋）
+          // 沿弯曲银河公转大圆实时绘制丝滑高精度 3D 螺旋轨道（零堆分配路径）
           const span=(PLANET_HELIX_SPAN[b.id]||12)*Math.max(.35,scaleFactor);
           const omega=Math.sqrt(SOLAR_GM*dynamics.gravity/Math.pow(b.orbit.a,3));
-          const curRel=b.p.clone().sub(sunNow.p),curMean=b.body.orbit.mean;
-          const exactCur=mapSolarAU(curRel),keplerCur=mapSolarAU(orbitPoint(b.orbit,curMean));
-          const offset=exactCur.sub(keplerCur);
+          const curMean=b.body.orbit.mean;
+          _tmpRel.copy(b.p).sub(sunNow.p);
+          mapSolarAU(_tmpRel,_tmpExact);
+          mapSolarAU(orbitPoint(b.orbit,curMean,_tmpOrbit),_tmpKepler);
+          _tmpOff.copy(_tmpExact).sub(_tmpKepler);
           for(let i=0;i<N;i++){
             const u=i/(N-1),dtBack=(1-u)*span,t=motion.years-dtBack;
-            const gf=galacticFrameAt(t);
-            const localP=mapSolarAU(orbitPoint(b.orbit,curMean-omega*dtBack)).addScaledVector(offset,u);
-            const worldP=gf.pos.clone().addScaledVector(gf.Ex,localP.x).addScaledVector(gf.Ey,localP.y).addScaledVector(gf.Ez,localP.z);
-            attr.setXYZ(i,worldP.x,worldP.y,worldP.z);
+            galacticFrameInto(t,_gfPos,_gfEx,_gfEy,_gfEz);
+            mapSolarAU(orbitPoint(b.orbit,curMean-omega*dtBack,_tmpOrbit),_tmpLocal).addScaledVector(_tmpOff,u);
+            attr.setXYZ(
+              i,
+              _gfPos.x+_gfEx.x*_tmpLocal.x+_gfEy.x*_tmpLocal.y+_gfEz.x*_tmpLocal.z,
+              _gfPos.y+_gfEx.y*_tmpLocal.x+_gfEy.y*_tmpLocal.y+_gfEz.y*_tmpLocal.z,
+              _gfPos.z+_gfEx.z*_tmpLocal.x+_gfEy.z*_tmpLocal.y+_gfEz.z*_tmpLocal.z
+            );
           }
           attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,N);b.historyLine.visible=dynamics.trails;
           return;
@@ -275,8 +295,9 @@
         if(ext&&b.id==='sun'){
           const span=36*Math.max(.4,scaleFactor);
           for(let i=0;i<N;i++){
-            const u=i/(N-1), t=motion.years-(1-u)*span, gf=galacticFrameAt(t);
-            attr.setXYZ(i,gf.pos.x,gf.pos.y,gf.pos.z);
+            const u=i/(N-1), t=motion.years-(1-u)*span;
+            galacticFrameInto(t,_gfPos,_gfEx,_gfEy,_gfEz);
+            attr.setXYZ(i,_gfPos.x,_gfPos.y,_gfPos.z);
           }
           attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,N);b.historyLine.visible=dynamics.trails;
           return;
@@ -287,8 +308,8 @@
         const slice=samples.slice(firstIdx),count=Math.min(N,slice.length);
         for(let i=0;i<count;i++){
           const s=slice[Math.min(slice.length-1,Math.floor(i*(slice.length-1)/Math.max(1,count-1)))],sun=s.p[0];
-          const pos=b.id==='sun'?new THREE.Vector3():mapSolarAU(s.p[index].clone().sub(sun));
-          attr.setXYZ(i,pos.x,pos.y,pos.z);
+          if(b.id==='sun'){_tmpLocal.set(0,0,0);}else{_tmpRel.copy(s.p[index]).sub(sun);mapSolarAU(_tmpRel,_tmpLocal);}
+          attr.setXYZ(i,_tmpLocal.x,_tmpLocal.y,_tmpLocal.z);
         }
         attr.needsUpdate=true;b.historyLine.geometry.setDrawRange(0,count);b.historyLine.visible=dynamics.trails&&b.id!=='sun';
       });

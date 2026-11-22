@@ -216,6 +216,7 @@ replace('''      const mat = new THREE.ShaderMaterial({
       const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, segments), mat);''','''      const mat = new THREE.ShaderMaterial({
         vertexShader: PLANET_CARVE_VERT,
         fragmentShader: PLANET_FRAG,
+        defines: { PLANET_KIND: typeId },
         uniforms,
         side: THREE.DoubleSide
       });
@@ -241,20 +242,20 @@ replace('''        for (int i = 0; i < 6; i++) {
         if (craterEmissive > 0.01) {
           vec3 lavaCol = mix(vec3(1.0, 0.22, 0.02), vec3(1.0, 0.88, 0.45), clamp(craterEmissive * 0.75, 0.0, 1.0));
           emissive += lavaCol * min(craterEmissive * 1.8, 2.6);
-        }''','''        bool isSolidBody = (uPlanetType != 0 && uPlanetType != 5 && uPlanetType != 6 && uPlanetType != 7 && uPlanetType != 8);
+        }''','''        #if PLANET_KIND != 0 && PLANET_KIND != 5 && PLANET_KIND != 6 && PLANET_KIND != 7 && PLANET_KIND != 8
+        float jagBase = vnoise(p * 14.0);
+        float crackNoise = vnoise(p * 28.0) * 0.65 + vnoise(p * 56.0) * 0.35;
+        float rayNoise = vnoise(p * 11.0);
         for (int i = 0; i < 16; i++) {
           float rad = uImpactRadii[i];
           if (rad > 0.001) {
             vec3 cDir = normalize(uImpactPoints[i]);
             float d = acos(clamp(dot(p, cDir), -1.0, 1.0));
-            float jagNoise = fbm(p * 14.0 + cDir * 3.1);
-            float jagRad = rad * (0.78 + 0.44 * jagNoise);
-            if (isSolidBody && rad > 0.13 && d < jagRad * 0.68) discard;
+            float jagRad = rad * (0.78 + 0.44 * jagBase);
+            if (rad > 0.13 && d < jagRad * 0.68) discard;
             if (d < rad * 2.5) {
-              float crackNoise = fbm(p * 28.0);
-              float rayNoise = fbm(p * 11.0 + cDir * 5.0);
               float core = smoothstep(jagRad * 1.15, jagRad * 0.50, d);
-              float lipHot = (isSolidBody && rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
+              float lipHot = (rad > 0.13) ? smoothstep(jagRad * 0.92, jagRad * 0.68, d) * 1.85 : 0.0;
               float rim = smoothstep(jagRad * 1.70, jagRad * 1.02, d) * smoothstep(jagRad * 0.66, jagRad * 1.02, d);
               float rays = smoothstep(0.55, 0.78, rayNoise) * smoothstep(rad * 2.4, rad * 0.9, d) * 0.42;
               col = mix(col, vec3(0.05, 0.04, 0.045), clamp(core * 0.95 + rim * 0.70 + rays, 0.0, 1.0));
@@ -264,6 +265,7 @@ replace('''        for (int i = 0; i < 6; i++) {
             }
           }
         }
+        #endif
         if (!gl_FrontFacing) {
           gl_FragColor = vec4(vec3(1.0, 0.36, 0.06) * (0.9 + 0.5 * fbm(p * 18.0 + uTime * 0.3)), 1.0);
           return;
@@ -434,7 +436,7 @@ replace('camPos: [0, 12, 52]', 'camPos: [0, 15, 70]')
 replace('camPos: [0, 88, 155]', 'camPos: [0, 100, 200]')
 replace('camPos: [0, 110, 210]', 'camPos: [0, 120, 255]')
 replace('camPos: [0, 130, 250]', 'camPos: [0, 150, 310]')
-replace('renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));','renderer.setPixelRatio(Math.min(window.devicePixelRatio, document.body.dataset.layout === "mobile" ? 1.4 : 2));')
+replace('renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));','renderer.setPixelRatio(Math.min(window.devicePixelRatio, document.body.dataset.layout === "mobile" ? 1.25 : 1.5));')
 replace('      landingPromptShown: false','      landingPromptShown: false')
 replace('      paused: false,', "      paused: matchMedia('(prefers-reduced-motion: reduce)').matches,")
 replace('    // 尺度分组容器', (WORK/'dynamics.js').read_text(encoding='utf-8')+'\n\n    // 尺度分组容器')
@@ -610,6 +612,61 @@ if (WORK/'earth-hd.js').exists():
             float foam = smoothstep(0.80, 0.98, combined) * (0.35 + inRiver * 0.65);
             col += vec3(0.84, 0.96, 1.0) * foam * 0.58;
             gl_FragColor = vec4(col, 0.86);''')
+replace('''    window.onload = function () {''','''    window.onload = async function () {
+      const yieldFrame = () => new Promise(r => requestAnimationFrame(() => r()));''')
+replace('''        bar.style.width = '100%';
+        status.textContent = '观测台已就绪 · 引力与轨迹已启用';
+        setTimeout(() => {
+          const ls = document.getElementById('loading-screen');
+          ls.style.opacity = '0';
+          setTimeout(() => ls.remove(), 700);
+        }, 350);''','''        const isTestRun = new URLSearchParams(location.search).has('test');
+        if (!isTestRun && typeof renderer.compileAsync === 'function') {
+          status.textContent = '正在并行编译相对论着色器与星海光晕…';
+          bar.style.width = '92%';
+          await yieldFrame();
+          await Promise.race([
+            renderer.compileAsync(scaleGroups.L1, camera, scene).catch(() => {}),
+            new Promise(r => setTimeout(r, 8000))
+          ]);
+        }
+        bar.style.width = '100%';
+        status.textContent = '观测台已就绪 · 引力与轨迹已启用';
+        const dismissLoading = () => {
+          const ls = document.getElementById('loading-screen');
+          if (!ls) return;
+          ls.style.pointerEvents = 'none';
+          ls.style.opacity = '0';
+          setTimeout(() => ls?.remove(), 350);
+        };
+        requestAnimationFrame(() => requestAnimationFrame(dismissLoading));
+        setTimeout(dismissLoading, 1200);''')
+# Split PLANET_FRAG monolithic runtime branches into compile-time #if PLANET_KIND branches so D3D11 FXC compiles each shader 50x faster
+replace('        if (uPlanetType == 0) {','        #if PLANET_KIND == 0\n        {')
+replace('          gl_FragColor = vec4(col, 1.0);\n          return;\n        }','          gl_FragColor = vec4(col, 1.0);\n        }\n        #else')
+replace('        if (uPlanetType == 1) {','        #if PLANET_KIND == 1\n        {')
+replace('        else if (uPlanetType == 2) {','        #elif PLANET_KIND == 2\n        {')
+replace('        else if (uPlanetType == 3) {','        #elif PLANET_KIND == 3\n        {')
+replace('        else if (uPlanetType == 4) {','        #elif PLANET_KIND == 4\n        {')
+replace('        else if (uPlanetType == 5) {','        #elif PLANET_KIND == 5\n        {')
+replace('        else if (uPlanetType == 6) {','        #elif PLANET_KIND == 6\n        {')
+replace('        else if (uPlanetType == 7) {','        #elif PLANET_KIND == 7\n        {')
+replace('        else if (uPlanetType == 8) {','        #elif PLANET_KIND == 8\n        {')
+replace('        else if (uPlanetType == 9) {','        #elif PLANET_KIND == 9\n        {')
+replace('''          col = mix(vec3(0.08, 0.20, 0.62), vec3(0.20, 0.45, 0.92), band);
+        }''','''          col = mix(vec3(0.08, 0.20, 0.62), vec3(0.20, 0.45, 0.92), band);
+        }
+        #endif''')
+replace('''        gl_FragColor = vec4(finalCol, 1.0);
+      }
+    `;
+
+    // 地球动态云层着色器''','''        gl_FragColor = vec4(finalCol, 1.0);
+        #endif
+      }
+    `;
+
+    // 地球动态云层着色器''')
 # Final visual polish layer (icons + stylesheet injected last so it wins the cascade).
 if (WORK/'polish.py').exists():
     s=runpy.run_path(str(WORK/'polish.py'))['apply'](s,ROOT,WORK)
