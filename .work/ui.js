@@ -215,9 +215,9 @@
       if(window.cosmicDesktop?.isDesktop){
         const tools=document.querySelector('.header-tools');
         if(tools){
-          const fsBtn=document.createElement('button');fsBtn.className='glass-btn rounded-xl px-2.5 py-1.5 text-xs flex items-center gap-1 text-sky-200';fsBtn.title='切换全屏 / 窗口模式 (F11)';fsBtn.textContent='🖥️ F11全屏';
+          const fsBtn=document.createElement('button');fsBtn.id='desktop-btn-fs';fsBtn.className='glass-btn px-2.5 py-1.5 text-xs flex items-center gap-1';fsBtn.title='切换全屏 / 窗口模式 (F11)';fsBtn.textContent='全屏';
           fsBtn.onclick=()=>window.cosmicDesktop.toggleFullscreen();
-          const qBtn=document.createElement('button');qBtn.className='glass-btn rounded-xl px-2.5 py-1.5 text-xs flex items-center gap-1 text-rose-200 border-rose-500/35';qBtn.title='退出桌面程序 (Alt+F4)';qBtn.textContent='✕ 退出';
+          const qBtn=document.createElement('button');qBtn.id='desktop-btn-quit';qBtn.className='glass-btn px-2.5 py-1.5 text-xs flex items-center gap-1 desktop-quit-btn';qBtn.title='退出桌面程序 (Alt+F4)';qBtn.textContent='退出';
           qBtn.onclick=()=>window.cosmicDesktop.quit();
           tools.append(fsBtn,qBtn);
         }

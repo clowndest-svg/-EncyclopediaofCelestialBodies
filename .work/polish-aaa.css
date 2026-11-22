@@ -343,3 +343,129 @@ input[type="range"]::-moz-range-thumb {
 .sb-inspector-head { gap: 6px; }
 .sb-head-btns { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; flex-shrink: 0; }
 .sb-head-btns .sb-mini-btn { padding: 4px 6px; font-size: 10.5px; white-space: nowrap; }
+
+/* =========================================================================
+   5. 顶栏防折行重叠修复 & 全站黑曜石深空背景/表面统一样式
+   ========================================================================= */
+body[data-layout="desktop"] #observatory-header {
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+body[data-layout="desktop"] .header-tools {
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  gap: 3px !important;
+  padding: 4px 6px !important;
+  background: var(--obs-glass) !important;
+  border: 1px solid var(--obs-border) !important;
+  box-shadow: var(--obs-shadow), var(--obs-spec) !important;
+}
+body[data-layout="desktop"] .header-tools .glass-btn {
+  min-height: 32px !important;
+  height: 32px !important;
+  padding: 0 9px !important;
+  font-size: 12px !important;
+  border-radius: 9px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+body[data-layout="desktop"] .header-tools .glass-btn:hover {
+  background: rgba(125, 211, 252, 0.12) !important;
+  border-color: rgba(125, 211, 252, 0.28) !important;
+}
+body[data-layout="desktop"] .header-tools .glass-btn.active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(99, 102, 241, 0.22)) !important;
+  border-color: rgba(125, 211, 252, 0.48) !important;
+}
+body[data-layout="desktop"] .header-tools .desktop-quit-btn {
+  color: #fda4af !important;
+}
+body[data-layout="desktop"] .header-tools .desktop-quit-btn:hover {
+  background: rgba(244, 63, 94, 0.18) !important;
+  border-color: rgba(251, 113, 133, 0.45) !important;
+  color: #ffe4e6 !important;
+}
+
+/* 第二排四大入口按钮：严格对齐同一水平基准线、统一高度与黑曜石玻璃质感 */
+body[data-layout="desktop"] #toggle-left-btn,
+body[data-layout="desktop"] #toggle-right-btn,
+body[data-layout="desktop"] .atlas-library-launch,
+body[data-layout="desktop"] .sandbox-launch-btn {
+  top: 74px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  border-radius: 12px !important;
+  padding: 0 14px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  white-space: nowrap !important;
+  backdrop-filter: blur(18px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+}
+body[data-layout="desktop"] #toggle-left-btn { left: 16px !important; width: 112px !important; justify-content: center !important; }
+body[data-layout="desktop"] .atlas-library-launch {
+  left: 136px !important;
+  background: linear-gradient(135deg, rgba(14, 29, 58, 0.86), rgba(32, 24, 64, 0.86)) !important;
+  border: 1px solid rgba(148, 197, 255, 0.28) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+  color: #e6f2ff !important;
+}
+body[data-layout="desktop"] .atlas-library-launch:hover {
+  border-color: rgba(125, 211, 252, 0.55) !important;
+  box-shadow: 0 10px 28px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+body[data-layout="desktop"] .sandbox-launch-btn { left: 254px !important; }
+body[data-layout="desktop"] #toggle-right-btn { right: 16px !important; }
+body[data-layout="desktop"] #left-panel,
+body[data-layout="desktop"] #right-panel {
+  top: 122px !important;
+}
+
+/* 星海百科全区域与主界面黑曜石背景/玻璃边框完全统一 */
+#cosmic-book {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(16, 30, 58, 0.55), #030711 72%) !important;
+  border: 1px solid rgba(148, 197, 255, 0.18) !important;
+  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+#cosmic-book .book-header,
+#cosmic-book .book-searchbar,
+#cosmic-book .book-tours-strip {
+  background: rgba(7, 11, 22, 0.84) !important;
+  border-bottom-color: rgba(148, 197, 255, 0.12) !important;
+}
+#cosmic-book .book-catalog {
+  background: rgba(6, 10, 20, 0.78) !important;
+  border-right-color: rgba(148, 197, 255, 0.12) !important;
+}
+#cosmic-book .book-detail {
+  background: radial-gradient(ellipse at 60% 12%, rgba(20, 40, 74, 0.42) 0%, transparent 50%), rgba(4, 8, 17, 0.92) !important;
+}
+#cosmic-book .book-detail-tabs {
+  background: rgba(7, 11, 22, 0.88) !important;
+  border-bottom-color: rgba(148, 197, 255, 0.14) !important;
+}
+#cosmic-book .book-everyday,
+#cosmic-book .book-dossier-card,
+#cosmic-book .book-qa-card,
+#cosmic-book .book-takeaway,
+#cosmic-book .book-comparison,
+#cosmic-book .book-source-link {
+  background: rgba(11, 18, 34, 0.72) !important;
+  border-color: rgba(148, 197, 255, 0.14) !important;
+}
+#cosmic-book .book-everyday-card {
+  background: rgba(7, 12, 24, 0.78) !important;
+  border-color: rgba(148, 197, 255, 0.12) !important;
+}
+#cosmic-book .book-qa-dialog {
+  background: linear-gradient(180deg, rgba(13, 21, 38, 0.96), rgba(6, 10, 20, 0.98)) !important;
+  border: 1px solid rgba(148, 197, 255, 0.24) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
