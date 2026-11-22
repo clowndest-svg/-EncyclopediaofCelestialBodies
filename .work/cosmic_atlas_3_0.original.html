@@ -2454,6 +2454,7 @@
       appendLog(`[撞击] ${projectile.label || '小行星'} 命中 ${enc.name} · ${mtStr} · 完整度 ${body.integrity.toFixed(1)}%`, 'rose');
 
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     // 发射弹体（小行星 / 动能柱 / 双尾彗星 / 陨石雨 / 光粒 / 二向箔）
@@ -2663,6 +2664,7 @@
 
       activeExoticEffects.push({ type: 'shatter', body, cloud, vels, age: 0, maxAge: 999 });
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     // 二向箔维度跌落（将目标压扁为发光二维平面画卷）
@@ -2699,6 +2701,7 @@
 
       activeExoticEffects.push({ type: 'flatten', body, foilPlane, age: 0, maxAge: 999 });
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     // 干净还原单颗天体或全部场景状态
@@ -2747,6 +2750,7 @@
         }
       }
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     function cleanupExoticEffect(fx) {
@@ -2855,7 +2859,12 @@
       if (moveCamera) {
         const offsetDir = camera.position.clone().sub(wp).normalize();
         if (offsetDir.lengthSq() < 0.01) offsetDir.set(0, 0.35, 1).normalize();
-        const dist = Math.max(body.radius * 3.8, 8.5);
+        const vHalf = THREE.MathUtils.degToRad((camera.fov || 50) * 0.5);
+        const aspect = Math.max(0.35, camera.aspect || (innerWidth / Math.max(1, innerHeight)));
+        const hHalf = Math.atan(Math.tan(vHalf) * aspect);
+        const fitR = body.radius * (body.id === 'sun' ? 2.65 : 1.75);
+        const minFit = fitR / Math.sin(Math.min(vHalf, hHalf));
+        const dist = Math.max(body.radius * (body.id === 'sun' ? 5.6 : 4.2), minFit, 9.5);
         startCamTransition(wp.clone().add(offsetDir.multiplyScalar(dist)), wp);
       }
     }

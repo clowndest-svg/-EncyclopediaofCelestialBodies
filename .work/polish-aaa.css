@@ -471,34 +471,98 @@ body[data-layout="desktop"] #right-panel {
 }
 
 /* =========================================================================
-   6. 移动端 (<= 760px / data-layout="mobile") 全面自适应防挤压与统一样式修复
+   6. 移动端 (<= 760px / data-layout="mobile") 全新自适应重设计与零重叠排版
    ========================================================================= */
+body[data-layout="mobile"] #observatory-header {
+  left: 8px !important;
+  right: 8px !important;
+  top: max(8px, env(safe-area-inset-top)) !important;
+  gap: 6px !important;
+}
+body[data-layout="mobile"] .brand-lockup {
+  padding: 6px 10px !important;
+  border-radius: 13px !important;
+  gap: 8px !important;
+}
+body[data-layout="mobile"] .brand-lockup > div:first-child {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 9px !important;
+}
+body[data-layout="mobile"] .header-tools {
+  padding: 3px 4px !important;
+  gap: 2px !important;
+  border-radius: 12px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+}
+body[data-layout="mobile"] .header-tools #layout-switch {
+  margin-right: 2px !important;
+  flex-shrink: 0 !important;
+}
+body[data-layout="mobile"] .header-tools #layout-switch button {
+  padding: 0 7px !important;
+  font-size: 10.5px !important;
+  min-height: 26px !important;
+}
+body[data-layout="mobile"] .header-tools .glass-btn {
+  min-height: 30px !important;
+  padding: 0 6px !important;
+  flex: 1 0 auto !important;
+}
 body[data-layout="mobile"] #toggle-left-btn,
 body[data-layout="mobile"] #btn-cosmic-book,
 body[data-layout="mobile"] .sandbox-launch-btn,
 body[data-layout="mobile"] #toggle-right-btn {
-  top: 114px !important;
+  top: var(--mob-subbar-top, 122px) !important;
   bottom: auto !important;
   height: 34px !important;
   min-height: 34px !important;
-  padding: 0 9px !important;
+  padding: 0 4px !important;
   font-size: 11px !important;
+  font-weight: 600 !important;
   border-radius: 10px !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 4px !important;
-}
-body[data-layout="mobile"] #toggle-left-btn { left: 10px !important; width: auto !important; }
-body[data-layout="mobile"] #btn-cosmic-book { left: 97px !important; }
-body[data-layout="mobile"] .sandbox-launch-btn {
-  left: 185px !important;
-  background: linear-gradient(135deg, rgba(12, 22, 44, 0.92), rgba(30, 22, 58, 0.92)) !important;
-  border: 1px solid rgba(125, 211, 252, 0.45) !important;
+  background: rgba(8, 13, 26, 0.86) !important;
+  border: 1px solid rgba(148, 197, 255, 0.22) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
 }
-body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
+body[data-layout="mobile"] #toggle-left-btn { left: 8px !important; width: calc((100vw - 34px) * 0.24) !important; }
+body[data-layout="mobile"] #btn-cosmic-book {
+  left: calc(8px + (100vw - 34px) * 0.24 + 6px) !important;
+  width: calc((100vw - 34px) * 0.24) !important;
+  background: linear-gradient(135deg, rgba(16, 32, 62, 0.90), rgba(38, 28, 72, 0.90)) !important;
+  border-color: rgba(125, 211, 252, 0.36) !important;
+}
+body[data-layout="mobile"] .sandbox-launch-btn {
+  left: calc(8px + (100vw - 34px) * 0.48 + 12px) !important;
+  width: calc((100vw - 34px) * 0.26) !important;
+  background: linear-gradient(135deg, rgba(14, 42, 74, 0.92), rgba(52, 30, 88, 0.92)) !important;
+  border-color: rgba(125, 211, 252, 0.48) !important;
+}
+body[data-layout="mobile"] #toggle-right-btn { left: auto !important; right: 8px !important; width: calc((100vw - 34px) * 0.26) !important; }
+body[data-layout="mobile"] .scene-guide #scene-subtitle { display: none !important; }
+body[data-layout="mobile"] .scene-guide { bottom: 112px !important; padding: 0 12px !important; }
+body[data-layout="mobile"] .scene-guide #scene-title { font-size: 14px !important; }
+body[data-layout="mobile"] #transport-dock { bottom: 68px !important; padding: 4px 8px !important; gap: 4px !important; max-width: calc(100vw - 16px) !important; overflow-x: auto !important; }
+body[data-layout="mobile"] #transport-dock button { padding: 4px 7px !important; font-size: 11px !important; white-space: nowrap !important; }
+body[data-layout="mobile"] #scale-dock { height: 58px !important; padding-bottom: env(safe-area-inset-bottom) !important; }
+body[data-layout="mobile"] #left-panel,
+body[data-layout="mobile"] #right-panel {
+  left: 8px !important;
+  right: 8px !important;
+  width: auto !important;
+  top: auto !important;
+  bottom: 66px !important;
+  max-height: 52dvh !important;
+  border-radius: 16px !important;
+}
 
 @media (max-width: 760px) {
   #cosmic-book .book-header {
@@ -540,19 +604,119 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
   #cosmic-book .book-everyday-grid {
     grid-template-columns: 1fr !important;
   }
+
+  /* 宇宙沙盘 2 手机端全新紧致流式布局（释放 75% 居中宇宙视野） */
   .sb-topbar {
+    position: relative !important;
     padding: 6px 8px !important;
-    gap: 6px !important;
+    gap: 5px !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
-  .sb-dock {
-    padding: 6px 8px !important;
-    gap: 6px !important;
+  .sb-brand { width: 100% !important; justify-content: flex-start; gap: 6px !important; padding-right: 60px !important; }
+  .sb-brand h2 { font-size: 12px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-brand p { font-size: 9.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-logo { font-size: 16px !important; }
+  #sb-close {
+    position: absolute !important;
+    top: 7px !important;
+    right: 8px !important;
+    z-index: 6 !important;
+    padding: 4px 10px !important;
+    min-height: 28px !important;
+    font-size: 11px !important;
   }
-  .sb-tools {
+  /* 手机端星海百科 3D 预览区底部防重叠 */
+  .book-visual-note {
+    max-width: calc(100% - 172px) !important;
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+    left: 10px !important;
+    bottom: 8px !important;
+  }
+  .book-viewer-tools {
+    right: 8px !important;
+    bottom: 8px !important;
     gap: 4px !important;
   }
+  .book-viewer-tools button {
+    padding: 4px 8px !important;
+    min-height: 28px !important;
+    font-size: 10px !important;
+  }
+  .sb-top-controls {
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 4px !important;
+    padding-bottom: 2px;
+  }
+  .sb-top-controls > * { flex-shrink: 0 !important; }
+  #sb-preset-select { max-width: 145px !important; font-size: 10.5px !important; padding: 4px 6px !important; }
+  .sb-view-pills { flex-wrap: nowrap !important; overflow-x: visible !important; gap: 3px !important; }
+  .sb-navigation {
+    inset: 6px 6px auto !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 4px !important;
+    padding: 4px 6px !important;
+    border-radius: 10px !important;
+    background: rgba(7, 12, 24, 0.80) !important;
+    border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  }
+  .sb-navigation > * { flex-shrink: 0 !important; }
+  .sb-navigation select { max-width: 108px !important; font-size: 10.5px !important; padding: 4px 5px !important; }
+  .sb-tool-hint { display: none !important; }
+  .sb-left, .sb-right {
+    top: 46px !important;
+    bottom: 6px !important;
+    width: min(290px, 88vw) !important;
+  }
+  .sb-flight-pad {
+    bottom: 8px !important;
+    left: 8px !important;
+    grid-template-columns: repeat(3, 44px) !important;
+    gap: 4px !important;
+    padding: 5px !important;
+  }
+  .sb-flight-pad button { height: 28px !important; font-size: 10px !important; }
+  .sb-dock {
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom)) !important;
+    gap: 5px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .sb-time-controls {
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 4px !important;
+    overflow: hidden !important;
+  }
+  .sb-time-controls button {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    padding: 4px 7px !important;
+    min-height: 28px !important;
+    font-size: 10px !important;
+  }
+  .sb-dock-slider { gap: 3px !important; font-size: 10px !important; white-space: nowrap !important; flex: 1 1 0 !important; min-width: 0 !important; }
+  .sb-dock-slider span { white-space: nowrap !important; flex-shrink: 0 !important; }
+  .sb-dock-slider input { width: 100% !important; min-width: 34px !important; max-width: 56px !important; }
+  .sb-dock-slider output { min-width: 24px !important; font-size: 9px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
+  .sb-tools {
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    padding-bottom: 1px;
+  }
   .sb-tools button {
-    padding: 5px 7px !important;
+    flex-shrink: 0 !important;
+    padding: 6px 9px !important;
     font-size: 11px !important;
+    white-space: nowrap !important;
   }
 }

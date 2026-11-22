@@ -222,7 +222,11 @@
       sb$('sb-pause-btn').setAttribute('aria-pressed',String(sb.paused));sb$('sb-pause-btn').textContent=sb.paused?'▶ 继续':'Ⅱ 暂停';
     }
     function sbBindExtendedControls() {
-      sb.sizeMode='illustrative';sb.flightMode=true;sbBindTelemetry();
+      const narrow=window.innerWidth<=760;
+      sb.sizeMode='illustrative';sb.flightMode=!narrow;sbBindTelemetry();
+      sb$('sb-nav-mode').setAttribute('aria-pressed',String(sb.flightMode));
+      sb$('sb-nav-mode').textContent=sb.flightMode?'🕹️ 方向遥控':'🕹️ 打开遥控';
+      if(sb$('sb-flight-pad'))sb$('sb-flight-pad').hidden=!sb.flightMode;
       sb$('sb-overview').onclick=sbOverview;sb$('sb-focus-selected').onclick=()=>sbFocusBody();
       sb$('sb-body-locator').onchange=e=>{sbFocusBody(sb.bodies.find(b=>b.id===e.target.value));e.target.value='';};
       sb$('sb-nav-mode').onclick=()=>{sb.flightMode=!sb.flightMode;sb$('sb-nav-mode').setAttribute('aria-pressed',String(sb.flightMode));sb$('sb-nav-mode').textContent=sb.flightMode?'🕹️ 方向遥控':'🕹️ 打开遥控';sb$('sb-flight-pad').hidden=!sb.flightMode;};

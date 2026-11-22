@@ -83,14 +83,17 @@
     function triggerPlanetShatter(body, accentHex = 0xff6b2b) {
       if (!body || body.shatterGroup) return;
       const g = new THREE.Group(), R = body.radius, rng = deterministicRandom(Math.floor(dynamics.time * 100) + 777);
+      const isGas = PLANET_PHYSICS[body.id] && !PLANET_PHYSICS[body.id].solid && body.id !== 'sun';
+      const coreHex = isGas ? 0xa5f3fc : 0xffe48c;
+      const glowHex = isGas ? 0x38bdf8 : accentHex;
 
-      // 1. 暴露在宇宙中的白热沸腾行星核心（清晰层次不过曝）
+      // 1. 暴露在宇宙中的白热沸腾行星核心（气态巨星为高压金属氢电离内核）
       const core = new THREE.Mesh(
-        new THREE.SphereGeometry(R * 0.42, 36, 28),
-        new THREE.MeshBasicMaterial({ color: 0xffe48c })
+        new THREE.SphereGeometry(R * (isGas ? 0.36 : 0.42), 36, 28),
+        new THREE.MeshBasicMaterial({ color: coreHex })
       );
-      const coreGlow = glowSprite(accentHex, R * 3.1, 0.58);
-      const coreGlow2 = glowSprite(0xffc966, R * 1.65, 0.52);
+      const coreGlow = glowSprite(glowHex, R * 2.5, 0.48);
+      const coreGlow2 = glowSprite(isGas ? 0xfbbf24 : 0xffc966, R * 1.45, 0.42);
       g.add(core, coreGlow, coreGlow2);
 
       // 2. Solar Smash 标志性超巨型倾斜赤道爆星冲击波环！
@@ -192,7 +195,7 @@
       if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
       triggerScreenFlash(0.85);
       audioEngine.playImpact(1.6);
-      showToast(`💥 爆星达成！${ENCYCLOPEDIA[body.id]?.name || body.id} 已彻底裂解为熔岩星核与小行星碎带！`, 'amber');
+      showToast(`💥 爆星达成！${ENCYCLOPEDIA[body.id]?.name || body.id} 已彻底裂解为${isGas ? '金属氢等离子星核与电离碎云' : '熔岩星核与小行星碎带'}！`, 'amber');
     }
 
     function monsterBasis(body, worldPoint = null) {
@@ -214,7 +217,11 @@
       if (!body) return;
       const center = body.mesh.getWorldPosition(new THREE.Vector3());
       const vec = camera.position.clone().sub(center);
-      const dist = vec.length(), minDist = body.radius * 6.2;
+      const vHalf = THREE.MathUtils.degToRad((camera.fov || 50) * 0.5);
+      const aspect = Math.max(0.35, camera.aspect || (innerWidth / Math.max(1, innerHeight)));
+      const hHalf = Math.atan(Math.tan(vHalf) * aspect);
+      const fitDist = (body.radius * 2.45) / Math.sin(Math.min(vHalf, hHalf));
+      const dist = vec.length(), minDist = Math.max(body.radius * 6.2, fitDist);
       if (dist < minDist) {
         const dir = dist > 1e-3 ? vec.normalize() : new THREE.Vector3(0, 0.25, 1).normalize();
         startCamTransition(center.clone().addScaledVector(dir, minDist), center.clone());
@@ -274,11 +281,11 @@
       body.mesh.add(root);
       root.position.copy(meshNormal).multiplyScalar(body.radius * 1.015);
       root.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), meshNormal);
-      const sz = body.radius * (0.08 + effPower * 0.018) * state.vfxIntensity;
-      const hot = glowSprite(colorHex, sz * 6.5, 0.96);
+      const sz = body.radius * (0.07 + effPower * 0.015) * state.vfxIntensity;
+      const hot = glowSprite(colorHex, sz * 4.2, 0.58);
       const flash = new THREE.Mesh(
-        new THREE.SphereGeometry(Math.max(0.02, sz * 1.25), 18, 14),
-        new THREE.MeshBasicMaterial({ color: 0xfff5d6, transparent: true, opacity: 0.92, depthWrite: false, blending: THREE.AdditiveBlending })
+        new THREE.SphereGeometry(Math.max(0.02, sz * 0.95), 18, 14),
+        new THREE.MeshBasicMaterial({ color: 0xfff5d6, transparent: true, opacity: 0.52, depthWrite: false, blending: THREE.AdditiveBlending })
       );
       root.add(hot, flash);
 
@@ -304,7 +311,7 @@
       triggerScreenFlash(Math.min(0.42, 0.16 + effPower * 0.04));
       if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
       const canBust = PLANET_BUSTER_IDS.has(type) || effPower >= 5;
-      if (canBust && planet.solid && (effPower >= 6 || (effPower >= 5 && body.integrity <= 38) || body.integrity <= 8)) {
+      if (canBust && body.id !== 'sun' && (effPower >= 6 || (effPower >= 5 && body.integrity <= 42) || body.integrity <= 16)) {
         triggerPlanetShatter(body, colorHex);
       }
       renderLabReport();
@@ -554,9 +561,9 @@
       const swordPivot = new THREE.Group();
       swordPivot.position.set(R * 0.34 * S, -R * 0.08 * S, R * 0.24 * S);
       swordPivot.add(instantiateGLB('titan_sword', sc * 1.10));
-      swordPivot.add(glowSprite(0x38bdf8, R * 0.95 * S, 0.35));
+      swordPivot.add(glowSprite(0x38bdf8, R * 0.72 * S, 0.18));
       titan.add(swordPivot);
-      titan.add(glowSprite(0x38bdf8, R * 1.25 * S, 0.28));
+      titan.add(glowSprite(0x38bdf8, R * 0.95 * S, 0.14));
       grp.add(titan);
       return { grp, titan, swordPivot };
     }

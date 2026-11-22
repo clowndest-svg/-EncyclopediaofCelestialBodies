@@ -272,12 +272,30 @@ replace('''        for (int i = 0; i < 6; i++) {
         }
         if (uDamage > 0.08) {
           float gCrack = smoothstep(0.54, 0.72, fbm(p * 12.0 + vec3(uTime * 0.03)));
+          #if PLANET_KIND >= 6 && PLANET_KIND <= 9
+          col = mix(col, vec3(0.18, 0.24, 0.36), uDamage * 0.35);
+          emissive += vec3(0.42, 0.78, 1.0) * gCrack * pow(uDamage, 1.2) * 0.65;
+          #else
           col = mix(col, vec3(0.14, 0.09, 0.08), uDamage * 0.62);
-          craterEmissive += gCrack * pow(uDamage, 1.35) * 1.65;
+          craterEmissive += gCrack * pow(uDamage, 1.35) * 1.45;
+          #endif
         }
         if (craterEmissive > 0.01) {
           vec3 lavaCol = mix(vec3(1.0, 0.20, 0.02), vec3(1.0, 0.92, 0.52), clamp(craterEmissive * 0.65, 0.0, 1.0));
           emissive += lavaCol * min(craterEmissive * 1.95, 3.2);
+        }''')
+replace('''        // 戴森光束/高能热融状态
+        if (uHeatGlow > 0.01) {
+          float crack = smoothstep(0.45, 0.72, fbm(p * 14.0 + uTime * 0.15));
+          emissive += vec3(1.0, 0.36, 0.05) * crack * uHeatGlow * 2.2;
+        }''','''        // 戴森光束/高能热融状态（气态巨行星转为电离青岚极光扰动，不显示岩浆裂纹）
+        if (uHeatGlow > 0.01) {
+          float crack = smoothstep(0.45, 0.72, fbm(p * 14.0 + uTime * 0.15));
+          #if PLANET_KIND >= 6 && PLANET_KIND <= 9
+          emissive += vec3(0.32, 0.68, 1.0) * crack * uHeatGlow * 0.55;
+          #else
+          emissive += vec3(1.0, 0.36, 0.05) * crack * uHeatGlow * 1.65;
+          #endif
         }''')
 replace('for (let i = 0; i < 6; i++) {\n        pts.push(new THREE.Vector3(0, 1, 0));','for (let i = 0; i < 16; i++) {\n        pts.push(new THREE.Vector3(0, 1, 0));')
 replace('for (let i = 0; i < 6; i++) {\n        body.uniforms.uImpactRadii.value[i] = 0;','for (let i = 0; i < 16; i++) {\n        body.uniforms.uImpactRadii.value[i] = 0;')

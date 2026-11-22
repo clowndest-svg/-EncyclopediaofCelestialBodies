@@ -1796,34 +1796,98 @@ body[data-layout="desktop"] #right-panel {
 }
 
 /* =========================================================================
-   6. 移动端 (<= 760px / data-layout="mobile") 全面自适应防挤压与统一样式修复
+   6. 移动端 (<= 760px / data-layout="mobile") 全新自适应重设计与零重叠排版
    ========================================================================= */
+body[data-layout="mobile"] #observatory-header {
+  left: 8px !important;
+  right: 8px !important;
+  top: max(8px, env(safe-area-inset-top)) !important;
+  gap: 6px !important;
+}
+body[data-layout="mobile"] .brand-lockup {
+  padding: 6px 10px !important;
+  border-radius: 13px !important;
+  gap: 8px !important;
+}
+body[data-layout="mobile"] .brand-lockup > div:first-child {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 9px !important;
+}
+body[data-layout="mobile"] .header-tools {
+  padding: 3px 4px !important;
+  gap: 2px !important;
+  border-radius: 12px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+}
+body[data-layout="mobile"] .header-tools #layout-switch {
+  margin-right: 2px !important;
+  flex-shrink: 0 !important;
+}
+body[data-layout="mobile"] .header-tools #layout-switch button {
+  padding: 0 7px !important;
+  font-size: 10.5px !important;
+  min-height: 26px !important;
+}
+body[data-layout="mobile"] .header-tools .glass-btn {
+  min-height: 30px !important;
+  padding: 0 6px !important;
+  flex: 1 0 auto !important;
+}
 body[data-layout="mobile"] #toggle-left-btn,
 body[data-layout="mobile"] #btn-cosmic-book,
 body[data-layout="mobile"] .sandbox-launch-btn,
 body[data-layout="mobile"] #toggle-right-btn {
-  top: 114px !important;
+  top: var(--mob-subbar-top, 122px) !important;
   bottom: auto !important;
   height: 34px !important;
   min-height: 34px !important;
-  padding: 0 9px !important;
+  padding: 0 4px !important;
   font-size: 11px !important;
+  font-weight: 600 !important;
   border-radius: 10px !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 4px !important;
-}
-body[data-layout="mobile"] #toggle-left-btn { left: 10px !important; width: auto !important; }
-body[data-layout="mobile"] #btn-cosmic-book { left: 97px !important; }
-body[data-layout="mobile"] .sandbox-launch-btn {
-  left: 185px !important;
-  background: linear-gradient(135deg, rgba(12, 22, 44, 0.92), rgba(30, 22, 58, 0.92)) !important;
-  border: 1px solid rgba(125, 211, 252, 0.45) !important;
+  background: rgba(8, 13, 26, 0.86) !important;
+  border: 1px solid rgba(148, 197, 255, 0.22) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
 }
-body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
+body[data-layout="mobile"] #toggle-left-btn { left: 8px !important; width: calc((100vw - 34px) * 0.24) !important; }
+body[data-layout="mobile"] #btn-cosmic-book {
+  left: calc(8px + (100vw - 34px) * 0.24 + 6px) !important;
+  width: calc((100vw - 34px) * 0.24) !important;
+  background: linear-gradient(135deg, rgba(16, 32, 62, 0.90), rgba(38, 28, 72, 0.90)) !important;
+  border-color: rgba(125, 211, 252, 0.36) !important;
+}
+body[data-layout="mobile"] .sandbox-launch-btn {
+  left: calc(8px + (100vw - 34px) * 0.48 + 12px) !important;
+  width: calc((100vw - 34px) * 0.26) !important;
+  background: linear-gradient(135deg, rgba(14, 42, 74, 0.92), rgba(52, 30, 88, 0.92)) !important;
+  border-color: rgba(125, 211, 252, 0.48) !important;
+}
+body[data-layout="mobile"] #toggle-right-btn { left: auto !important; right: 8px !important; width: calc((100vw - 34px) * 0.26) !important; }
+body[data-layout="mobile"] .scene-guide #scene-subtitle { display: none !important; }
+body[data-layout="mobile"] .scene-guide { bottom: 112px !important; padding: 0 12px !important; }
+body[data-layout="mobile"] .scene-guide #scene-title { font-size: 14px !important; }
+body[data-layout="mobile"] #transport-dock { bottom: 68px !important; padding: 4px 8px !important; gap: 4px !important; max-width: calc(100vw - 16px) !important; overflow-x: auto !important; }
+body[data-layout="mobile"] #transport-dock button { padding: 4px 7px !important; font-size: 11px !important; white-space: nowrap !important; }
+body[data-layout="mobile"] #scale-dock { height: 58px !important; padding-bottom: env(safe-area-inset-bottom) !important; }
+body[data-layout="mobile"] #left-panel,
+body[data-layout="mobile"] #right-panel {
+  left: 8px !important;
+  right: 8px !important;
+  width: auto !important;
+  top: auto !important;
+  bottom: 66px !important;
+  max-height: 52dvh !important;
+  border-radius: 16px !important;
+}
 
 @media (max-width: 760px) {
   #cosmic-book .book-header {
@@ -1865,20 +1929,120 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
   #cosmic-book .book-everyday-grid {
     grid-template-columns: 1fr !important;
   }
+
+  /* 宇宙沙盘 2 手机端全新紧致流式布局（释放 75% 居中宇宙视野） */
   .sb-topbar {
+    position: relative !important;
     padding: 6px 8px !important;
-    gap: 6px !important;
+    gap: 5px !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
-  .sb-dock {
-    padding: 6px 8px !important;
-    gap: 6px !important;
+  .sb-brand { width: 100% !important; justify-content: flex-start; gap: 6px !important; padding-right: 60px !important; }
+  .sb-brand h2 { font-size: 12px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-brand p { font-size: 9.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-logo { font-size: 16px !important; }
+  #sb-close {
+    position: absolute !important;
+    top: 7px !important;
+    right: 8px !important;
+    z-index: 6 !important;
+    padding: 4px 10px !important;
+    min-height: 28px !important;
+    font-size: 11px !important;
   }
-  .sb-tools {
+  /* 手机端星海百科 3D 预览区底部防重叠 */
+  .book-visual-note {
+    max-width: calc(100% - 172px) !important;
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+    left: 10px !important;
+    bottom: 8px !important;
+  }
+  .book-viewer-tools {
+    right: 8px !important;
+    bottom: 8px !important;
     gap: 4px !important;
   }
+  .book-viewer-tools button {
+    padding: 4px 8px !important;
+    min-height: 28px !important;
+    font-size: 10px !important;
+  }
+  .sb-top-controls {
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 4px !important;
+    padding-bottom: 2px;
+  }
+  .sb-top-controls > * { flex-shrink: 0 !important; }
+  #sb-preset-select { max-width: 145px !important; font-size: 10.5px !important; padding: 4px 6px !important; }
+  .sb-view-pills { flex-wrap: nowrap !important; overflow-x: visible !important; gap: 3px !important; }
+  .sb-navigation {
+    inset: 6px 6px auto !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 4px !important;
+    padding: 4px 6px !important;
+    border-radius: 10px !important;
+    background: rgba(7, 12, 24, 0.80) !important;
+    border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  }
+  .sb-navigation > * { flex-shrink: 0 !important; }
+  .sb-navigation select { max-width: 108px !important; font-size: 10.5px !important; padding: 4px 5px !important; }
+  .sb-tool-hint { display: none !important; }
+  .sb-left, .sb-right {
+    top: 46px !important;
+    bottom: 6px !important;
+    width: min(290px, 88vw) !important;
+  }
+  .sb-flight-pad {
+    bottom: 8px !important;
+    left: 8px !important;
+    grid-template-columns: repeat(3, 44px) !important;
+    gap: 4px !important;
+    padding: 5px !important;
+  }
+  .sb-flight-pad button { height: 28px !important; font-size: 10px !important; }
+  .sb-dock {
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom)) !important;
+    gap: 5px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .sb-time-controls {
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 4px !important;
+    overflow: hidden !important;
+  }
+  .sb-time-controls button {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    padding: 4px 7px !important;
+    min-height: 28px !important;
+    font-size: 10px !important;
+  }
+  .sb-dock-slider { gap: 3px !important; font-size: 10px !important; white-space: nowrap !important; flex: 1 1 0 !important; min-width: 0 !important; }
+  .sb-dock-slider span { white-space: nowrap !important; flex-shrink: 0 !important; }
+  .sb-dock-slider input { width: 100% !important; min-width: 34px !important; max-width: 56px !important; }
+  .sb-dock-slider output { min-width: 24px !important; font-size: 9px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
+  .sb-tools {
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    padding-bottom: 1px;
+  }
   .sb-tools button {
-    padding: 5px 7px !important;
+    flex-shrink: 0 !important;
+    padding: 6px 9px !important;
     font-size: 11px !important;
+    white-space: nowrap !important;
   }
 }
 
@@ -3291,18 +3455,27 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
         }
         if (uDamage > 0.08) {
           float gCrack = smoothstep(0.54, 0.72, fbm(p * 12.0 + vec3(uTime * 0.03)));
+          #if PLANET_KIND >= 6 && PLANET_KIND <= 9
+          col = mix(col, vec3(0.18, 0.24, 0.36), uDamage * 0.35);
+          emissive += vec3(0.42, 0.78, 1.0) * gCrack * pow(uDamage, 1.2) * 0.65;
+          #else
           col = mix(col, vec3(0.14, 0.09, 0.08), uDamage * 0.62);
-          craterEmissive += gCrack * pow(uDamage, 1.35) * 1.65;
+          craterEmissive += gCrack * pow(uDamage, 1.35) * 1.45;
+          #endif
         }
         if (craterEmissive > 0.01) {
           vec3 lavaCol = mix(vec3(1.0, 0.20, 0.02), vec3(1.0, 0.92, 0.52), clamp(craterEmissive * 0.65, 0.0, 1.0));
           emissive += lavaCol * min(craterEmissive * 1.95, 3.2);
         }
 
-        // 戴森光束/高能热融状态
+        // 戴森光束/高能热融状态（气态巨行星转为电离青岚极光扰动，不显示岩浆裂纹）
         if (uHeatGlow > 0.01) {
           float crack = smoothstep(0.45, 0.72, fbm(p * 14.0 + uTime * 0.15));
-          emissive += vec3(1.0, 0.36, 0.05) * crack * uHeatGlow * 2.2;
+          #if PLANET_KIND >= 6 && PLANET_KIND <= 9
+          emissive += vec3(0.32, 0.68, 1.0) * crack * uHeatGlow * 0.55;
+          #else
+          emissive += vec3(1.0, 0.36, 0.05) * crack * uHeatGlow * 1.65;
+          #endif
         }
 
         vec3 finalCol = col * (ambient + diffuse * 1.05) + vec3(spec) + emissive;
@@ -4603,14 +4776,17 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
     function triggerPlanetShatter(body, accentHex = 0xff6b2b) {
       if (!body || body.shatterGroup) return;
       const g = new THREE.Group(), R = body.radius, rng = deterministicRandom(Math.floor(dynamics.time * 100) + 777);
+      const isGas = PLANET_PHYSICS[body.id] && !PLANET_PHYSICS[body.id].solid && body.id !== 'sun';
+      const coreHex = isGas ? 0xa5f3fc : 0xffe48c;
+      const glowHex = isGas ? 0x38bdf8 : accentHex;
 
-      // 1. 暴露在宇宙中的白热沸腾行星核心（清晰层次不过曝）
+      // 1. 暴露在宇宙中的白热沸腾行星核心（气态巨星为高压金属氢电离内核）
       const core = new THREE.Mesh(
-        new THREE.SphereGeometry(R * 0.42, 36, 28),
-        new THREE.MeshBasicMaterial({ color: 0xffe48c })
+        new THREE.SphereGeometry(R * (isGas ? 0.36 : 0.42), 36, 28),
+        new THREE.MeshBasicMaterial({ color: coreHex })
       );
-      const coreGlow = glowSprite(accentHex, R * 3.1, 0.58);
-      const coreGlow2 = glowSprite(0xffc966, R * 1.65, 0.52);
+      const coreGlow = glowSprite(glowHex, R * 2.5, 0.48);
+      const coreGlow2 = glowSprite(isGas ? 0xfbbf24 : 0xffc966, R * 1.45, 0.42);
       g.add(core, coreGlow, coreGlow2);
 
       // 2. Solar Smash 标志性超巨型倾斜赤道爆星冲击波环！
@@ -4712,7 +4888,7 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
       triggerScreenFlash(0.85);
       audioEngine.playImpact(1.6);
-      showToast(`💥 爆星达成！${ENCYCLOPEDIA[body.id]?.name || body.id} 已彻底裂解为熔岩星核与小行星碎带！`, 'amber');
+      showToast(`💥 爆星达成！${ENCYCLOPEDIA[body.id]?.name || body.id} 已彻底裂解为${isGas ? '金属氢等离子星核与电离碎云' : '熔岩星核与小行星碎带'}！`, 'amber');
     }
 
     function monsterBasis(body, worldPoint = null) {
@@ -4734,7 +4910,11 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       if (!body) return;
       const center = body.mesh.getWorldPosition(new THREE.Vector3());
       const vec = camera.position.clone().sub(center);
-      const dist = vec.length(), minDist = body.radius * 6.2;
+      const vHalf = THREE.MathUtils.degToRad((camera.fov || 50) * 0.5);
+      const aspect = Math.max(0.35, camera.aspect || (innerWidth / Math.max(1, innerHeight)));
+      const hHalf = Math.atan(Math.tan(vHalf) * aspect);
+      const fitDist = (body.radius * 2.45) / Math.sin(Math.min(vHalf, hHalf));
+      const dist = vec.length(), minDist = Math.max(body.radius * 6.2, fitDist);
       if (dist < minDist) {
         const dir = dist > 1e-3 ? vec.normalize() : new THREE.Vector3(0, 0.25, 1).normalize();
         startCamTransition(center.clone().addScaledVector(dir, minDist), center.clone());
@@ -4794,11 +4974,11 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       body.mesh.add(root);
       root.position.copy(meshNormal).multiplyScalar(body.radius * 1.015);
       root.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), meshNormal);
-      const sz = body.radius * (0.08 + effPower * 0.018) * state.vfxIntensity;
-      const hot = glowSprite(colorHex, sz * 6.5, 0.96);
+      const sz = body.radius * (0.07 + effPower * 0.015) * state.vfxIntensity;
+      const hot = glowSprite(colorHex, sz * 4.2, 0.58);
       const flash = new THREE.Mesh(
-        new THREE.SphereGeometry(Math.max(0.02, sz * 1.25), 18, 14),
-        new THREE.MeshBasicMaterial({ color: 0xfff5d6, transparent: true, opacity: 0.92, depthWrite: false, blending: THREE.AdditiveBlending })
+        new THREE.SphereGeometry(Math.max(0.02, sz * 0.95), 18, 14),
+        new THREE.MeshBasicMaterial({ color: 0xfff5d6, transparent: true, opacity: 0.52, depthWrite: false, blending: THREE.AdditiveBlending })
       );
       root.add(hot, flash);
 
@@ -4824,7 +5004,7 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       triggerScreenFlash(Math.min(0.42, 0.16 + effPower * 0.04));
       if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
       const canBust = PLANET_BUSTER_IDS.has(type) || effPower >= 5;
-      if (canBust && planet.solid && (effPower >= 6 || (effPower >= 5 && body.integrity <= 38) || body.integrity <= 8)) {
+      if (canBust && body.id !== 'sun' && (effPower >= 6 || (effPower >= 5 && body.integrity <= 42) || body.integrity <= 16)) {
         triggerPlanetShatter(body, colorHex);
       }
       renderLabReport();
@@ -5074,9 +5254,9 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       const swordPivot = new THREE.Group();
       swordPivot.position.set(R * 0.34 * S, -R * 0.08 * S, R * 0.24 * S);
       swordPivot.add(instantiateGLB('titan_sword', sc * 1.10));
-      swordPivot.add(glowSprite(0x38bdf8, R * 0.95 * S, 0.35));
+      swordPivot.add(glowSprite(0x38bdf8, R * 0.72 * S, 0.18));
       titan.add(swordPivot);
-      titan.add(glowSprite(0x38bdf8, R * 1.25 * S, 0.28));
+      titan.add(glowSprite(0x38bdf8, R * 0.95 * S, 0.14));
       grp.add(titan);
       return { grp, titan, swordPivot };
     }
@@ -5526,14 +5706,14 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       body.statusText=!planet.solid?'云层 / 光球剧烈扰动':body.integrity<25?'地壳崩裂 · 全球岩浆海':body.integrity<55?'剧烈叠加损伤 · 尘埃核冬':report.airburst?'大气空爆 · 冲击波横扫':lab.surface==='ocean'?'巨型海啸与水汽羽流':`累计 ${body.stackedHits} 次撞击 · 熔岩裂谷扩散`;
       if(body.cloudsMesh)body.cloudsMesh.material.uniforms.uOpacity.value=Math.max(0,body.atmoPct/100);
       if(body.atmoMesh)body.atmoMesh.material.uniforms.uIntensity.value=Math.max(0,body.atmoPct/100)*.85;
-      body.uniforms.uDamage.value=1-body.integrity/100;
-      body.uniforms.uHeatGlow.value=Math.min(1.5,Math.max(body.uniforms.uHeatGlow.value,(1-body.integrity/100)*.95));
+      body.uniforms.uDamage.value=planet.solid?(1-body.integrity/100):Math.min(.55,(1-body.integrity/100)*.6);
+      body.uniforms.uHeatGlow.value=planet.solid?Math.min(1.15,Math.max(body.uniforms.uHeatGlow.value,(1-body.integrity/100)*.82)):Math.min(.48,(1-body.integrity/100)*.48);
       if(typeof ensurePlanetInterior==='function')ensurePlanetInterior(body);
       ensureStackedVisuals(body,planet);
       if(typeof syncSmashMeter==='function')syncSmashMeter(body);
       const isBuster=typeof PLANET_BUSTER_IDS!=='undefined'&&PLANET_BUSTER_IDS.has(type);
       const bigImpact=type==='asteroid'&&state.astDiamKm>=60;
-      if(planet.solid&&!MONSTER_IDS.has(type)&&((monsterLab.autoBust&&(isBuster||bigImpact))||body.integrity<=10)){
+      if(body.id!=='sun'&&!MONSTER_IDS.has(type)&&((monsterLab.autoBust&&(isBuster||bigImpact))||body.integrity<=14)){
         const bustCol=type==='antimatter'?0xe879f9:type==='photoid'?0x60a5fa:type==='dyson'?0xfbbf24:0xff5a1f;
         if(typeof triggerPlanetShatter==='function')triggerPlanetShatter(body,bustCol);
       }
@@ -5691,7 +5871,7 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       if(lab.effects.length+lab.projectiles.length+activeExoticEffects.length>=(document.body.dataset.layout==='mobile'?12:24)){showToast('当前并发实验较多，请稍候片刻','amber');return;}
       if(typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type)){spawnMonsterExperiment(type,body,point);return;}
       if(!body||body.isDestroyed){showToast('请先选择一个完整的天体','amber');return;}
-      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻爆星演出，支持一键复原','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 💥 爆星演出';document.getElementById('lab-report-values').textContent='高能科幻爆星演出：可随时点击“单目标复原”还原。';if(type==='foil')flattenBodyTo2D(body);else{legacyExecuteExoticExperiment(type,body,point);if(monsterLab.autoBust&&PLANET_PHYSICS[body.id]?.solid)lab.salvoTimers.push(setTimeout(()=>{if(!body.isDestroyed&&!body.shatterGroup)triggerPlanetShatter(body,type==='singularity'?0xa855f7:0x38bdf8);},1800));}return;}
+      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻爆星演出，支持一键复原','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 💥 爆星演出';document.getElementById('lab-report-values').textContent='高能科幻爆星演出：可随时点击“单目标复原”还原。';if(type==='foil')flattenBodyTo2D(body);else{legacyExecuteExoticExperiment(type,body,point);if(monsterLab.autoBust&&body.id!=='sun')lab.salvoTimers.push(setTimeout(()=>{if(!body.isDestroyed&&!body.shatterGroup)triggerPlanetShatter(body,type==='singularity'?0xa855f7:0x38bdf8);},1800));}return;}
       if(type==='tidal'){tidalEncounter(body);return;}
       if(['nuclear','antimatter','laser','dyson','grb','photoid'].includes(type)){spawnRadiation(body,type,point);return;}
       const center=body.mesh.getWorldPosition(new THREE.Vector3()),radial=camera.position.clone().sub(center).normalize(),side=new THREE.Vector3(0,1,0).cross(radial).normalize();
@@ -5705,7 +5885,7 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       if(!body||body.isDestroyed){showToast('请先选择可撞击的行星或卫星','amber');return;}
       const center=body.mesh.getWorldPosition(new THREE.Vector3()),radial=camera.position.clone().sub(center).normalize();
       const t1=new THREE.Vector3(0,1,0).cross(radial).normalize(),t2=radial.clone().cross(t1).normalize();
-      const offsets=[[0,0],[.34,.22],[-.32,.25]];
+      const offsets=[[0,0],[.58,.32],[-.55,-.28]];
       offsets.forEach(([ox,oy],idx)=>{
         const timer=setTimeout(()=>{
           if(body.isDestroyed||!['L0','L1'].includes(state.currentScale))return;
@@ -5732,7 +5912,7 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       tickLabProjectiles(dt);
       for(let i=lab.effects.length-1;i>=0;i--){const e=lab.effects[i];if(e.body.scaleKey!==state.currentScale)continue;e.age+=dt;const u=Math.min(1,e.age/e.duration);
         if(e.kind==='blast'){
-          e.hot.scale.setScalar(Math.max(.01,e.size*6.5*(1+u*1.8)));e.hot.material.opacity=.92*Math.max(0,1-e.age/2.2);e.flash.scale.setScalar(1+u*2.8);e.flash.material.opacity=.88*Math.max(0,1-e.age/1.1);
+          e.hot.scale.setScalar(Math.max(.01,e.size*5.0*(1+u*1.55)));e.hot.material.opacity=.64*Math.max(0,1-e.age/1.8);e.flash.scale.setScalar(1+u*2.3);e.flash.material.opacity=.58*Math.max(0,1-e.age/.95);
           e.shock.material.uniforms.uAge.value=e.age;e.shock.material.uniforms.uAlpha.value=.9*(1-u);
           if(e.shock2){e.shock2.material.uniforms.uAge.value=e.age;e.shock2.material.uniforms.uAlpha.value=.75*Math.pow(1-u,.85);}
           const steps=Math.max(1,Math.ceil(dt*300/5)),h=dt*300/steps,mu=REAL_G*e.planet.mass;
@@ -5742,7 +5922,7 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
         }else if(e.kind==='beam'){const deposited=e.power*Math.max(0,Math.min(dt,e.duration-(e.age-dt)));e.report.energy+=deposited;e.report.groundEnergy+=deposited;e.body.currentTemp+=deposited*.01/Math.max(1,(e.physical.planet.atmosphere?e.physical.planet.atmoMass:e.physical.planet.mass*.001)*1000);renderLabReport();e.hot.material.opacity=.5+.2*Math.sin(e.age*14);e.shock.material.uniforms.uAge.value=e.age;e.shock.material.uniforms.uAlpha.value=.55*(1-u);e.body.uniforms.uHeatGlow.value=Math.max(e.body.uniforms.uHeatGlow.value,.45*Math.sin(u*Math.PI));}
         else if(e.kind==='tidal'){const center=worldToSimulation(e.body.mesh.getWorldPosition(new THREE.Vector3()),e.body.scaleKey),distance=3+Math.pow((u-.5)*10,2),ratio=2*e.massRatio/distance**3;
           e.flyby.position.copy(center).add(new THREE.Vector3((u-.5)*e.body.radius*14,e.body.radius*3,0));e.body.mesh.scale.copy(e.initialScale).multiply(new THREE.Vector3(1+Math.min(.42,ratio),1-Math.min(.22,ratio*.5),1-Math.min(.22,ratio*.5)));}
-        if(u>=1){if(e.root)disposeTree(e.root);if(e.shock)disposeTree(e.shock.mesh);if(e.shock2)disposeTree(e.shock2.mesh);if(e.debris)disposeTree(e.debris);if(e.flyby){disposeTree(e.flyby);e.body.mesh.scale.copy(e.initialScale);}e.body.uniforms.uHeatGlow.value=Math.min(1.2,(1-e.body.integrity/100)*.85);lab.effects.splice(i,1);if(e.report){e.report.phase='完成';renderLabReport();}}
+        if(u>=1){if(e.root)disposeTree(e.root);if(e.shock)disposeTree(e.shock.mesh);if(e.shock2)disposeTree(e.shock2.mesh);if(e.debris)disposeTree(e.debris);if(e.flyby){disposeTree(e.flyby);e.body.mesh.scale.copy(e.initialScale);}const maxGlow=e.body.id!=='sun'&&PLANET_PHYSICS[e.body.id]&&!PLANET_PHYSICS[e.body.id].solid?0.45:1.05;e.body.uniforms.uHeatGlow.value=Math.min(maxGlow,(1-e.body.integrity/100)*.85);lab.effects.splice(i,1);if(e.report){e.report.phase='完成';renderLabReport();}}
       }
     }
     function resetLab(body=null) {
@@ -5771,7 +5951,7 @@ body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
       document.getElementById('val-ast-diam').textContent=state.astDiamKm<1?(state.astDiamKm*1000).toFixed(0)+' m':state.astDiamKm.toFixed(2)+' km';
       const monsterEst=isMonster?(1.6e24*Math.pow(10,(monsterLab.power-1)*.95)*(.65+monsterLab.scale*.45)):0;
       document.getElementById('val-est-mt').textContent=((isMonster?monsterEst:impact?physics.initialEnergy:energyForType(type))/4.184e15).toExponential(2)+' Mt TNT';
-      document.getElementById('lab-physical-note').textContent=isMonster?(MONSTER_NOTES[type]||'科幻/玄幻巨兽与舰队毁灭演出，支持体型/破坏力调节与 3 连发叠加，Lv.5+ 破坏力可将固体行星彻底粉碎。'):impact?`${physics.planet.solid?'固体表面 · 支持最多 16 处熔岩坑与尘埃环叠加':'气态目标，无岩石撞击坑'}；${physics.planet.atmosphere&&lab.atmosphere?'指数大气 + 阻力 + 等离子烧蚀 + 碎裂近似':'无大气减速'}。`:['singularity','foil','vacuum'].includes(type)?'科幻 / 假说的艺术演出，不对应经过验证的物理模型。':type==='tidal'?'点质量潮汐比例与放大的形变示意，不是流体解。':'理想能量沉积模型。支持连续多次发射，观察热融裂纹与冲击波叠加。';
+      document.getElementById('lab-physical-note').textContent=isMonster?(MONSTER_NOTES[type]||'科幻/玄幻巨兽与舰队毁灭演出，支持体型/破坏力调节与 3 连发叠加，Lv.5+ 破坏力可将行星或卫星彻底粉碎。'):impact?`${physics.planet.solid?'固体表面 · 支持最多 16 处熔岩坑与尘埃环叠加':'气态巨行星 · 触发电离风暴与核心解体'}${physics.planet.atmosphere&&lab.atmosphere?'；指数大气 + 阻力 + 等离子烧蚀':'；无大气减速'}。`:['singularity','foil','vacuum'].includes(type)?'科幻 / 假说的艺术演出，不对应经过验证的物理模型。':type==='tidal'?'点质量潮汐比例与放大的形变示意，不是流体解。':'理想能量沉积模型。支持连续多次发射，观察热融裂纹与冲击波叠加。';
     }
     function syncSmashMeter(body=getActiveLabTarget()) {
       const lbl=document.getElementById('smash-target-label'),val=document.getElementById('smash-integrity-val'),bar=document.getElementById('smash-bar-fill');
@@ -9723,7 +9903,11 @@ function normalizeSandboxUniverse(value) {
       sb$('sb-pause-btn').setAttribute('aria-pressed',String(sb.paused));sb$('sb-pause-btn').textContent=sb.paused?'▶ 继续':'Ⅱ 暂停';
     }
     function sbBindExtendedControls() {
-      sb.sizeMode='illustrative';sb.flightMode=true;sbBindTelemetry();
+      const narrow=window.innerWidth<=760;
+      sb.sizeMode='illustrative';sb.flightMode=!narrow;sbBindTelemetry();
+      sb$('sb-nav-mode').setAttribute('aria-pressed',String(sb.flightMode));
+      sb$('sb-nav-mode').textContent=sb.flightMode?'🕹️ 方向遥控':'🕹️ 打开遥控';
+      if(sb$('sb-flight-pad'))sb$('sb-flight-pad').hidden=!sb.flightMode;
       sb$('sb-overview').onclick=sbOverview;sb$('sb-focus-selected').onclick=()=>sbFocusBody();
       sb$('sb-body-locator').onchange=e=>{sbFocusBody(sb.bodies.find(b=>b.id===e.target.value));e.target.value='';};
       sb$('sb-nav-mode').onclick=()=>{sb.flightMode=!sb.flightMode;sb$('sb-nav-mode').setAttribute('aria-pressed',String(sb.flightMode));sb$('sb-nav-mode').textContent=sb.flightMode?'🕹️ 方向遥控':'🕹️ 打开遥控';sb$('sb-flight-pad').hidden=!sb.flightMode;};
@@ -11422,6 +11606,7 @@ function normalizeSandboxUniverse(value) {
       appendLog(`[撞击] ${projectile.label || '小行星'} 命中 ${enc.name} · ${mtStr} · 完整度 ${body.integrity.toFixed(1)}%`, 'rose');
 
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     // 发射弹体（小行星 / 动能柱 / 双尾彗星 / 陨石雨 / 光粒 / 二向箔）
@@ -11636,6 +11821,7 @@ function normalizeSandboxUniverse(value) {
 
       activeExoticEffects.push({ type: 'shatter', body, cloud, vels, age: 0, maxAge: 999 });
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     // 二向箔维度跌落（将目标压扁为发光二维平面画卷）
@@ -11672,6 +11858,7 @@ function normalizeSandboxUniverse(value) {
 
       activeExoticEffects.push({ type: 'flatten', body, foilPlane, age: 0, maxAge: 999 });
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     // 干净还原单颗天体或全部场景状态
@@ -11722,6 +11909,7 @@ function normalizeSandboxUniverse(value) {
         }
       }
       if (state.lockedBody === body) updateLeftPanelTelemetry(body);
+      if (typeof syncSmashMeter === 'function') syncSmashMeter(body);
     }
 
     function cleanupExoticEffect(fx) {
@@ -11851,7 +12039,12 @@ function normalizeSandboxUniverse(value) {
       if (moveCamera) {
         const offsetDir = camera.position.clone().sub(wp).normalize();
         if (offsetDir.lengthSq() < 0.01) offsetDir.set(0, 0.35, 1).normalize();
-        const dist = Math.max(body.radius * 3.8, 8.5);
+        const vHalf = THREE.MathUtils.degToRad((camera.fov || 50) * 0.5);
+        const aspect = Math.max(0.35, camera.aspect || (innerWidth / Math.max(1, innerHeight)));
+        const hHalf = Math.atan(Math.tan(vHalf) * aspect);
+        const fitR = body.radius * (body.id === 'sun' ? 2.65 : 1.75);
+        const minFit = fitR / Math.sin(Math.min(vHalf, hHalf));
+        const dist = Math.max(body.radius * (body.id === 'sun' ? 5.6 : 4.2), minFit, 9.5);
         startCamTransition(wp.clone().add(offsetDir.multiplyScalar(dist)), wp);
       }
     }
@@ -12044,6 +12237,20 @@ function normalizeSandboxUniverse(value) {
       L5:['宇宙纤维网 · 空间的演化','空间膨胀与物质汇聚同时进行。切换物理坐标和共动坐标比较。','简化 ΛCDM 尺度因子与固定共动骨架；节点流动是约束示意，不代表实际观测重建。']
     };
     function safeStorageRead(key){try{return localStorage.getItem(key);}catch{return null;}}
+    function syncMobileLayoutMetrics() {
+      if (document.body.dataset.layout !== 'mobile') {
+        document.documentElement.style.removeProperty('--mob-subbar-top');
+        return;
+      }
+      requestAnimationFrame(() => {
+        const hdr = document.getElementById('observatory-header');
+        if (!hdr) return;
+        const bottom = Math.ceil(hdr.getBoundingClientRect().bottom);
+        if (bottom > 30) {
+          document.documentElement.style.setProperty('--mob-subbar-top', (bottom + 6) + 'px');
+        }
+      });
+    }
     function setLayout(mode, remember=true) {
       document.body.dataset.layout=mode;
       if(remember){try{localStorage.setItem('cosmic-layout',mode);}catch{}}
@@ -12053,6 +12260,7 @@ function normalizeSandboxUniverse(value) {
       document.getElementById('right-panel').classList.toggle('drawer-collapsed',compact);
       document.body.classList.remove('sheet-open');syncPanelAccessibility();
       resizeViewport(true);
+      syncMobileLayoutMetrics();
     }
     function syncPanelAccessibility() {
       const left=document.getElementById('left-panel'),right=document.getElementById('right-panel');
@@ -12279,6 +12487,7 @@ function normalizeSandboxUniverse(value) {
       camera.aspect=w/h;camera.updateProjectionMatrix();
       const ratio=Math.min(devicePixelRatio,document.body.dataset.layout==='mobile'?1.25:1.5);
       renderer.setPixelRatio(ratio);renderer.setSize(w,h);composer.setPixelRatio(ratio);composer.setSize(w,h);
+      syncMobileLayoutMetrics();
       if(reframe||Math.abs(camera.aspect-previousAspect)>.2){
         if(!state.lockedBody){const meta=SCALE_META[state.currentScale];frameOverview();}
       }

@@ -112,14 +112,14 @@
       body.statusText=!planet.solid?'云层 / 光球剧烈扰动':body.integrity<25?'地壳崩裂 · 全球岩浆海':body.integrity<55?'剧烈叠加损伤 · 尘埃核冬':report.airburst?'大气空爆 · 冲击波横扫':lab.surface==='ocean'?'巨型海啸与水汽羽流':`累计 ${body.stackedHits} 次撞击 · 熔岩裂谷扩散`;
       if(body.cloudsMesh)body.cloudsMesh.material.uniforms.uOpacity.value=Math.max(0,body.atmoPct/100);
       if(body.atmoMesh)body.atmoMesh.material.uniforms.uIntensity.value=Math.max(0,body.atmoPct/100)*.85;
-      body.uniforms.uDamage.value=1-body.integrity/100;
-      body.uniforms.uHeatGlow.value=Math.min(1.5,Math.max(body.uniforms.uHeatGlow.value,(1-body.integrity/100)*.95));
+      body.uniforms.uDamage.value=planet.solid?(1-body.integrity/100):Math.min(.55,(1-body.integrity/100)*.6);
+      body.uniforms.uHeatGlow.value=planet.solid?Math.min(1.15,Math.max(body.uniforms.uHeatGlow.value,(1-body.integrity/100)*.82)):Math.min(.48,(1-body.integrity/100)*.48);
       if(typeof ensurePlanetInterior==='function')ensurePlanetInterior(body);
       ensureStackedVisuals(body,planet);
       if(typeof syncSmashMeter==='function')syncSmashMeter(body);
       const isBuster=typeof PLANET_BUSTER_IDS!=='undefined'&&PLANET_BUSTER_IDS.has(type);
       const bigImpact=type==='asteroid'&&state.astDiamKm>=60;
-      if(planet.solid&&!MONSTER_IDS.has(type)&&((monsterLab.autoBust&&(isBuster||bigImpact))||body.integrity<=10)){
+      if(body.id!=='sun'&&!MONSTER_IDS.has(type)&&((monsterLab.autoBust&&(isBuster||bigImpact))||body.integrity<=14)){
         const bustCol=type==='antimatter'?0xe879f9:type==='photoid'?0x60a5fa:type==='dyson'?0xfbbf24:0xff5a1f;
         if(typeof triggerPlanetShatter==='function')triggerPlanetShatter(body,bustCol);
       }
@@ -242,7 +242,7 @@
       if(lab.effects.length+lab.projectiles.length+activeExoticEffects.length>=(document.body.dataset.layout==='mobile'?12:24)){showToast('当前并发实验较多，请稍候片刻','amber');return;}
       if(typeof MONSTER_IDS!=='undefined'&&MONSTER_IDS.has(type)){spawnMonsterExperiment(type,body,point);return;}
       if(!body||body.isDestroyed){showToast('请先选择一个完整的天体','amber');return;}
-      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻爆星演出，支持一键复原','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 💥 爆星演出';document.getElementById('lab-report-values').textContent='高能科幻爆星演出：可随时点击“单目标复原”还原。';if(type==='foil')flattenBodyTo2D(body);else{legacyExecuteExoticExperiment(type,body,point);if(monsterLab.autoBust&&PLANET_PHYSICS[body.id]?.solid)lab.salvoTimers.push(setTimeout(()=>{if(!body.isDestroyed&&!body.shatterGroup)triggerPlanetShatter(body,type==='singularity'?0xa855f7:0x38bdf8);},1800));}return;}
+      if(['singularity','foil','vacuum'].includes(type)){showToast('此类型为科幻爆星演出，支持一键复原','amber');lab.lastReport=null;document.getElementById('lab-phase').textContent=EXPERIMENTS.find(e=>e[0]===type)[2]+' · 💥 爆星演出';document.getElementById('lab-report-values').textContent='高能科幻爆星演出：可随时点击“单目标复原”还原。';if(type==='foil')flattenBodyTo2D(body);else{legacyExecuteExoticExperiment(type,body,point);if(monsterLab.autoBust&&body.id!=='sun')lab.salvoTimers.push(setTimeout(()=>{if(!body.isDestroyed&&!body.shatterGroup)triggerPlanetShatter(body,type==='singularity'?0xa855f7:0x38bdf8);},1800));}return;}
       if(type==='tidal'){tidalEncounter(body);return;}
       if(['nuclear','antimatter','laser','dyson','grb','photoid'].includes(type)){spawnRadiation(body,type,point);return;}
       const center=body.mesh.getWorldPosition(new THREE.Vector3()),radial=camera.position.clone().sub(center).normalize(),side=new THREE.Vector3(0,1,0).cross(radial).normalize();
@@ -256,7 +256,7 @@
       if(!body||body.isDestroyed){showToast('请先选择可撞击的行星或卫星','amber');return;}
       const center=body.mesh.getWorldPosition(new THREE.Vector3()),radial=camera.position.clone().sub(center).normalize();
       const t1=new THREE.Vector3(0,1,0).cross(radial).normalize(),t2=radial.clone().cross(t1).normalize();
-      const offsets=[[0,0],[.34,.22],[-.32,.25]];
+      const offsets=[[0,0],[.58,.32],[-.55,-.28]];
       offsets.forEach(([ox,oy],idx)=>{
         const timer=setTimeout(()=>{
           if(body.isDestroyed||!['L0','L1'].includes(state.currentScale))return;
@@ -297,7 +297,7 @@
       }
       for(let i=lab.effects.length-1;i>=0;i--){const e=lab.effects[i];if(e.body.scaleKey!==state.currentScale)continue;e.age+=dt;const u=Math.min(1,e.age/e.duration);
         if(e.kind==='blast'){
-          e.hot.scale.setScalar(Math.max(.01,e.size*6.5*(1+u*1.8)));e.hot.material.opacity=.92*Math.max(0,1-e.age/2.2);e.flash.scale.setScalar(1+u*2.8);e.flash.material.opacity=.88*Math.max(0,1-e.age/1.1);
+          e.hot.scale.setScalar(Math.max(.01,e.size*5.0*(1+u*1.55)));e.hot.material.opacity=.64*Math.max(0,1-e.age/1.8);e.flash.scale.setScalar(1+u*2.3);e.flash.material.opacity=.58*Math.max(0,1-e.age/.95);
           e.shock.material.uniforms.uAge.value=e.age;e.shock.material.uniforms.uAlpha.value=.9*(1-u);
           if(e.shock2){e.shock2.material.uniforms.uAge.value=e.age;e.shock2.material.uniforms.uAlpha.value=.75*Math.pow(1-u,.85);}
           const steps=Math.max(1,Math.ceil(dt*300/5)),h=dt*300/steps,mu=REAL_G*e.planet.mass;
@@ -307,7 +307,7 @@
         }else if(e.kind==='beam'){const deposited=e.power*Math.max(0,Math.min(dt,e.duration-(e.age-dt)));e.report.energy+=deposited;e.report.groundEnergy+=deposited;e.body.currentTemp+=deposited*.01/Math.max(1,(e.physical.planet.atmosphere?e.physical.planet.atmoMass:e.physical.planet.mass*.001)*1000);renderLabReport();e.hot.material.opacity=.5+.2*Math.sin(e.age*14);e.shock.material.uniforms.uAge.value=e.age;e.shock.material.uniforms.uAlpha.value=.55*(1-u);e.body.uniforms.uHeatGlow.value=Math.max(e.body.uniforms.uHeatGlow.value,.45*Math.sin(u*Math.PI));}
         else if(e.kind==='tidal'){const center=worldToSimulation(e.body.mesh.getWorldPosition(new THREE.Vector3()),e.body.scaleKey),distance=3+Math.pow((u-.5)*10,2),ratio=2*e.massRatio/distance**3;
           e.flyby.position.copy(center).add(new THREE.Vector3((u-.5)*e.body.radius*14,e.body.radius*3,0));e.body.mesh.scale.copy(e.initialScale).multiply(new THREE.Vector3(1+Math.min(.42,ratio),1-Math.min(.22,ratio*.5),1-Math.min(.22,ratio*.5)));}
-        if(u>=1){if(e.root)disposeTree(e.root);if(e.shock)disposeTree(e.shock.mesh);if(e.shock2)disposeTree(e.shock2.mesh);if(e.debris)disposeTree(e.debris);if(e.flyby){disposeTree(e.flyby);e.body.mesh.scale.copy(e.initialScale);}e.body.uniforms.uHeatGlow.value=Math.min(1.2,(1-e.body.integrity/100)*.85);lab.effects.splice(i,1);if(e.report){e.report.phase='完成';renderLabReport();}}
+        if(u>=1){if(e.root)disposeTree(e.root);if(e.shock)disposeTree(e.shock.mesh);if(e.shock2)disposeTree(e.shock2.mesh);if(e.debris)disposeTree(e.debris);if(e.flyby){disposeTree(e.flyby);e.body.mesh.scale.copy(e.initialScale);}const maxGlow=e.body.id!=='sun'&&PLANET_PHYSICS[e.body.id]&&!PLANET_PHYSICS[e.body.id].solid?0.45:1.05;e.body.uniforms.uHeatGlow.value=Math.min(maxGlow,(1-e.body.integrity/100)*.85);lab.effects.splice(i,1);if(e.report){e.report.phase='完成';renderLabReport();}}
       }
     }
     function resetLab(body=null) {
@@ -336,7 +336,7 @@
       document.getElementById('val-ast-diam').textContent=state.astDiamKm<1?(state.astDiamKm*1000).toFixed(0)+' m':state.astDiamKm.toFixed(2)+' km';
       const monsterEst=isMonster?(1.6e24*Math.pow(10,(monsterLab.power-1)*.95)*(.65+monsterLab.scale*.45)):0;
       document.getElementById('val-est-mt').textContent=((isMonster?monsterEst:impact?physics.initialEnergy:energyForType(type))/4.184e15).toExponential(2)+' Mt TNT';
-      document.getElementById('lab-physical-note').textContent=isMonster?(MONSTER_NOTES[type]||'科幻/玄幻巨兽与舰队毁灭演出，支持体型/破坏力调节与 3 连发叠加，Lv.5+ 破坏力可将固体行星彻底粉碎。'):impact?`${physics.planet.solid?'固体表面 · 支持最多 16 处熔岩坑与尘埃环叠加':'气态目标，无岩石撞击坑'}；${physics.planet.atmosphere&&lab.atmosphere?'指数大气 + 阻力 + 等离子烧蚀 + 碎裂近似':'无大气减速'}。`:['singularity','foil','vacuum'].includes(type)?'科幻 / 假说的艺术演出，不对应经过验证的物理模型。':type==='tidal'?'点质量潮汐比例与放大的形变示意，不是流体解。':'理想能量沉积模型。支持连续多次发射，观察热融裂纹与冲击波叠加。';
+      document.getElementById('lab-physical-note').textContent=isMonster?(MONSTER_NOTES[type]||'科幻/玄幻巨兽与舰队毁灭演出，支持体型/破坏力调节与 3 连发叠加，Lv.5+ 破坏力可将行星或卫星彻底粉碎。'):impact?`${physics.planet.solid?'固体表面 · 支持最多 16 处熔岩坑与尘埃环叠加':'气态巨行星 · 触发电离风暴与核心解体'}${physics.planet.atmosphere&&lab.atmosphere?'；指数大气 + 阻力 + 等离子烧蚀':'；无大气减速'}。`:['singularity','foil','vacuum'].includes(type)?'科幻 / 假说的艺术演出，不对应经过验证的物理模型。':type==='tidal'?'点质量潮汐比例与放大的形变示意，不是流体解。':'理想能量沉积模型。支持连续多次发射，观察热融裂纹与冲击波叠加。';
     }
     function syncSmashMeter(body=getActiveLabTarget()) {
       const lbl=document.getElementById('smash-target-label'),val=document.getElementById('smash-integrity-val'),bar=document.getElementById('smash-bar-fill');

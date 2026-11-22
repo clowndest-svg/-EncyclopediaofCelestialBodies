@@ -8,6 +8,20 @@
       L5:['宇宙纤维网 · 深空的骨架','物质沿纤维流向高密度节点，宇宙空洞在其间展开。','程序化密度网与引力流示意。纤维几何固定；粒子受节点引力与纤维约束，不代表实际观测数据。']
     };
     function safeStorageRead(key){try{return localStorage.getItem(key);}catch{return null;}}
+    function syncMobileLayoutMetrics() {
+      if (document.body.dataset.layout !== 'mobile') {
+        document.documentElement.style.removeProperty('--mob-subbar-top');
+        return;
+      }
+      requestAnimationFrame(() => {
+        const hdr = document.getElementById('observatory-header');
+        if (!hdr) return;
+        const bottom = Math.ceil(hdr.getBoundingClientRect().bottom);
+        if (bottom > 30) {
+          document.documentElement.style.setProperty('--mob-subbar-top', (bottom + 6) + 'px');
+        }
+      });
+    }
     function setLayout(mode, remember=true) {
       document.body.dataset.layout=mode;
       if(remember){try{localStorage.setItem('cosmic-layout',mode);}catch{}}
@@ -17,6 +31,7 @@
       document.getElementById('right-panel').classList.toggle('drawer-collapsed',compact);
       document.body.classList.remove('sheet-open');syncPanelAccessibility();
       resizeViewport(true);
+      syncMobileLayoutMetrics();
     }
     function syncPanelAccessibility() {
       const left=document.getElementById('left-panel'),right=document.getElementById('right-panel');
@@ -236,6 +251,7 @@
       camera.aspect=w/h;camera.updateProjectionMatrix();
       const ratio=Math.min(devicePixelRatio,document.body.dataset.layout==='mobile'?1.25:1.5);
       renderer.setPixelRatio(ratio);renderer.setSize(w,h);composer.setPixelRatio(ratio);composer.setSize(w,h);
+      syncMobileLayoutMetrics();
       if(reframe||Math.abs(camera.aspect-previousAspect)>.2){
         if(!state.lockedBody){const meta=SCALE_META[state.currentScale];startCamTransition(fittedCameraPosition(meta.camPos),new THREE.Vector3(...meta.target));}
       }
