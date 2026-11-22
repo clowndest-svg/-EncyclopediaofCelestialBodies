@@ -469,3 +469,90 @@ body[data-layout="desktop"] #right-panel {
   border: 1px solid rgba(148, 197, 255, 0.24) !important;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
 }
+
+/* =========================================================================
+   6. 移动端 (<= 760px / data-layout="mobile") 全面自适应防挤压与统一样式修复
+   ========================================================================= */
+body[data-layout="mobile"] #toggle-left-btn,
+body[data-layout="mobile"] #btn-cosmic-book,
+body[data-layout="mobile"] .sandbox-launch-btn,
+body[data-layout="mobile"] #toggle-right-btn {
+  top: 114px !important;
+  bottom: auto !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 9px !important;
+  font-size: 11px !important;
+  border-radius: 10px !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+body[data-layout="mobile"] #toggle-left-btn { left: 10px !important; width: auto !important; }
+body[data-layout="mobile"] #btn-cosmic-book { left: 97px !important; }
+body[data-layout="mobile"] .sandbox-launch-btn {
+  left: 185px !important;
+  background: linear-gradient(135deg, rgba(12, 22, 44, 0.92), rgba(30, 22, 58, 0.92)) !important;
+  border: 1px solid rgba(125, 211, 252, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+body[data-layout="mobile"] #toggle-right-btn { right: 10px !important; }
+
+@media (max-width: 760px) {
+  #cosmic-book .book-header {
+    flex-wrap: wrap !important;
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+  #cosmic-book .book-header-tools {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px !important;
+  }
+  #cosmic-book .book-header-tools button {
+    white-space: nowrap !important;
+    padding: 5px 9px !important;
+    font-size: 11px !important;
+    min-height: 30px !important;
+  }
+  #cosmic-book .book-object-heading {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  #cosmic-book .book-heading-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100%;
+  }
+  #cosmic-book .book-heading-actions button {
+    flex: 1 1 auto !important;
+    min-width: 72px;
+    padding: 7px 8px !important;
+    font-size: 11px !important;
+    text-align: center;
+    white-space: nowrap !important;
+  }
+  #cosmic-book .book-everyday-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .sb-topbar {
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+  .sb-dock {
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+  .sb-tools {
+    gap: 4px !important;
+  }
+  .sb-tools button {
+    padding: 5px 7px !important;
+    font-size: 11px !important;
+  }
+}

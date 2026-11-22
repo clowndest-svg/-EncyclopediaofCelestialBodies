@@ -8,6 +8,7 @@
     "start:lan": "node --env-file-if-exists=.env server/index.mjs --lan",
     "build": "python .work/assemble.py",
     "build:exe": "node desktop/build_desktop.mjs",
+    "build:apk": "node android/build_apk.mjs",
     "catalog:core": "node server/scripts/catalog-core.mjs",
     "catalog:pack": "node server/scripts/catalog-pack.mjs",
     "test": "node --test server/tests/*.test.mjs"

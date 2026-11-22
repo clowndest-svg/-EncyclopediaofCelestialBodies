@@ -19,3 +19,7 @@ pelican_seaside_bike.html
 promo_media/
 dist_exe/
 desktop/cosmos.ico
+
+dist_apk/
+android/_build/
+android/cosmic-release.jks
