@@ -3752,11 +3752,21 @@ input[type="range"]::-moz-range-thumb {
       motion.solar.forEach(b=>{b.p.sub(center);b.v.sub(velocity);b.initialP=b.p.clone();b.initialV=b.v.clone();b.body.physical=b;});
       seedSolarHistory();renderSolarState();
     }
+    function orbitMeanFromPos(orbit, pos) {
+      const c = Math.cos(orbit.argument), s = Math.sin(orbit.argument);
+      const uProj = pos.y * Math.sin(orbit.inclination) + pos.z * Math.cos(orbit.inclination);
+      const x = pos.x * c + uProj * s;
+      const z = -pos.x * s + uProj * c;
+      const bSemi = orbit.a * Math.sqrt(Math.max(1e-6, 1 - orbit.e * orbit.e));
+      const E = Math.atan2(z / bSemi, x / orbit.a + orbit.e);
+      return E - orbit.e * Math.sin(E);
+    }
+
     function seedSolarHistory() {
       const span=Math.min(10,motion.historyYears),copy=motion.solar.map(b=>({id:b.id,mass:b.mass,p:b.p.clone(),v:b.v.clone()})),samples=[solarSample(motion.years,copy)],steps=140,interval=span/steps;
       for(let i=1;i<=steps;i++){const n=Math.max(1,Math.min(14,Math.ceil(interval*365.25))),h=-interval/n;for(let k=0;k<n;k++)gravitationalStep(copy,h,SOLAR_GM*dynamics.gravity,motion.nbody);samples.push(solarSample(motion.years-i*interval,copy));}
       motion.histories=samples.reverse();motion.lastHistory=motion.years;
-      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.96:b.id==='sun'?.88:.82,200);});
+      motion.solar.forEach(b=>{b.historyLine ||= makeHistoryLine('L1',PLANET_TRAIL_COLORS[b.id]||TRAJECTORY_COLOR,b.id==='earth'?.96:b.id==='sun'?.88:.82,420);});
       renderSolarHistory();
     }
     function renderSolarState() {
@@ -3789,7 +3799,7 @@ input[type="range"]::-moz-range-thumb {
     }
     function renderSolarHistory() {
       if(!motion.solar.length)return;
-      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=200,ext=motion.frame==='external';
+      const sunNow=motion.solar[0],scaleFactor=motion.historyYears/12,N=420,ext=motion.frame==='external';
       const samples=motion.histories.concat(solarSample(motion.years));
       // 更新银河年大尺度编织光带（远景/银河年全景下沿太阳身后 150° 银道圆弧延伸）
       if(motion.galacticRibbon&&motion.galacticRibbon.visible){
@@ -3807,11 +3817,11 @@ input[type="range"]::-moz-range-thumb {
       motion.solar.forEach((b,index)=>{
         const attr=b.historyLine.geometry.attributes.position;
         if(ext&&b.orbit){
-          // 沿弯曲银河公转大圆实时绘制丝滑高精度 3D 螺旋轨道（零堆分配路径）
+          // 沿弯曲银河公转大圆实时绘制丝滑高精度 3D 螺旋轨道（以实测日心相位对齐，永不漂移歪斜）
           const span=(PLANET_HELIX_SPAN[b.id]||12)*Math.max(.35,scaleFactor);
-          const omega=Math.sqrt(SOLAR_GM*dynamics.gravity/Math.pow(b.orbit.a,3));
-          const curMean=b.body.orbit.mean;
+          const omega=Math.sqrt(SOLAR_GM*Math.max(0.05,dynamics.gravity)/Math.pow(b.orbit.a,3));
           _tmpRel.copy(b.p).sub(sunNow.p);
+          const curMean=orbitMeanFromPos(b.orbit,_tmpRel);
           mapSolarAU(_tmpRel,_tmpExact);
           mapSolarAU(orbitPoint(b.orbit,curMean,_tmpOrbit),_tmpKepler);
           _tmpOff.copy(_tmpExact).sub(_tmpKepler);
