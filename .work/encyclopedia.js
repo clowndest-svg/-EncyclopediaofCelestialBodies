@@ -1,6 +1,25 @@
     const BOOK_TEXTURES=JSON.parse(document.getElementById('book-texture-data').textContent);
     const BOOK_CORE=JSON.parse(document.getElementById('book-core-data').textContent);
-    const cosmicBook={open:false,ready:false,mode:'core',data:BOOK_CORE.items,stats:BOOK_CORE.stats,q:'',realm:'',kind:'',page:1,limit:24,sort:'featured',items:[],selected:null,queryTicket:0,detailTicket:0,favorites:new Set(),savedCache:new Map(),stages:[],stageIndex:0,stageTimer:null,qaList:[],qaIndex:0,compareIds:[]};
+    const cosmicBook={open:false,ready:false,mode:'core',data:BOOK_CORE.items,stats:BOOK_CORE.stats,q:'',realm:'',kind:'',page:1,limit:24,sort:'featured',items:[],selected:null,queryTicket:0,detailTicket:0,favorites:new Set(),visited:new Set(),savedCache:new Map(),stages:[],stageIndex:0,stageTimer:null,qaList:[],qaIndex:0,compareIds:[],tourId:'',quizPool:[],quizIdx:0,quizScore:0,speaking:false};
+    const BOOK_TOURS={
+      solar:{title:'🪐 太阳系全家福',ids:['sun','mercury','venus','earth','moon','mars','jupiter','saturn','uranus','neptune','pluto']},
+      extreme:{title:'🕳️ 黑洞与极端天体',ids:['blackhole-sgr-a','blackhole-m87','blackhole-ton618','star-crab-pulsar','star-sgr-1806-20','star-sirius-b']},
+      exo:{title:'🌍 寻找第二个地球',ids:['exo-proxima-cen-b','exo-trappist-1-e','exo-kepler-452-b','exo-kepler-186-f','exo-k2-18-b','exo-55-cnc-e']},
+      wonders:{title:'🌌 肉眼与望远镜名胜',ids:['ngc-0224','ngc-1976','ngc-6611','cluster-pleiades','ngc-1952','ngc-4594','halley']},
+      moons:{title:'🛸 冰下海洋与卫星奇观',ids:['europa','enceladus','titan','io','ganymede','triton']}
+    };
+    const BOOK_QUIZ_BANK=[
+      {q:'太阳系八大行星中，哪一颗表面平均温度最高（约 464 °C）？',opts:['水星（离太阳最近）','金星（失控二氧化碳温室效应）','火星（红色沙漠）','木星（气态巨行星）'],ans:1,exp:'金星虽然排在第二，但浓密二氧化碳大气造成极强温室效应，昼夜均高于 460 °C，比水星更热。'},
+      {q:'如果把土星放进一个足够大的宇宙浴缸里，它理论上会怎样？',opts:['直接沉底','浮在水面上（平均密度约 0.69 g/cm³）','瞬间融化','变成黑洞'],ans:1,exp:'土星是太阳系唯一平均密度低于水（1 g/cm³）的行星，主要由氢和氦构成。'},
+      {q:'距离太阳系最近的恒星“比邻星”有多远，光跑过去需要多久？',opts:['约 8 分钟','约 1.3 秒','约 4.24 年','约 250 万年'],ans:2,exp:'比邻星距离约 4.24 光年，哪怕以光速飞行也要 4 年多；按目前最快的探测器也需要数万年。'},
+      {q:'在天文学中，“光年”是用来衡量什么的单位？',opts:['时间长短','距离远近','恒星亮度','行星年龄'],ans:1,exp:'1 光年是光在真空中走一整年的距离，约 9.46 万亿公里。'},
+      {q:'黑洞之所以“黑”，最核心的原因是什么？',opts:['表面涂满黑碳','事件视界内的逃逸速度超过光速','内部温度为绝对零度','它永远不吸引周围物质'],ans:1,exp:'黑洞把巨大质量压缩在极小空间内，事件视界内连光也无法逃脱。不过其外侧吸积盘反而可能极亮。'},
+      {q:'为什么木卫二（欧罗巴）和土卫二是寻找地外生命的热门候选？',opts:['它们上面有茂密森林','厚冰壳下方可能存在液态全球咸水海洋','它们离太阳比地球更近','它们表面温度 25 °C'],ans:1,exp:'木星和土星的潮汐加热使冰卫星内部保持温暖，冰层下方可能存在液态海洋。'},
+      {q:'银河系大约有多少颗恒星？',opts:['几百颗','几万颗','上千亿颗','只有 8 颗'],ans:2,exp:'银河系是一个直径约 10 万光年的棒旋星系，包含 1,000 亿到 4,000 亿颗恒星。'},
+      {q:'为什么宇宙中“看起来很近”的两颗亮星，实际可能相隔上千光年？',opts:['望远镜坏了','夜空只是地球视角下的二维投影，缺少前后纵深','星星每晚都在瞬移','地球在自转'],ans:1,exp:'星座里的星星只是在地球视线方向上挨在一起，真实的三维距离可能相差极远。'},
+      {q:'如果一个 60 公斤的人站在月球上，体重秤大约会显示多少公斤？',opts:['约 10 公斤（约地球重力的 1/6）','约 60 公斤不变','约 360 公斤','0 公斤'],ans:0,exp:'月球表面重力约为地球的 16.5%，所以 60 公斤的人在月球上体感重量大约只有 10 公斤。'},
+      {q:'人类首张直接成像的黑洞照片（M87*）呈现的明亮橙色光环来自哪里？',opts:['黑洞自己发出的手电筒光','黑洞周围被高速加热并受引力弯曲的吸积盘等离子体','太阳反射光','镜头炫光'],ans:1,exp:'黑洞本身不发光，我们看到的是视界外高速旋转的超高温吸积盘辐射，以及强引力造成的环形光晕。'}
+    ];
     const book$=id=>document.getElementById(id);
     const bookEscape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     function bookStored(key,fallback){try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}}
@@ -60,8 +79,151 @@
     function bookLocalQuery(){let data=cosmicBook.data;if(cosmicBook.realm==='saved'){data=data.filter(i=>cosmicBook.favorites.has(i.id));for(const [id,item]of cosmicBook.savedCache)if(cosmicBook.favorites.has(id)&&!data.some(i=>i.id===id))data=data.concat(item);}
       return queryMemory({items:data.map(i=>i.searchText?i:{...i,searchText:[i.name,...(i.aliases||[]),i.subtype,...(i.tags||[])].join(' ').toLowerCase()}),version:cosmicBook.stats.version},{q:cosmicBook.q,realm:cosmicBook.realm==='saved'?'':cosmicBook.realm,kind:cosmicBook.kind,page:cosmicBook.page,limit:cosmicBook.limit,sort:cosmicBook.sort});
     }
+    function bookFormatHumanTime(hours){
+      if(!Number.isFinite(hours)||hours<=0)return '—';
+      if(hours<24)return hours.toFixed(1)+' 小时';
+      const days=hours/24;
+      if(days<365)return Math.round(days).toLocaleString('zh-CN')+' 天';
+      const yrs=days/365.25;
+      if(yrs<1e4)return (yrs<10?yrs.toFixed(1):Math.round(yrs).toLocaleString('zh-CN'))+' 年';
+      if(yrs<1e8)return (yrs/1e4).toFixed(1)+' 万年';
+      return (yrs/1e8).toFixed(1)+' 亿年';
+    }
+    function bookRenderEveryday(item){
+      const el=book$('book-everyday');if(!el)return;
+      const f=item.facts||{},cards=[];
+      // 1) 多久能飞到
+      let distKm=null;
+      if(f.distanceLy)distKm=Number(f.distanceLy)*9.4607e12;
+      else if(f.distanceAU)distKm=Number(f.distanceAU)*1.496e8;
+      else if(f.distanceKm)distKm=Number(f.distanceKm);
+      if(distKm&&distKm>0){
+        const lightH=distKm/1.079e9,planeH=distKm/900,hsrH=distKm/350,voyagerH=distKm/61200;
+        cards.push({title:'🚀 飞过去要多久？',main:`坐客机约 ${bookFormatHumanTime(planeH)}`,sub:`复兴号高铁约 ${bookFormatHumanTime(hsrH)} · 旅行者1号约 ${bookFormatHumanTime(voyagerH)} · 光速约 ${bookFormatHumanTime(lightH)}`});
+      }
+      // 2) 站上去有多重
+      const mE=Number(f.massEarth),rE=Number(f.radiusEarth);
+      if(mE>0&&rE>0&&!['star','blackhole','galaxy','nebula','cluster'].includes(item.kind)){
+        const gRatio=mE/(rE*rE),wt=60*gRatio;
+        const note=item.visual?.preset==='gas'||item.visual?.preset==='ring'?'气态巨星没有固体地面，这是云顶等效重力':gRatio<0.45?'轻轻一跳就能跃起好几米':gRatio>2.2?'重力极强，站立和行走都非常吃力':'和地球体感比较接近';
+        cards.push({title:'⚖️ 60 公斤的人站上去多重？',main:`约 ${wt<10?wt.toFixed(1):Math.round(wt)} 公斤（地球的 ${gRatio.toFixed(2)} 倍）`,sub:note});
+      }
+      // 3) 冷还是热
+      const tk=Number(f.tempK);
+      if(tk>0){
+        const tc=Math.round(tk-273.15);
+        const desc=tc<-150?'比南极最严寒还冷上百度，液氮都要结冰':tc<0?'常年冰封在零下，水只能以坚硬冰岩存在':tc<=45?'处于液态水温和区间，接近人类可感知温度':tc<600?'远超沸水与家用烤箱，金属锡铅都会熔化':tc<3000?'滚烫灼热，岩石与钢铁都会直接熔融':'媲美恒星表层的炽热等离子态，任何已知材料都会气化';
+        cards.push({title:'🌡️ 温度用人话怎么理解？',main:`约 ${tc.toLocaleString('zh-CN')} °C（${numberText(tk)} K）`,sub:desc});
+      }
+      // 4) 体积大小对比
+      const radE=rE||(f.radiusSolar?Number(f.radiusSolar)*109.2:null);
+      if(radE>0&&!['galaxy','nebula','cluster'].includes(item.kind)){
+        const vol=radE**3;
+        const main=vol>=10?`能装下约 ${numberText(vol)} 个地球`:vol>=0.9?`个头和地球差不多（${vol.toFixed(1)} 倍）`:`体积只有地球的 ${vol>=0.01?(vol*100).toFixed(1)+'%':'不到 1%'}`;
+        cards.push({title:'🌍 和地球比大小',main,sub:`直径约是地球的 ${radE>=10?numberText(radE):radE.toFixed(2)} 倍（按球体近似估算）`});
+      }
+      el.hidden=!cards.length;
+      if(cards.length){
+        el.innerHTML=`<div class="book-everyday-head"><h3>💡 普通人秒懂换算</h3><span>把天文数字翻译成生活中的距离、重量与温度</span></div><div class="book-everyday-grid">${cards.map(c=>`<div class="book-everyday-card"><small>${bookEscape(c.title)}</small><strong>${bookEscape(c.main)}</strong><p>${bookEscape(c.sub)}</p></div>`).join('')}</div>`;
+      }
+    }
+    function bookUpdatePassportUI(){
+      const n=cosmicBook.visited.size;
+      const rank=n>=25?'宇宙博学者':n>=12?'星海领航员':n>=5?'太阳系漫游者':'星空学徒';
+      const badge=book$('book-passport-badge');
+      if(badge)badge.textContent=`已探索 ${n} 颗 · ${rank}`;
+    }
+    function bookMarkVisited(item){
+      if(!item?.id)return;
+      cosmicBook.visited.add(item.id);
+      bookSetStored('cosmic-book-visited',[...cosmicBook.visited].slice(-300));
+      bookUpdatePassportUI();
+    }
+    function bookStopSpeech(){
+      try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch{}
+      cosmicBook.speaking=false;
+      const b=book$('book-speak');if(b){b.setAttribute('aria-pressed','false');b.textContent='🔊 朗读';}
+    }
+    function bookToggleSpeech(){
+      if(cosmicBook.speaking){bookStopSpeech();return;}
+      const item=cosmicBook.selected;if(!item)return;
+      if(!window.speechSynthesis){const s=book$('book-source-status');if(s)s.textContent='当前环境不支持系统语音';return;}
+      bookStopSpeech();
+      const firstSec=item.sections?.[0]?`${item.sections[0].title}。${item.sections[0].body.slice(0,180)}`:'';
+      const text=`${item.name}。${item.summary} ${firstSec}`;
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='zh-CN';u.rate=1.02;
+      const zh=window.speechSynthesis.getVoices?.().find(v=>/zh/i.test(v.lang));
+      if(zh)u.voice=zh;
+      u.onend=()=>bookStopSpeech();u.onerror=()=>bookStopSpeech();
+      cosmicBook.speaking=true;
+      const b=book$('book-speak');if(b){b.setAttribute('aria-pressed','true');b.textContent='⏹ 停止';}
+      window.speechSynthesis.speak(u);
+    }
+    function bookSyncTourBar(){
+      const bar=book$('book-tour-bar');if(!bar)return;
+      const tour=BOOK_TOURS[cosmicBook.tourId];
+      if(!tour){bar.hidden=true;return;}
+      const idx=tour.ids.indexOf(cosmicBook.selected?.id);
+      const pos=idx>=0?idx+1:1;
+      bar.hidden=false;
+      book$('book-tour-title').textContent=`${tour.title} · 第 ${pos} / ${tour.ids.length} 站`;
+      book$('book-tour-prev').disabled=pos<=1;
+      book$('book-tour-next').disabled=pos>=tour.ids.length;
+    }
+    function bookSetTour(tourId){
+      cosmicBook.tourId=tourId||'';
+      document.querySelectorAll('[data-book-tour]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bookTour===cosmicBook.tourId)));
+      if(cosmicBook.tourId&&BOOK_TOURS[cosmicBook.tourId]){
+        cosmicBook.q='';cosmicBook.kind='';cosmicBook.realm='';cosmicBook.page=1;
+        if(book$('book-search'))book$('book-search').value='';
+        const firstId=BOOK_TOURS[cosmicBook.tourId].ids[0];
+        bookQuery();
+        if(firstId)bookSelect(firstId);
+      }else{
+        bookSyncTourBar();
+        bookQuery();
+      }
+    }
+    function bookOpenQuiz(){
+      const m=book$('book-quiz-modal');if(!m)return;
+      const shuffled=[...BOOK_QUIZ_BANK].sort(()=>Math.random()-0.5).slice(0,5);
+      cosmicBook.quizPool=shuffled;cosmicBook.quizIdx=0;cosmicBook.quizScore=0;
+      bookRenderQuizStep();
+      m.hidden=false;
+    }
+    function bookRenderQuizStep(){
+      const pool=cosmicBook.quizPool,idx=cosmicBook.quizIdx,item=pool[idx];
+      if(!item)return;
+      book$('book-quiz-progress').textContent=`宇宙科普闯关 · 第 ${idx+1} / ${pool.length} 题`;
+      book$('book-quiz-title').textContent=item.q;
+      book$('book-quiz-score').textContent=`当前得分：${cosmicBook.quizScore} / ${pool.length}`;
+      const fb=book$('book-quiz-feedback');if(fb)fb.hidden=true;
+      const nextBtn=book$('book-quiz-next'),restartBtn=book$('book-quiz-restart');
+      if(nextBtn)nextBtn.hidden=true;if(restartBtn)restartBtn.hidden=true;
+      const opts=book$('book-quiz-options');opts.replaceChildren();
+      item.opts.forEach((label,i)=>{
+        const btn=document.createElement('button');btn.type='button';btn.className='book-quiz-opt';btn.textContent=`${String.fromCharCode(65+i)}. ${label}`;
+        btn.onclick=()=>{
+          [...opts.children].forEach((c,ci)=>{c.disabled=true;if(ci===item.ans)c.dataset.state='correct';else if(ci===i)c.dataset.state='wrong';});
+          const ok=i===item.ans;if(ok)cosmicBook.quizScore++;
+          book$('book-quiz-score').textContent=`当前得分：${cosmicBook.quizScore} / ${pool.length}`;
+          book$('book-quiz-fb-title').textContent=ok?'✅ 回答正确！':'💡 差一点，答案是 '+String.fromCharCode(65+item.ans);
+          book$('book-quiz-fb-body').textContent=item.exp;
+          fb.hidden=false;
+          if(idx+1<pool.length){nextBtn.hidden=false;}else{book$('book-quiz-fb-body').textContent+=` 本轮总分：${cosmicBook.quizScore} / ${pool.length}！`;restartBtn.hidden=false;}
+        };
+        opts.appendChild(btn);
+      });
+    }
     async function bookQuery(){const ticket=++cosmicBook.queryTicket;book$('book-count').textContent='正在寻找…';book$('book-results').innerHTML='<p class="book-loading">正在整理匹配的天体…</p>';let result;
-      try{if(cosmicBook.mode==='api'&&cosmicBook.realm!=='saved'){const p=new URLSearchParams({q:cosmicBook.q,realm:cosmicBook.realm,kind:cosmicBook.kind,page:cosmicBook.page,limit:cosmicBook.limit,sort:cosmicBook.sort});result=await bookFetch('/api/objects?'+p);}else result=bookLocalQuery();}
+      try{
+        if(cosmicBook.tourId&&BOOK_TOURS[cosmicBook.tourId]){
+          const ids=BOOK_TOURS[cosmicBook.tourId].ids;
+          const items=ids.map(id=>cosmicBook.savedCache.get(id)||cosmicBook.data.find(x=>x.id===id)).filter(Boolean);
+          result={items,total:items.length,page:1,pages:1};
+        }else if(cosmicBook.mode==='api'&&cosmicBook.realm!=='saved'){const p=new URLSearchParams({q:cosmicBook.q,realm:cosmicBook.realm,kind:cosmicBook.kind,page:cosmicBook.page,limit:cosmicBook.limit,sort:cosmicBook.sort});result=await bookFetch('/api/objects?'+p);}else result=bookLocalQuery();
+      }
       catch{cosmicBook.mode='core';result=bookLocalQuery();book$('book-source-status').textContent='连接中断 · 已切换本地精选';}
       if(ticket!==cosmicBook.queryTicket)return;cosmicBook.items=result.items;cosmicBook.pages=result.pages||1;book$('book-count').textContent=`${numberText(result.total)} 条${cosmicBook.realm==='saved'?'收藏':'结果'}`;book$('book-mobile-count').textContent=numberText(result.total)+' 条';
       const root=book$('book-results');root.replaceChildren();for(const item of result.items){const button=document.createElement('button');button.className='book-object-card';button.dataset.bookId=item.id;button.setAttribute('aria-current',String(item.id===cosmicBook.selected?.id));button.innerHTML=bookThumbnail(item)+`<div><h4>${bookEscape(item.name)}</h4><p>${bookEscape(item.subtype||KIND_NAMES[item.kind])}</p><small data-realm="${bookEscape(item.realm)}">${bookEscape(REALM_NAMES[item.realm])}${item.facts?.distanceLy?' · '+numberText(item.facts.distanceLy)+' 光年':''}</small></div>`;button.onclick=()=>bookSelect(item);root.appendChild(button);}
@@ -147,7 +309,10 @@
       m.hidden=false;
     }
     function bookRenderDetail(item){
+      bookStopSpeech();
       bookCloseQAModal();
+      bookMarkVisited(item);
+      bookSyncTourBar();
       book$('book-object-name').textContent=item.name;book$('book-object-alias').textContent=(item.aliases||[]).filter(a=>a!==item.name).slice(0,3).join(' / ')||item.id;
       book$('book-badges').innerHTML=`<span data-realm="${bookEscape(item.realm)}">${bookEscape(REALM_NAMES[item.realm])}</span><span>${bookEscape(item.subtype||KIND_NAMES[item.kind])}</span>`;
       book$('book-object-summary').textContent=item.summary;book$('book-model-note').textContent=item.id==='earth'?'NASA Blue Marble 底图 · 动态光照与演化推演':item.realm==='real'?'参数化动态特效模型 · 可调节亮度与演化时期':'原创设定的动态特效展示 · 不是观测记录';
@@ -157,6 +322,7 @@
       const dossierEl=book$('book-dossier');
       if(dossierEl)dossierEl.innerHTML=[['发现者 / 提出者',d.discoverer],['起源与形成机制',d.origin],['空间位置与归属',d.location],['观测与探测来源',d.observation]].filter(([,v])=>v).map(([k,v])=>`<div class="book-dossier-card"><span>${bookEscape(k)}</span><p>${bookEscape(v)}</p></div>`).join('');
       book$('book-sections').innerHTML=item.sections.map(section=>`<section><h3>${bookEscape(section.title)}</h3>${section.body.split(/\n\n/).map(p=>`<p>${bookEscape(p)}</p>`).join('')}</section>`).join('');
+      bookRenderEveryday(item);
       cosmicBook.qaList=item.qa||[];
       const qaSec=book$('book-qa-section'),qaListEl=book$('book-qa-list');
       if(qaSec&&qaListEl){
@@ -185,19 +351,19 @@
     function bookSetTab(tab){document.querySelectorAll('[data-book-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.bookTab===tab)));for(const name of ['story','facts','sources'])book$('book-tab-'+name).hidden=name!==tab;}
     function bookMobilePane(pane){document.querySelector('#cosmic-book .book-shell').dataset.mobilePane=pane;book$('book-show-list').setAttribute('aria-pressed',String(pane==='list'));book$('book-show-detail').setAttribute('aria-pressed',String(pane==='detail'));if(pane==='detail')cosmicBook.viewer?.resize();}
     cosmicBook.show=async()=>{if(cosmicBook.open)return;cosmicBook.open=true;cosmicBook.oldFocus=document.activeElement;book$('cosmic-book').showModal();cosmicBook.viewer ||=new CatalogViewer(book$('book-viewer'));const first=cosmicBook.selected||cosmicBook.data.find(i=>i.id==='sun')||cosmicBook.data[0];await bookSelect(first);bookQuery();bookLoadCatalog();if(innerWidth>760)setTimeout(()=>book$('book-search').focus({preventScroll:true}),20);};
-    cosmicBook.hide=()=>{cosmicBook.open=false;cosmicBook.detailTicket++;bookStopStagePlay();book$('cosmic-book').close();cosmicBook.oldFocus?.focus({preventScroll:true});};
+    cosmicBook.hide=()=>{cosmicBook.open=false;cosmicBook.detailTicket++;bookStopSpeech();bookStopStagePlay();book$('cosmic-book').close();cosmicBook.oldFocus?.focus({preventScroll:true});};
     cosmicBook.frame=dt=>cosmicBook.viewer?.frame(dt);
     cosmicBook.bind=()=>{
-      cosmicBook.favorites=new Set(bookStored('cosmic-book-favorites',[]));cosmicBook.savedCache=new Map(bookStored('cosmic-book-cache',[]));book$('btn-cosmic-book').onclick=cosmicBook.show;book$('book-close').onclick=cosmicBook.hide;
+      cosmicBook.favorites=new Set(bookStored('cosmic-book-favorites',[]));cosmicBook.visited=new Set(bookStored('cosmic-book-visited',[]));cosmicBook.savedCache=new Map(bookStored('cosmic-book-cache',[]));bookUpdatePassportUI();book$('btn-cosmic-book').onclick=cosmicBook.show;book$('book-close').onclick=cosmicBook.hide;
       book$('cosmic-book').addEventListener('cancel',e=>{e.preventDefault();cosmicBook.hide();});
       let timer;const clearSearchBtn=book$('book-search-clear');
-      book$('book-search').oninput=e=>{cosmicBook.q=e.target.value;cosmicBook.page=1;if(clearSearchBtn)clearSearchBtn.hidden=!cosmicBook.q;clearTimeout(timer);timer=setTimeout(bookQuery,160);};
+      book$('book-search').oninput=e=>{cosmicBook.tourId='';document.querySelectorAll('[data-book-tour]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bookTour==='')));bookSyncTourBar();cosmicBook.q=e.target.value;cosmicBook.page=1;if(clearSearchBtn)clearSearchBtn.hidden=!cosmicBook.q;clearTimeout(timer);timer=setTimeout(bookQuery,160);};
       if(clearSearchBtn)clearSearchBtn.onclick=()=>{cosmicBook.q='';cosmicBook.page=1;book$('book-search').value='';clearSearchBtn.hidden=true;book$('book-search').focus();bookQuery();};
       book$('book-kinds').innerHTML='<button data-book-kind="" aria-pressed="true">全部</button>'+Object.entries(KIND_NAMES).map(([id,name])=>`<button data-book-kind="${id}" aria-pressed="false">${name}</button>`).join('');
-      document.querySelectorAll('[data-book-kind]').forEach(b=>b.onclick=()=>{cosmicBook.kind=b.dataset.bookKind;cosmicBook.page=1;document.querySelectorAll('[data-book-kind]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));bookQuery();bookMobilePane('list');});
-      document.querySelectorAll('[data-book-realm]').forEach(b=>b.onclick=()=>{cosmicBook.realm=b.dataset.bookRealm;cosmicBook.page=1;document.querySelectorAll('[data-book-realm]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));bookQuery();bookMobilePane('list');});
+      document.querySelectorAll('[data-book-kind]').forEach(b=>b.onclick=()=>{cosmicBook.tourId='';document.querySelectorAll('[data-book-tour]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.bookTour==='')));bookSyncTourBar();cosmicBook.kind=b.dataset.bookKind;cosmicBook.page=1;document.querySelectorAll('[data-book-kind]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));bookQuery();bookMobilePane('list');});
+      document.querySelectorAll('[data-book-realm]').forEach(b=>b.onclick=()=>{cosmicBook.tourId='';document.querySelectorAll('[data-book-tour]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.bookTour==='')));bookSyncTourBar();cosmicBook.realm=b.dataset.bookRealm;cosmicBook.page=1;document.querySelectorAll('[data-book-realm]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));bookQuery();bookMobilePane('list');});
       book$('book-sort').onchange=e=>{cosmicBook.sort=e.target.value;cosmicBook.page=1;bookQuery();};book$('book-page-prev').onclick=()=>{cosmicBook.page--;bookQuery();};book$('book-page-next').onclick=()=>{cosmicBook.page++;bookQuery();};
-      book$('book-clear-filters').onclick=()=>{cosmicBook.q='';cosmicBook.kind='';cosmicBook.realm='';cosmicBook.page=1;book$('book-search').value='';document.querySelectorAll('[data-book-kind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bookKind==='')));document.querySelectorAll('[data-book-realm]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bookRealm==='')));bookQuery();};
+      book$('book-clear-filters').onclick=()=>{cosmicBook.tourId='';document.querySelectorAll('[data-book-tour]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.bookTour==='')));bookSyncTourBar();cosmicBook.q='';cosmicBook.kind='';cosmicBook.realm='';cosmicBook.page=1;book$('book-search').value='';document.querySelectorAll('[data-book-kind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bookKind==='')));document.querySelectorAll('[data-book-realm]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bookRealm==='')));bookQuery();};
       document.querySelectorAll('[data-book-tab]').forEach(b=>b.onclick=()=>bookSetTab(b.dataset.bookTab));book$('book-show-list').onclick=()=>bookMobilePane('list');book$('book-show-detail').onclick=()=>bookMobilePane('detail');
       book$('book-viewer-pause').onclick=()=>{const v=cosmicBook.viewer;v.paused=!v.paused;book$('book-viewer-pause').setAttribute('aria-pressed',String(v.paused));book$('book-viewer-pause').textContent=v.paused?'▶ 演示':'Ⅱ 暂停';};
       book$('book-viewer-reset').onclick=()=>cosmicBook.viewer.reset();
@@ -232,5 +398,19 @@
       if(cmpClear)cmpClear.onclick=()=>{cosmicBook.compareIds=[];bookSyncCompareUI();};
       if(cmpClose)cmpClose.onclick=bookCloseCompareModal;
       if(cmpModal)cmpModal.onclick=e=>{if(e.target===cmpModal)bookCloseCompareModal();};
-      window.addEventListener('keydown',e=>{if(cosmicBook.open){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(book$('book-qa-modal')&&!book$('book-qa-modal').hidden)bookCloseQAModal();else if(book$('book-compare-modal')&&!book$('book-compare-modal').hidden)bookCloseCompareModal();else cosmicBook.hide();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();e.stopImmediatePropagation();book$('book-search').focus();}}else if(e.key.toLowerCase()==='b'&&!e.target.matches('input,textarea,select')&&!(typeof sb!=='undefined'&&sb.open))cosmicBook.show();},{capture:true});
+      document.querySelectorAll('[data-book-tour]').forEach(b=>b.onclick=()=>bookSetTour(b.dataset.bookTour));
+      const tourPrev=book$('book-tour-prev'),tourNext=book$('book-tour-next'),tourExit=book$('book-tour-exit');
+      if(tourPrev)tourPrev.onclick=()=>{const t=BOOK_TOURS[cosmicBook.tourId];if(!t)return;const i=t.ids.indexOf(cosmicBook.selected?.id);if(i>0)bookSelect(t.ids[i-1]);};
+      if(tourNext)tourNext.onclick=()=>{const t=BOOK_TOURS[cosmicBook.tourId];if(!t)return;const i=t.ids.indexOf(cosmicBook.selected?.id);if(i>=0&&i+1<t.ids.length)bookSelect(t.ids[i+1]);};
+      if(tourExit)tourExit.onclick=()=>bookSetTour('');
+      const speakBtn=book$('book-speak');if(speakBtn)speakBtn.onclick=bookToggleSpeech;
+      const dailyBtn=book$('book-daily');
+      if(dailyBtn)dailyBtn.onclick=()=>{const pool=cosmicBook.data.filter(i=>i.realm==='real');const d=Math.floor(Date.now()/86400000);const pick=pool[d%Math.max(1,pool.length)];if(pick)bookSelect(pick);};
+      const quizOpen=book$('book-quiz-open'),quizModal=book$('book-quiz-modal'),quizClose=book$('book-quiz-close'),quizNext=book$('book-quiz-next'),quizRestart=book$('book-quiz-restart');
+      if(quizOpen)quizOpen.onclick=bookOpenQuiz;
+      if(quizClose)quizClose.onclick=()=>{if(quizModal)quizModal.hidden=true;};
+      if(quizModal)quizModal.onclick=e=>{if(e.target===quizModal)quizModal.hidden=true;};
+      if(quizNext)quizNext.onclick=()=>{cosmicBook.quizIdx++;bookRenderQuizStep();};
+      if(quizRestart)quizRestart.onclick=bookOpenQuiz;
+      window.addEventListener('keydown',e=>{if(cosmicBook.open){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(book$('book-qa-modal')&&!book$('book-qa-modal').hidden)bookCloseQAModal();else if(book$('book-compare-modal')&&!book$('book-compare-modal').hidden)bookCloseCompareModal();else if(book$('book-quiz-modal')&&!book$('book-quiz-modal').hidden)book$('book-quiz-modal').hidden=true;else cosmicBook.hide();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();e.stopImmediatePropagation();book$('book-search').focus();}}else if(e.key.toLowerCase()==='b'&&!e.target.matches('input,textarea,select')&&!(typeof sb!=='undefined'&&sb.open))cosmicBook.show();},{capture:true});
     };
