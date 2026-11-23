@@ -1324,29 +1324,36 @@ body[data-layout=mobile] #cosmic-book .book-fact-highlights dd{font-size:17px}
 </style>
 <style>
 /* =========================================================================
-   COSMIC ATLAS & UNIVERSE SANDBOX 2 — AAA "OBSIDIAN OBSERVATORY" UI POLISH
+   COSMIC ATLAS & UNIVERSE SANDBOX 2
+   "STARLIGHT OBSIDIAN & CHAMPAGNE RIM" DESIGN SYSTEM (DESKTOP + MOBILE)
+   Inspired by AAA Aerospace Telemetry & Modern Glassmorphism
    ========================================================================= */
 :root {
-  --obs-glass: rgba(7, 11, 22, 0.78);
-  --obs-glass-strong: rgba(8, 13, 26, 0.90);
-  --obs-card: rgba(13, 21, 38, 0.68);
-  --obs-card-hover: rgba(20, 33, 58, 0.84);
-  --obs-border: rgba(148, 197, 255, 0.14);
-  --obs-border-hi: rgba(125, 211, 252, 0.42);
-  --obs-spec: inset 0 1px 0 rgba(255, 255, 255, 0.085);
-  --obs-shadow: 0 16px 44px rgba(0, 0, 0, 0.52), 0 1px 0 rgba(255, 255, 255, 0.05);
+  --obs-glass: linear-gradient(168deg, rgba(16, 26, 48, 0.78) 0%, rgba(6, 11, 22, 0.88) 100%);
+  --obs-glass-strong: linear-gradient(168deg, rgba(18, 29, 52, 0.90) 0%, rgba(5, 10, 20, 0.96) 100%);
+  --obs-card: rgba(10, 17, 33, 0.76);
+  --obs-card-hover: rgba(18, 30, 56, 0.88);
+  --obs-border: rgba(182, 214, 248, 0.16);
+  --obs-border-hi: rgba(125, 211, 252, 0.45);
+  --obs-border-gold: rgba(243, 207, 162, 0.58);
+  --obs-spec: inset 0 1px 0 rgba(255, 255, 255, 0.13);
+  --obs-shadow: 0 18px 46px rgba(0, 0, 0, 0.56), 0 1px 0 rgba(255, 255, 255, 0.04);
   --obs-cyan: #7dd3fc;
-  --obs-gold: #fcd34d;
-  --obs-rose: #fb7185;
+  --obs-gold: #f3cfa2;
+  --obs-rose: #fda4af;
+  --obs-glow-gold: 0 0 18px rgba(243, 207, 162, 0.22), inset 0 1px 0 rgba(255, 244, 224, 0.24);
+  --obs-glow-cyan: 0 0 16px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(224, 242, 254, 0.20);
 }
 
-/* 1. 全站自定义精密滑块（彻底告别浏览器默认丑蓝条） */
+/* -------------------------------------------------------------------------
+   1. 精密滑块与细微滚动条（青蓝发光轨道 + 香槟珍珠滑块头）
+   ------------------------------------------------------------------------- */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.32), rgba(148, 163, 184, 0.22));
+  background: linear-gradient(90deg, rgba(125, 211, 252, 0.45), rgba(243, 207, 162, 0.28) 65%, rgba(148, 163, 184, 0.20));
   outline: none;
   cursor: pointer;
 }
@@ -1356,322 +1363,272 @@ input[type="range"]::-webkit-slider-thumb {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #7dd3fc 65%, #0284c7 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.65), 0 2px 6px rgba(0, 0, 0, 0.5);
+  background: radial-gradient(circle at 35% 35%, #fffdf8 0%, #f3cfa2 65%, #d99b52 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 10px rgba(243, 207, 162, 0.72), 0 2px 5px rgba(0, 0, 0, 0.55);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.18);
-  box-shadow: 0 0 14px rgba(125, 211, 252, 0.9), 0 2px 8px rgba(0, 0, 0, 0.6);
+  transform: scale(1.16);
+  box-shadow: 0 0 14px rgba(243, 207, 162, 0.92), 0 2px 7px rgba(0, 0, 0, 0.65);
 }
 input[type="range"]::-moz-range-thumb {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #7dd3fc;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.65);
+  background: #f3cfa2;
+  border: 1.5px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 10px rgba(243, 207, 162, 0.72);
 }
 
-/* 极细暗色滚动条 */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(148, 197, 255, 0.22); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(125, 211, 252, 0.45); }
+::-webkit-scrollbar-thumb { background: rgba(182, 214, 248, 0.22); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(243, 207, 162, 0.45); }
 
-/* 2. 首页高级黑曜石毛玻璃与排版精修 */
+/* -------------------------------------------------------------------------
+   2. 主界面黑曜石微光玻璃系统（外层温和 blur(12px)，内卡零模糊高帧率）
+   ------------------------------------------------------------------------- */
 .glass-panel {
   background: var(--obs-glass) !important;
-  backdrop-filter: blur(22px) saturate(145%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(145%) !important;
+  backdrop-filter: blur(12px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
   border: 1px solid var(--obs-border) !important;
   box-shadow: var(--obs-shadow), var(--obs-spec) !important;
 }
 .glass-btn {
-  background: rgba(15, 23, 42, 0.62) !important;
-  border: 1px solid rgba(148, 197, 255, 0.16) !important;
+  background: var(--obs-card) !important;
+  border: 1px solid rgba(182, 214, 248, 0.14) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition: background 0.16s ease, border-color 0.16s ease, transform 0.14s ease, box-shadow 0.16s ease !important;
 }
 .glass-btn:hover {
-  background: rgba(24, 38, 66, 0.86) !important;
-  border-color: rgba(125, 211, 252, 0.42) !important;
-  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  background: var(--obs-card-hover) !important;
+  border-color: rgba(243, 207, 162, 0.42) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
-.glass-btn.active, .scale-btn.active {
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.22), rgba(14, 116, 144, 0.28)) !important;
-  border-color: rgba(125, 211, 252, 0.62) !important;
-  box-shadow: 0 0 18px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+.glass-btn.active,
+.scale-btn.active {
+  background: linear-gradient(160deg, rgba(243, 207, 162, 0.18), rgba(56, 189, 248, 0.12)) !important;
+  border-color: var(--obs-border-gold) !important;
+  color: #fff8eb !important;
+  box-shadow: var(--obs-glow-gold) !important;
 }
 
-/* 首页旗舰入口「宇宙沙盘 2」高级黑曜石极光镶边（与天体档案/百科完美统一又脱颖而出） */
+/* 旗舰入口「宇宙沙盘 2」：深空蓝宝石渐变 + 香槟金细描边 */
 .sandbox-launch-btn {
-  background: linear-gradient(135deg, rgba(12, 22, 44, 0.90), rgba(30, 22, 58, 0.90)) !important;
-  border: 1px solid rgba(125, 211, 252, 0.52) !important;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  background: linear-gradient(135deg, rgba(16, 30, 58, 0.88), rgba(14, 46, 74, 0.86)) !important;
+  border: 1px solid rgba(243, 207, 162, 0.52) !important;
+  color: #fef3c7 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.48), var(--obs-glow-gold) !important;
   letter-spacing: 0.03em;
 }
 .sandbox-launch-btn:hover {
-  background: linear-gradient(135deg, rgba(16, 32, 62, 0.96), rgba(46, 30, 86, 0.96)) !important;
-  border-color: rgba(252, 211, 77, 0.72) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 24px rgba(125, 211, 252, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.26) !important;
+  background: linear-gradient(135deg, rgba(24, 46, 86, 0.94), rgba(18, 62, 96, 0.94)) !important;
+  border-color: rgba(243, 207, 162, 0.82) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), 0 0 22px rgba(243, 207, 162, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
 }
 
-/* 修复右侧实验卡片标题中文单字换行问题 */
-.exp-card {
-  background: var(--obs-card) !important;
+/* 品牌图标与顶部状态栏细化 */
+.brand-lockup {
+  background: var(--obs-glass) !important;
   border: 1px solid var(--obs-border) !important;
-  box-shadow: var(--obs-spec);
+  box-shadow: var(--obs-shadow), var(--obs-spec) !important;
+  border-radius: 999px !important;
 }
-.exp-card:hover {
-  background: var(--obs-card-hover) !important;
-  border-color: rgba(125, 211, 252, 0.4) !important;
+.brand-lockup > div:first-child {
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 32% 28%, rgba(243, 207, 162, 0.35), rgba(56, 189, 248, 0.28) 58%, rgba(10, 18, 36, 0.9)) !important;
+  border: 1px solid rgba(243, 207, 162, 0.42) !important;
+  box-shadow: 0 0 14px rgba(243, 207, 162, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
-.exp-card .font-semibold, .exp-card .font-bold {
+.brand-lockup .brand-version {
+  border-color: rgba(243, 207, 162, 0.28) !important;
+  color: var(--obs-gold) !important;
+  background: rgba(243, 207, 162, 0.07) !important;
+}
+
+/* 左右抽屉与内嵌遥测模块卡（参考设计图1左侧与右侧分区卡片） */
+#left-panel,
+#right-panel {
+  border-radius: 20px !important;
+  background: var(--obs-glass-strong) !important;
+  border: 1px solid var(--obs-border) !important;
+  box-shadow: var(--obs-shadow), var(--obs-spec) !important;
+}
+#left-panel .left-tab-btn.active,
+#right-panel .right-tab-btn.active {
+  background: linear-gradient(160deg, rgba(243, 207, 162, 0.20), rgba(56, 189, 248, 0.12)) !important;
+  border-color: var(--obs-border-gold) !important;
+  color: #fff9ef !important;
+  box-shadow: var(--obs-glow-gold) !important;
+}
+#enc-grid > div,
+#left-tab-telemetry > div,
+#asteroid-params,
+#lab-energy-params,
+#lab-monster-params,
+.dynamics-box {
+  background: rgba(8, 14, 28, 0.78) !important;
+  border: 1px solid rgba(182, 214, 248, 0.12) !important;
+  border-radius: 13px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: none !important;
+}
+.exp-card,
+#experiment-selector .exp-btn {
+  background: rgba(10, 17, 34, 0.80) !important;
+  border: 1px solid rgba(182, 214, 248, 0.12) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: none !important;
+}
+.exp-card:hover,
+#experiment-selector .exp-btn:hover {
+  background: rgba(19, 31, 58, 0.90) !important;
+  border-color: rgba(125, 211, 252, 0.38) !important;
+}
+#experiment-selector .exp-btn.active {
+  background: linear-gradient(155deg, rgba(243, 207, 162, 0.18), rgba(56, 189, 248, 0.14)) !important;
+  border-color: rgba(243, 207, 162, 0.65) !important;
+  box-shadow: 0 0 16px rgba(243, 207, 162, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+#experiment-selector .exp-btn > div:first-child {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+#experiment-selector .exp-btn > div:first-child > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+#experiment-selector .tier-pill {
+  flex-shrink: 0 !important;
+  font-size: 8.5px !important;
+  padding: 1px 4px !important;
+  line-height: 1.3 !important;
+}
+.exp-card .font-semibold,
+.exp-card .font-bold {
   font-size: 11.5px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-/* 3. 宇宙沙盘 2 — AAA 悬浮观测站视觉全面升级 */
-#sandbox-modal {
-  background: #02050c !important;
-}
-.sb-shell {
-  background: radial-gradient(ellipse at 50% 0%, rgba(14, 28, 56, 0.42), #02050c 60%) !important;
-}
-.sb-topbar {
-  background: rgba(6, 10, 20, 0.86) !important;
-  backdrop-filter: blur(22px) saturate(145%);
-  border-bottom: 1px solid rgba(148, 197, 255, 0.14) !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
-  padding: 8px 14px !important;
-}
-.sb-brand h2 {
-  font-size: 13.5px !important;
-  letter-spacing: 0.04em;
-  background: linear-gradient(90deg, #f8fafc 0%, #bae6fd 65%, #fde68a 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent !important;
-}
-.sb-brand p { color: #7e95b5 !important; font-size: 10.5px !important; }
-
-.sb-top-controls select {
-  background: rgba(11, 19, 36, 0.92) !important;
-  border: 1px solid rgba(148, 197, 255, 0.24) !important;
-  border-radius: 10px !important;
-  padding: 5px 10px !important;
-  font-size: 11.5px !important;
-  color: #e2e8f0 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
-}
-.sb-top-controls select:hover { border-color: rgba(125, 211, 252, 0.5) !important; }
-
-.sb-btn, .sb-pill, .sb-mini-btn {
-  background: rgba(13, 22, 40, 0.72) !important;
-  color: #cbd5e1 !important;
-  border: 1px solid rgba(148, 197, 255, 0.16) !important;
-  border-radius: 9px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: all 0.16s ease !important;
-}
-.sb-btn:hover, .sb-pill:hover, .sb-mini-btn:hover {
-  background: rgba(22, 37, 66, 0.92) !important;
-  color: #f8fafc !important;
-  border-color: rgba(125, 211, 252, 0.45) !important;
-  transform: translateY(-0.5px);
-}
-.sb-pill[aria-pressed="true"], .sb-mini-btn[aria-pressed="true"] {
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.24), rgba(14, 116, 144, 0.30)) !important;
-  color: #e0f2fe !important;
-  border-color: rgba(125, 211, 252, 0.68) !important;
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-}
-.sb-btn-accent {
-  background: linear-gradient(135deg, rgba(14, 116, 144, 0.45), rgba(109, 40, 217, 0.45)) !important;
-  border-color: rgba(125, 211, 252, 0.48) !important;
-  color: #f0f9ff !important;
-}
-.sb-btn-close {
-  background: rgba(127, 29, 29, 0.34) !important;
-  border-color: rgba(251, 113, 133, 0.34) !important;
-  color: #fecdd3 !important;
-}
-.sb-btn-close:hover {
-  background: rgba(190, 18, 60, 0.62) !important;
-  border-color: rgba(251, 113, 133, 0.75) !important;
-}
-
-/* 沙盘左右面板：通透深空玻璃 + 柔和内高光 */
-.sb-panel {
-  background: rgba(6, 10, 21, 0.80) !important;
-  backdrop-filter: blur(22px) saturate(145%);
-  border-color: rgba(148, 197, 255, 0.12) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-.sb-panel-tabs {
-  background: rgba(4, 8, 16, 0.65);
-  border-bottom: 1px solid rgba(148, 197, 255, 0.10) !important;
-  padding: 6px 8px !important;
-  gap: 5px !important;
-}
-.sb-panel-tabs button {
-  border-radius: 8px !important;
+.lab-type-filter {
+  position: static !important;
   background: transparent !important;
-  border: 1px solid transparent !important;
-  color: #8aa2c0 !important;
-  font-weight: 600;
-}
-.sb-panel-tabs button[aria-pressed="true"] {
-  background: rgba(56, 189, 248, 0.16) !important;
-  border-color: rgba(125, 211, 252, 0.42) !important;
-  color: #e0f2fe !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: none !important;
+  padding: 2px 0 6px !important;
 }
 
-/* 组合模型与天体模板卡片 */
-.sb-spawn-item {
-  background: rgba(12, 20, 36, 0.72) !important;
-  border: 1px solid rgba(148, 197, 255, 0.12) !important;
-  border-radius: 10px !important;
-  padding: 7px 8px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  transition: all 0.16s ease !important;
+/* 替换高饱和粉橙按钮为高级香槟金 + 冰蓝双操作钮 */
+#btn-launch-exp {
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #f3cfa2 0%, #deb074 52%, #c98f4b 100%) !important;
+  color: #0b111e !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(255, 244, 224, 0.55) !important;
+  box-shadow: 0 8px 22px -6px rgba(243, 207, 162, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  letter-spacing: 0.04em !important;
 }
-.sb-spawn-item:hover {
-  background: rgba(20, 34, 60, 0.88) !important;
-  border-color: rgba(125, 211, 252, 0.42) !important;
+#btn-launch-exp:hover:not(:disabled) {
+  filter: brightness(1.06);
   transform: translateY(-1px);
 }
-.sb-spawn-item[aria-pressed="true"] {
-  background: linear-gradient(135deg, rgba(14, 116, 144, 0.34), rgba(37, 99, 235, 0.28)) !important;
-  border-color: rgba(125, 211, 252, 0.78) !important;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+#btn-launch-salvo {
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(14, 116, 144, 0.34)) !important;
+  border: 1px solid rgba(125, 211, 252, 0.52) !important;
+  color: #e0f2fe !important;
+  font-weight: 600 !important;
+  box-shadow: var(--obs-glow-cyan) !important;
 }
-.sb-model-grid .sb-spawn-item {
-  background: linear-gradient(135deg, rgba(13, 25, 48, 0.78), rgba(32, 20, 58, 0.68)) !important;
-  border-color: rgba(167, 139, 250, 0.22) !important;
-}
-.sb-model-grid .sb-spawn-item[aria-pressed="true"] {
-  background: linear-gradient(135deg, rgba(14, 116, 144, 0.45), rgba(109, 40, 217, 0.48)) !important;
-  border-color: rgba(252, 211, 77, 0.78) !important;
-  box-shadow: 0 0 16px rgba(167, 139, 250, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+#btn-launch-salvo:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.34), rgba(14, 116, 144, 0.44)) !important;
+  border-color: rgba(125, 211, 252, 0.80) !important;
 }
 
-/* 顶部悬浮导航胶囊 & 工具提示 */
-.sb-nav-bar {
-  background: rgba(7, 12, 24, 0.76) !important;
-  backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid rgba(148, 197, 255, 0.18) !important;
-  border-radius: 14px !important;
+/* -------------------------------------------------------------------------
+   3. 底部时间轴胶囊与圆形香槟金播放按钮（参考设计图1、3）
+   ------------------------------------------------------------------------- */
+#scene-transport {
+  background: var(--obs-glass) !important;
+  backdrop-filter: blur(12px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
+  border: 1px solid var(--obs-border) !important;
+  box-shadow: var(--obs-shadow), var(--obs-spec) !important;
+  border-radius: 999px !important;
   padding: 5px 8px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  gap: 4px !important;
+  align-items: center !important;
 }
-.sb-tool-hint {
-  background: rgba(7, 12, 24, 0.76) !important;
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(148, 197, 255, 0.16) !important;
-  color: #9fb3cc !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+#transport-pause {
+  border-radius: 999px !important;
+  background: radial-gradient(circle at 35% 30%, rgba(243, 207, 162, 0.24), rgba(16, 26, 48, 0.90)) !important;
+  border: 1.5px solid rgba(243, 207, 162, 0.68) !important;
+  color: #fef3c7 !important;
+  box-shadow: 0 0 14px rgba(243, 207, 162, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  min-width: 68px;
 }
-
-/* 右侧检视器卡片精致化 */
-.sb-life-box, .sb-spark-box, .sb-metrics-grid > div {
-  background: rgba(11, 19, 35, 0.72) !important;
-  border: 1px solid rgba(148, 197, 255, 0.13) !important;
-  border-radius: 10px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+#transport-pause[aria-pressed="true"] {
+  background: radial-gradient(circle at 35% 30%, rgba(56, 189, 248, 0.28), rgba(12, 24, 46, 0.92)) !important;
+  border-color: rgba(125, 211, 252, 0.72) !important;
+  color: #e0f2fe !important;
+  box-shadow: var(--obs-glow-cyan) !important;
 }
-.sb-supernova {
-  background: linear-gradient(135deg, rgba(225, 29, 72, 0.78), rgba(234, 88, 12, 0.78)) !important;
-  border-color: rgba(253, 186, 116, 0.55) !important;
-  color: #fff !important;
-  font-weight: 700;
-}
-.sb-supernova:hover { filter: brightness(1.12); }
-
-/* 底部控制坞：悬浮玻璃底座 + 高亮工具态 */
-.sb-dock {
-  background: rgba(6, 10, 20, 0.88) !important;
-  backdrop-filter: blur(22px) saturate(145%);
-  border-top: 1px solid rgba(148, 197, 255, 0.14) !important;
-  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  padding: 8px 14px !important;
-}
-.sb-tools button {
-  background: rgba(13, 22, 40, 0.72) !important;
-  border: 1px solid rgba(148, 197, 255, 0.16) !important;
-  border-radius: 10px !important;
-  color: #cbd5e1 !important;
-  padding: 6px 10px !important;
-  font-weight: 600;
-  transition: all 0.16s ease !important;
-}
-.sb-tools button:hover {
-  background: rgba(22, 37, 66, 0.92) !important;
-  border-color: rgba(125, 211, 252, 0.45) !important;
-  color: #fff !important;
-}
-.sb-tools button[aria-pressed="true"] {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.32), rgba(99, 102, 241, 0.34)) !important;
-  border-color: rgba(125, 211, 252, 0.82) !important;
-  color: #f0f9ff !important;
-  box-shadow: 0 0 18px rgba(56, 189, 248, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+#scene-transport button[aria-pressed="true"]:not(#transport-pause) {
+  background: linear-gradient(155deg, rgba(125, 211, 252, 0.20), rgba(56, 189, 248, 0.10)) !important;
+  border: 1px solid rgba(125, 211, 252, 0.45) !important;
+  color: #e0f2fe !important;
 }
 
-/* 悬浮标签与 Toast 精致化 */
-.sb-label {
-  background: rgba(6, 11, 22, 0.74) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(148, 197, 255, 0.24) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
+#scale-dock > div {
+  background: var(--obs-glass) !important;
+  backdrop-filter: blur(12px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
+  border: 1px solid var(--obs-border) !important;
+  box-shadow: var(--obs-shadow), var(--obs-spec) !important;
+  border-radius: 20px !important;
 }
-.sb-label.selected {
-  border-color: rgba(252, 211, 77, 0.85) !important;
-  color: #fef08a !important;
-  box-shadow: 0 0 14px rgba(251, 191, 36, 0.32);
+#scale-dock .scale-btn {
+  position: relative;
+  border-radius: 13px !important;
 }
-.sb-toast {
-  background: rgba(8, 15, 30, 0.90) !important;
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(125, 211, 252, 0.48) !important;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 20px rgba(56, 189, 248, 0.18);
+#scale-dock .scale-btn.active {
+  background: linear-gradient(180deg, rgba(243, 207, 162, 0.18), rgba(14, 24, 44, 0.42)) !important;
+  border-color: rgba(243, 207, 162, 0.56) !important;
+  color: #fff9ef !important;
+  box-shadow: var(--obs-glow-gold) !important;
 }
-
-/* 4. 星海百科统一黑曜石质感微调 */
-#cosmic-book .book-shell {
-  background: radial-gradient(ellipse at 25% 0%, rgba(16, 30, 60, 0.52), rgba(5, 9, 18, 0.98) 55%) !important;
-  border: 1px solid rgba(148, 197, 255, 0.16) !important;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-.sb-filter-pills { display: flex; gap: 3px; }
-.sb-chip {
-  background: rgba(13, 22, 40, 0.72);
-  border: 1px solid rgba(148, 197, 255, 0.16);
-  color: #94a3b8;
+#scale-dock .scale-btn.active::after {
+  content: '';
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: 4px;
+  height: 2.5px;
   border-radius: 999px;
-  padding: 2px 7px;
-  font-size: 10px;
-  cursor: pointer;
+  background: linear-gradient(90deg, #7dd3fc, #f3cfa2) !important;
+  box-shadow: 0 0 8px rgba(125, 211, 252, 0.85) !important;
 }
-.sb-chip[aria-pressed="true"] {
-  background: rgba(56, 189, 248, 0.22);
-  border-color: rgba(125, 211, 252, 0.65);
-  color: #e0f2fe;
+
+/* 场景内轻量化标签：零模糊合成成本，极致清晰度 */
+.body-label {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(6, 11, 22, 0.82) !important;
+  border: 1px solid rgba(182, 214, 248, 0.24) !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.48);
 }
-.sb-spawn-item[hidden] { display: none !important; }
 
-.sb-inspector-head { gap: 6px; }
-.sb-head-btns { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; flex-shrink: 0; }
-.sb-head-btns .sb-mini-btn { padding: 4px 6px; font-size: 10.5px; white-space: nowrap; }
-
-/* =========================================================================
-   5. 顶栏防折行重叠修复 & 全站黑曜石深空背景/表面统一样式
-   ========================================================================= */
+/* -------------------------------------------------------------------------
+   4. 桌面端顶部四胶囊入口条与防重排微调
+   ------------------------------------------------------------------------- */
 body[data-layout="desktop"] #observatory-header {
   flex-wrap: nowrap !important;
   align-items: center !important;
@@ -1681,17 +1638,18 @@ body[data-layout="desktop"] .header-tools {
   flex-wrap: nowrap !important;
   white-space: nowrap !important;
   gap: 3px !important;
-  padding: 4px 6px !important;
+  padding: 4px 7px !important;
+  border-radius: 999px !important;
   background: var(--obs-glass) !important;
   border: 1px solid var(--obs-border) !important;
   box-shadow: var(--obs-shadow), var(--obs-spec) !important;
 }
 body[data-layout="desktop"] .header-tools .glass-btn {
-  min-height: 32px !important;
-  height: 32px !important;
+  min-height: 31px !important;
+  height: 31px !important;
   padding: 0 9px !important;
   font-size: 12px !important;
-  border-radius: 9px !important;
+  border-radius: 999px !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
   background: transparent !important;
@@ -1699,12 +1657,12 @@ body[data-layout="desktop"] .header-tools .glass-btn {
   box-shadow: none !important;
 }
 body[data-layout="desktop"] .header-tools .glass-btn:hover {
-  background: rgba(125, 211, 252, 0.12) !important;
-  border-color: rgba(125, 211, 252, 0.28) !important;
+  background: rgba(243, 207, 162, 0.12) !important;
+  border-color: rgba(243, 207, 162, 0.34) !important;
 }
 body[data-layout="desktop"] .header-tools .glass-btn.active {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(99, 102, 241, 0.22)) !important;
-  border-color: rgba(125, 211, 252, 0.48) !important;
+  background: linear-gradient(135deg, rgba(243, 207, 162, 0.22), rgba(56, 189, 248, 0.18)) !important;
+  border-color: rgba(243, 207, 162, 0.50) !important;
 }
 body[data-layout="desktop"] .header-tools .desktop-quit-btn {
   color: #fda4af !important;
@@ -1715,138 +1673,423 @@ body[data-layout="desktop"] .header-tools .desktop-quit-btn:hover {
   color: #ffe4e6 !important;
 }
 
-/* 第二排四大入口按钮：严格对齐同一水平基准线、统一高度与黑曜石玻璃质感 */
 body[data-layout="desktop"] #toggle-left-btn,
 body[data-layout="desktop"] #toggle-right-btn,
 body[data-layout="desktop"] .atlas-library-launch,
 body[data-layout="desktop"] .sandbox-launch-btn {
-  top: 74px !important;
-  height: 38px !important;
-  min-height: 38px !important;
-  border-radius: 12px !important;
-  padding: 0 14px !important;
+  top: 72px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
   font-size: 12.5px !important;
   font-weight: 600 !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 7px !important;
   white-space: nowrap !important;
-  backdrop-filter: blur(18px) saturate(145%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+  backdrop-filter: blur(12px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
 }
 body[data-layout="desktop"] #toggle-left-btn { left: 16px !important; width: 112px !important; justify-content: center !important; }
 body[data-layout="desktop"] .atlas-library-launch {
   left: 136px !important;
-  background: linear-gradient(135deg, rgba(14, 29, 58, 0.86), rgba(32, 24, 64, 0.86)) !important;
-  border: 1px solid rgba(148, 197, 255, 0.28) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-  color: #e6f2ff !important;
+  background: linear-gradient(135deg, rgba(16, 28, 52, 0.88), rgba(14, 36, 62, 0.88)) !important;
+  border: 1px solid rgba(125, 211, 252, 0.36) !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  color: #e6f4ff !important;
 }
 body[data-layout="desktop"] .atlas-library-launch:hover {
-  border-color: rgba(125, 211, 252, 0.55) !important;
-  box-shadow: 0 10px 28px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(243, 207, 162, 0.62) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.52), 0 0 18px rgba(243, 207, 162, 0.20) !important;
 }
-body[data-layout="desktop"] .sandbox-launch-btn { left: 254px !important; }
+body[data-layout="desktop"] .sandbox-launch-btn { left: 256px !important; }
 body[data-layout="desktop"] #toggle-right-btn { right: 16px !important; }
 body[data-layout="desktop"] #left-panel,
 body[data-layout="desktop"] #right-panel {
-  top: 122px !important;
+  top: 118px !important;
 }
 
-/* 星海百科全区域与主界面黑曜石背景/玻璃边框完全统一 */
+/* -------------------------------------------------------------------------
+   5. 星海百科（参考设计图2：黑曜石边框 + 香槟金选中卡 + 航天展厅舞台）
+   ------------------------------------------------------------------------- */
 #cosmic-book {
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(16, 30, 58, 0.55), #030711 72%) !important;
-  border: 1px solid rgba(148, 197, 255, 0.18) !important;
-  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  background: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(18, 32, 62, 0.54), #030712 72%) !important;
+  border: 1px solid rgba(182, 214, 248, 0.18) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 36px 128px rgba(0, 0, 0, 0.88), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+#cosmic-book .book-shell {
+  background: transparent !important;
 }
 #cosmic-book .book-header,
 #cosmic-book .book-searchbar,
 #cosmic-book .book-tours-strip {
-  background: rgba(7, 11, 22, 0.84) !important;
-  border-bottom-color: rgba(148, 197, 255, 0.12) !important;
+  background: rgba(7, 12, 24, 0.88) !important;
+  border-bottom-color: rgba(182, 214, 248, 0.12) !important;
+}
+#cosmic-book #book-random {
+  background: linear-gradient(135deg, rgba(243, 207, 162, 0.22), rgba(56, 189, 248, 0.16)) !important;
+  border: 1px solid rgba(243, 207, 162, 0.50) !important;
+  color: #fef3c7 !important;
+}
+#cosmic-book .book-realms button[aria-pressed="true"],
+#cosmic-book .book-kinds button[aria-pressed="true"],
+#cosmic-book .book-detail-tabs button[aria-selected="true"] {
+  background: linear-gradient(155deg, rgba(243, 207, 162, 0.18), rgba(56, 189, 248, 0.12)) !important;
+  border-color: rgba(243, 207, 162, 0.52) !important;
+  color: #fff9ef !important;
 }
 #cosmic-book .book-catalog {
-  background: rgba(6, 10, 20, 0.78) !important;
-  border-right-color: rgba(148, 197, 255, 0.12) !important;
+  background: rgba(6, 10, 20, 0.82) !important;
+  border-right-color: rgba(182, 214, 248, 0.12) !important;
+}
+#cosmic-book .book-object-card {
+  border-radius: 14px !important;
+  border: 1px solid rgba(182, 214, 248, 0.08) !important;
+  background: rgba(10, 17, 33, 0.62) !important;
+  margin-bottom: 4px !important;
+}
+#cosmic-book .book-object-card:hover {
+  background: rgba(16, 28, 52, 0.84) !important;
+  border-color: rgba(125, 211, 252, 0.34) !important;
+}
+#cosmic-book .book-object-card[aria-current="true"] {
+  background: linear-gradient(135deg, rgba(243, 207, 162, 0.16), rgba(14, 26, 48, 0.90)) !important;
+  border-color: rgba(243, 207, 162, 0.68) !important;
+  box-shadow: 0 0 20px rgba(243, 207, 162, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+#cosmic-book .book-object-card[aria-current="true"]::before {
+  background: linear-gradient(180deg, #f3cfa2, #7dd3fc) !important;
 }
 #cosmic-book .book-detail {
-  background: radial-gradient(ellipse at 60% 12%, rgba(20, 40, 74, 0.42) 0%, transparent 50%), rgba(4, 8, 17, 0.92) !important;
+  background: radial-gradient(ellipse at 60% 12%, rgba(20, 40, 74, 0.36) 0%, transparent 52%), rgba(4, 8, 17, 0.94) !important;
+}
+#cosmic-book .book-visual-stage {
+  border: 1px solid rgba(182, 214, 248, 0.16) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.56), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
 }
 #cosmic-book .book-detail-tabs {
-  background: rgba(7, 11, 22, 0.88) !important;
-  border-bottom-color: rgba(148, 197, 255, 0.14) !important;
+  background: rgba(7, 12, 24, 0.90) !important;
+  border-bottom-color: rgba(182, 214, 248, 0.14) !important;
 }
 #cosmic-book .book-everyday,
 #cosmic-book .book-dossier-card,
 #cosmic-book .book-qa-card,
 #cosmic-book .book-takeaway,
 #cosmic-book .book-comparison,
-#cosmic-book .book-source-link {
-  background: rgba(11, 18, 34, 0.72) !important;
-  border-color: rgba(148, 197, 255, 0.14) !important;
-}
+#cosmic-book .book-source-link,
 #cosmic-book .book-everyday-card {
-  background: rgba(7, 12, 24, 0.78) !important;
-  border-color: rgba(148, 197, 255, 0.12) !important;
+  background: rgba(9, 15, 29, 0.78) !important;
+  border-color: rgba(182, 214, 248, 0.12) !important;
+  border-radius: 14px !important;
 }
 #cosmic-book .book-qa-dialog {
-  background: linear-gradient(180deg, rgba(13, 21, 38, 0.96), rgba(6, 10, 20, 0.98)) !important;
-  border: 1px solid rgba(148, 197, 255, 0.24) !important;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  background: var(--obs-glass-strong) !important;
+  border: 1px solid rgba(243, 207, 162, 0.34) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.80), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
 }
 
-/* =========================================================================
-   6. 移动端 (<= 760px / data-layout="mobile") 全新自适应重设计与零重叠排版
-   ========================================================================= */
+/* -------------------------------------------------------------------------
+   6. 宇宙沙盘 2 — 航天舰桥桌面 HUD（参考设计图2、3）
+   ------------------------------------------------------------------------- */
+#sandbox-modal { background: #02050c !important; }
+.sb-shell {
+  background: radial-gradient(ellipse at 50% 0%, rgba(16, 30, 60, 0.38), #02050c 60%) !important;
+}
+.sb-topbar {
+  background: rgba(6, 11, 22, 0.88) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+  border-bottom: 1px solid rgba(182, 214, 248, 0.14) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.48), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  padding: 8px 14px !important;
+}
+.sb-brand h2 {
+  font-size: 13.5px !important;
+  letter-spacing: 0.05em;
+  background: linear-gradient(90deg, #f8fafc 0%, #f3cfa2 62%, #7dd3fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+.sb-brand p { color: #889ebc !important; font-size: 10.5px !important; }
+
+.sb-top-controls select {
+  background: rgba(10, 17, 33, 0.92) !important;
+  border: 1px solid rgba(182, 214, 248, 0.22) !important;
+  border-radius: 999px !important;
+  padding: 5px 11px !important;
+  font-size: 11.5px !important;
+  color: #e2e8f0 !important;
+}
+.sb-btn, .sb-pill, .sb-mini-btn {
+  background: var(--obs-card) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(182, 214, 248, 0.15) !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.15s ease !important;
+}
+.sb-btn:hover, .sb-pill:hover, .sb-mini-btn:hover {
+  background: var(--obs-card-hover) !important;
+  color: #fff !important;
+  border-color: rgba(243, 207, 162, 0.48) !important;
+}
+.sb-pill[aria-pressed="true"], .sb-mini-btn[aria-pressed="true"] {
+  background: linear-gradient(155deg, rgba(243, 207, 162, 0.18), rgba(56, 189, 248, 0.16)) !important;
+  color: #fff9ef !important;
+  border-color: rgba(243, 207, 162, 0.62) !important;
+  box-shadow: var(--obs-glow-gold) !important;
+}
+.sb-btn-accent {
+  background: linear-gradient(135deg, rgba(243, 207, 162, 0.22), rgba(56, 189, 248, 0.16)) !important;
+  border-color: rgba(243, 207, 162, 0.56) !important;
+  color: #fef3c7 !important;
+}
+.sb-btn-close {
+  background: rgba(127, 29, 29, 0.34) !important;
+  border-color: rgba(251, 113, 133, 0.38) !important;
+  color: #fecdd3 !important;
+}
+.sb-btn-close:hover {
+  background: rgba(190, 18, 60, 0.62) !important;
+  border-color: rgba(251, 113, 133, 0.78) !important;
+}
+
+.sb-panel {
+  background: rgba(6, 11, 22, 0.84) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+  border-color: rgba(182, 214, 248, 0.13) !important;
+}
+.sb-panel-tabs {
+  background: rgba(4, 8, 16, 0.72);
+  border-bottom: 1px solid rgba(182, 214, 248, 0.10) !important;
+  padding: 6px 8px !important;
+  gap: 5px !important;
+}
+.sb-panel-tabs button {
+  border-radius: 999px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: #8aa2c0 !important;
+  font-weight: 600;
+}
+.sb-panel-tabs button[aria-pressed="true"] {
+  background: linear-gradient(155deg, rgba(243, 207, 162, 0.18), rgba(56, 189, 248, 0.12)) !important;
+  border-color: rgba(243, 207, 162, 0.48) !important;
+  color: #fff9ef !important;
+}
+
+.sb-spawn-item {
+  background: rgba(10, 17, 33, 0.78) !important;
+  border: 1px solid rgba(182, 214, 248, 0.12) !important;
+  border-radius: 12px !important;
+  padding: 7px 8px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.15s ease !important;
+  backdrop-filter: none !important;
+}
+.sb-spawn-item:hover {
+  background: rgba(18, 30, 56, 0.90) !important;
+  border-color: rgba(125, 211, 252, 0.42) !important;
+  transform: translateY(-1px);
+}
+.sb-spawn-item[aria-pressed="true"] {
+  background: linear-gradient(145deg, rgba(243, 207, 162, 0.18), rgba(14, 116, 144, 0.28)) !important;
+  border-color: rgba(243, 207, 162, 0.72) !important;
+  box-shadow: var(--obs-glow-gold) !important;
+}
+.sb-model-grid .sb-spawn-item {
+  background: linear-gradient(135deg, rgba(13, 25, 48, 0.80), rgba(20, 32, 62, 0.76)) !important;
+  border-color: rgba(125, 211, 252, 0.22) !important;
+}
+
+.sb-nav-bar {
+  background: rgba(7, 12, 24, 0.82) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+  border: 1px solid rgba(182, 214, 248, 0.18) !important;
+  border-radius: 999px !important;
+  padding: 5px 10px !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+.sb-tool-hint {
+  background: rgba(7, 12, 24, 0.82) !important;
+  border: 1px solid rgba(182, 214, 248, 0.14) !important;
+  color: #a6bbd4 !important;
+  border-radius: 999px !important;
+  backdrop-filter: none !important;
+}
+.sb-life-box, .sb-spark-box, .sb-metrics-grid > div {
+  background: rgba(9, 15, 29, 0.78) !important;
+  border: 1px solid rgba(182, 214, 248, 0.12) !important;
+  border-radius: 12px !important;
+  backdrop-filter: none !important;
+}
+.sb-supernova {
+  background: linear-gradient(135deg, #f3cfa2, #d97706) !important;
+  border-color: rgba(255, 244, 224, 0.55) !important;
+  color: #0b111e !important;
+  font-weight: 700;
+}
+
+/* 沙盘底部控制坞：香槟金圆形暂停键 + 底部指示灯工具键 */
+.sb-dock {
+  background: rgba(6, 11, 22, 0.90) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+  border-top: 1px solid rgba(182, 214, 248, 0.15) !important;
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 8px 14px !important;
+}
+#sb-pause {
+  border-radius: 999px !important;
+  background: radial-gradient(circle at 35% 30%, rgba(243, 207, 162, 0.24), rgba(14, 24, 44, 0.92)) !important;
+  border: 1.5px solid rgba(243, 207, 162, 0.65) !important;
+  color: #fef3c7 !important;
+  box-shadow: 0 0 12px rgba(243, 207, 162, 0.22);
+}
+.sb-tools button {
+  position: relative;
+  background: rgba(11, 19, 36, 0.78) !important;
+  border: 1px solid rgba(182, 214, 248, 0.15) !important;
+  border-radius: 12px !important;
+  color: #cbd5e1 !important;
+  padding: 6px 11px !important;
+  font-weight: 600;
+  transition: all 0.15s ease !important;
+}
+.sb-tools button:hover {
+  background: rgba(18, 32, 60, 0.92) !important;
+  border-color: rgba(243, 207, 162, 0.45) !important;
+  color: #fff !important;
+}
+.sb-tools button[aria-pressed="true"] {
+  background: linear-gradient(160deg, rgba(243, 207, 162, 0.18), rgba(56, 189, 248, 0.18)) !important;
+  border-color: rgba(243, 207, 162, 0.72) !important;
+  color: #fff9ef !important;
+  box-shadow: var(--obs-glow-gold) !important;
+}
+.sb-tools button[aria-pressed="true"]::after {
+  content: '';
+  position: absolute;
+  left: 24%;
+  right: 24%;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7dd3fc, #f3cfa2);
+  box-shadow: 0 0 8px rgba(125, 211, 252, 0.85);
+}
+
+.sb-label {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(6, 11, 22, 0.84) !important;
+  border: 1px solid rgba(182, 214, 248, 0.24) !important;
+}
+.sb-label.selected {
+  border-color: rgba(243, 207, 162, 0.88) !important;
+  color: #fef3c7 !important;
+  box-shadow: 0 0 14px rgba(243, 207, 162, 0.34);
+}
+.sb-toast {
+  background: rgba(8, 15, 30, 0.92) !important;
+  border: 1px solid rgba(243, 207, 162, 0.48) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.56);
+}
+.sb-filter-pills { display: flex; gap: 3px; }
+.sb-chip {
+  background: rgba(11, 19, 36, 0.78);
+  border: 1px solid rgba(182, 214, 248, 0.16);
+  color: #94a3b8;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 10px;
+  cursor: pointer;
+}
+.sb-chip[aria-pressed="true"] {
+  background: rgba(243, 207, 162, 0.20);
+  border-color: rgba(243, 207, 162, 0.65);
+  color: #fef3c7;
+}
+.sb-spawn-item[hidden] { display: none !important; }
+.sb-inspector-head { gap: 6px; }
+.sb-head-btns { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; flex-shrink: 0; }
+.sb-head-btns .sb-mini-btn { padding: 4px 6px; font-size: 10.5px; white-space: nowrap; }
+
+/* -------------------------------------------------------------------------
+   7. 移动端 (<= 760px / data-layout="mobile") 苹果级太空悬浮胶囊 UI
+      （参考设计图3：顶部优雅弧形星徽顶栏 + 75% 视野 + 底部悬浮双胶囊）
+   ------------------------------------------------------------------------- */
 body[data-layout="mobile"] #observatory-header {
-  left: 8px !important;
-  right: 8px !important;
+  left: 10px !important;
+  right: 10px !important;
   top: max(8px, env(safe-area-inset-top)) !important;
   gap: 6px !important;
 }
 body[data-layout="mobile"] .brand-lockup {
-  padding: 6px 10px !important;
-  border-radius: 13px !important;
+  padding: 6px 12px !important;
+  border-radius: 18px !important;
   gap: 8px !important;
+  background: radial-gradient(ellipse at 50% -20%, rgba(125, 211, 252, 0.20), transparent 65%), var(--obs-glass) !important;
 }
 body[data-layout="mobile"] .brand-lockup > div:first-child {
-  width: 30px !important;
-  height: 30px !important;
-  border-radius: 9px !important;
+  width: 28px !important;
+  height: 28px !important;
 }
 body[data-layout="mobile"] .header-tools {
-  padding: 3px 4px !important;
+  padding: 3px 5px !important;
   gap: 2px !important;
-  border-radius: 12px !important;
+  border-radius: 999px !important;
   flex-wrap: nowrap !important;
   overflow-x: auto !important;
+  background: var(--obs-glass) !important;
 }
 body[data-layout="mobile"] .header-tools #layout-switch {
   margin-right: 2px !important;
   flex-shrink: 0 !important;
+  border-radius: 999px !important;
 }
 body[data-layout="mobile"] .header-tools #layout-switch button {
   padding: 0 7px !important;
   font-size: 10.5px !important;
-  min-height: 26px !important;
+  min-height: 25px !important;
+  border-radius: 999px !important;
 }
 body[data-layout="mobile"] .header-tools .glass-btn {
-  min-height: 30px !important;
+  min-height: 28px !important;
   padding: 0 6px !important;
   flex: 1 0 auto !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  border-color: transparent !important;
 }
+body[data-layout="mobile"] .header-tools .glass-btn + .glass-btn {
+  position: relative;
+}
+body[data-layout="mobile"] .header-tools .glass-btn + .glass-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 1px;
+  background: rgba(182, 214, 248, 0.14);
+}
+
+/* 第二排四大功能胶囊：比例紧致单行、动态贴合顶栏底部永不重叠 */
 body[data-layout="mobile"] #toggle-left-btn,
 body[data-layout="mobile"] #btn-cosmic-book,
 body[data-layout="mobile"] .sandbox-launch-btn,
 body[data-layout="mobile"] #toggle-right-btn {
-  top: var(--mob-subbar-top, 122px) !important;
+  top: var(--mob-subbar-top, 112px) !important;
   bottom: auto !important;
-  height: 34px !important;
-  min-height: 34px !important;
-  padding: 0 4px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  padding: 0 5px !important;
   font-size: 11px !important;
   font-weight: 600 !important;
-  border-radius: 10px !important;
+  border-radius: 999px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -1854,42 +2097,96 @@ body[data-layout="mobile"] #toggle-right-btn {
   align-items: center !important;
   justify-content: center !important;
   gap: 4px !important;
-  background: rgba(8, 13, 26, 0.86) !important;
-  border: 1px solid rgba(148, 197, 255, 0.22) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+  background: var(--obs-glass) !important;
+  border: 1px solid rgba(182, 214, 248, 0.22) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), var(--obs-spec) !important;
 }
-body[data-layout="mobile"] #toggle-left-btn { left: 8px !important; width: calc((100vw - 34px) * 0.24) !important; }
+body[data-layout="mobile"] #toggle-left-btn { left: 10px !important; width: calc((100vw - 38px) * 0.24) !important; }
 body[data-layout="mobile"] #btn-cosmic-book {
-  left: calc(8px + (100vw - 34px) * 0.24 + 6px) !important;
-  width: calc((100vw - 34px) * 0.24) !important;
-  background: linear-gradient(135deg, rgba(16, 32, 62, 0.90), rgba(38, 28, 72, 0.90)) !important;
+  left: calc(10px + (100vw - 38px) * 0.24 + 6px) !important;
+  width: calc((100vw - 38px) * 0.24) !important;
   border-color: rgba(125, 211, 252, 0.36) !important;
 }
 body[data-layout="mobile"] .sandbox-launch-btn {
-  left: calc(8px + (100vw - 34px) * 0.48 + 12px) !important;
-  width: calc((100vw - 34px) * 0.26) !important;
-  background: linear-gradient(135deg, rgba(14, 42, 74, 0.92), rgba(52, 30, 88, 0.92)) !important;
-  border-color: rgba(125, 211, 252, 0.48) !important;
+  left: calc(10px + (100vw - 38px) * 0.48 + 12px) !important;
+  width: calc((100vw - 38px) * 0.26) !important;
+  background: linear-gradient(135deg, rgba(16, 34, 66, 0.92), rgba(14, 48, 76, 0.90)) !important;
+  border-color: rgba(243, 207, 162, 0.56) !important;
+  color: #fef3c7 !important;
 }
-body[data-layout="mobile"] #toggle-right-btn { left: auto !important; right: 8px !important; width: calc((100vw - 34px) * 0.26) !important; }
+body[data-layout="mobile"] #toggle-right-btn { left: auto !important; right: 10px !important; width: calc((100vw - 38px) * 0.26) !important; }
+
+/* 手机端底部双悬浮玻璃胶囊（完全对齐设计图3） */
 body[data-layout="mobile"] .scene-guide #scene-subtitle { display: none !important; }
-body[data-layout="mobile"] .scene-guide { bottom: 112px !important; padding: 0 12px !important; }
-body[data-layout="mobile"] .scene-guide #scene-title { font-size: 14px !important; }
-body[data-layout="mobile"] #transport-dock { bottom: 68px !important; padding: 4px 8px !important; gap: 4px !important; max-width: calc(100vw - 16px) !important; overflow-x: auto !important; }
-body[data-layout="mobile"] #transport-dock button { padding: 4px 7px !important; font-size: 11px !important; white-space: nowrap !important; }
-body[data-layout="mobile"] #scale-dock { height: 58px !important; padding-bottom: env(safe-area-inset-bottom) !important; }
+body[data-layout="mobile"] .scene-guide,
+body[data-layout="mobile"] #scene-observation {
+  bottom: calc(68px + env(safe-area-inset-bottom)) !important;
+  left: 10px !important;
+  right: 10px !important;
+  padding: 0 !important;
+}
+body[data-layout="mobile"] .scene-guide #scene-title,
+body[data-layout="mobile"] #scene-title {
+  font-size: 13px !important;
+  letter-spacing: 0.08em !important;
+  opacity: 0.92;
+  margin-bottom: 4px !important;
+}
+body[data-layout="mobile"] #transport-dock,
+body[data-layout="mobile"] #scene-transport {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 4px 6px !important;
+  gap: 2px !important;
+  border-radius: 18px !important;
+  justify-content: space-between !important;
+  overflow-x: auto !important;
+}
+body[data-layout="mobile"] #transport-dock button,
+body[data-layout="mobile"] #scene-transport button {
+  padding: 4px 6px !important;
+  min-height: 29px !important;
+  font-size: 10.5px !important;
+  white-space: nowrap !important;
+  border-radius: 999px !important;
+  flex-shrink: 0 !important;
+}
+body[data-layout="mobile"] #transport-pause {
+  min-width: 54px !important;
+  padding: 4px 8px !important;
+}
+body[data-layout="mobile"] #transport-time {
+  display: none !important;
+}
+body[data-layout="mobile"] #scale-dock {
+  left: 10px !important;
+  right: 10px !important;
+  width: auto !important;
+  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+  height: auto !important;
+  padding: 0 !important;
+}
+body[data-layout="mobile"] #scale-dock > div {
+  border-radius: 18px !important;
+  padding: 4px 5px !important;
+}
+body[data-layout="mobile"] #scale-dock .scale-btn {
+  min-height: 44px !important;
+  padding: 5px 8px !important;
+}
 body[data-layout="mobile"] #left-panel,
 body[data-layout="mobile"] #right-panel {
-  left: 8px !important;
-  right: 8px !important;
+  left: 10px !important;
+  right: 10px !important;
   width: auto !important;
   top: auto !important;
-  bottom: 66px !important;
-  max-height: 52dvh !important;
-  border-radius: 16px !important;
+  bottom: calc(64px + env(safe-area-inset-bottom)) !important;
+  max-height: 54dvh !important;
+  border-radius: 20px !important;
 }
 
 @media (max-width: 760px) {
+  #cosmic-book { border-radius: 0 !important; }
   #cosmic-book .book-header {
     flex-wrap: wrap !important;
     padding: 10px 12px !important;
@@ -1929,29 +2226,6 @@ body[data-layout="mobile"] #right-panel {
   #cosmic-book .book-everyday-grid {
     grid-template-columns: 1fr !important;
   }
-
-  /* 宇宙沙盘 2 手机端全新紧致流式布局（释放 75% 居中宇宙视野） */
-  .sb-topbar {
-    position: relative !important;
-    padding: 6px 8px !important;
-    gap: 5px !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-  .sb-brand { width: 100% !important; justify-content: flex-start; gap: 6px !important; padding-right: 60px !important; }
-  .sb-brand h2 { font-size: 12px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sb-brand p { font-size: 9.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sb-logo { font-size: 16px !important; }
-  #sb-close {
-    position: absolute !important;
-    top: 7px !important;
-    right: 8px !important;
-    z-index: 6 !important;
-    padding: 4px 10px !important;
-    min-height: 28px !important;
-    font-size: 11px !important;
-  }
-  /* 手机端星海百科 3D 预览区底部防重叠 */
   .book-visual-note {
     max-width: calc(100% - 172px) !important;
     font-size: 9px !important;
@@ -1969,67 +2243,100 @@ body[data-layout="mobile"] #right-panel {
     min-height: 28px !important;
     font-size: 10px !important;
   }
+
+  /* 宇宙沙盘 2 手机端悬浮胶囊设计（75% 视野 + 香槟金暂停圈 + 青光底部指示条） */
+  .sb-topbar {
+    position: relative !important;
+    margin: 6px 8px 0 !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(182, 214, 248, 0.16) !important;
+    padding: 7px 10px !important;
+    gap: 6px !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.52), var(--obs-spec) !important;
+  }
+  .sb-brand { width: 100% !important; justify-content: flex-start; gap: 6px !important; padding-right: 60px !important; }
+  .sb-brand h2 { font-size: 12px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-brand p { font-size: 9.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-logo { font-size: 16px !important; }
+  #sb-close {
+    position: absolute !important;
+    top: 7px !important;
+    right: 8px !important;
+    z-index: 6 !important;
+    padding: 4px 10px !important;
+    min-height: 28px !important;
+    font-size: 11px !important;
+  }
   .sb-top-controls {
     width: 100% !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     gap: 4px !important;
-    padding-bottom: 2px;
+    padding-bottom: 1px;
   }
   .sb-top-controls > * { flex-shrink: 0 !important; }
-  #sb-preset-select { max-width: 145px !important; font-size: 10.5px !important; padding: 4px 6px !important; }
+  #sb-preset-select { max-width: 145px !important; font-size: 10.5px !important; padding: 4px 8px !important; }
   .sb-view-pills { flex-wrap: nowrap !important; overflow-x: visible !important; gap: 3px !important; }
   .sb-navigation {
-    inset: 6px 6px auto !important;
+    inset: 6px 8px auto !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     gap: 4px !important;
-    padding: 4px 6px !important;
-    border-radius: 10px !important;
-    background: rgba(7, 12, 24, 0.80) !important;
-    border: 1px solid rgba(148, 197, 255, 0.16) !important;
+    padding: 5px 8px !important;
+    border-radius: 999px !important;
+    background: rgba(7, 12, 24, 0.84) !important;
+    border: 1px solid rgba(182, 214, 248, 0.18) !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45), var(--obs-spec) !important;
   }
   .sb-navigation > * { flex-shrink: 0 !important; }
-  .sb-navigation select { max-width: 108px !important; font-size: 10.5px !important; padding: 4px 5px !important; }
+  .sb-navigation select { max-width: 108px !important; font-size: 10.5px !important; padding: 4px 6px !important; }
   .sb-tool-hint { display: none !important; }
-  .sb-left, .sb-right {
-    top: 46px !important;
-    bottom: 6px !important;
-    width: min(290px, 88vw) !important;
-  }
   .sb-flight-pad {
-    bottom: 8px !important;
-    left: 8px !important;
-    grid-template-columns: repeat(3, 44px) !important;
-    gap: 4px !important;
-    padding: 5px !important;
+    bottom: 94px !important;
+    left: 10px !important;
+    transform: scale(0.92);
+    transform-origin: bottom left;
   }
-  .sb-flight-pad button { height: 28px !important; font-size: 10px !important; }
+  .sb-panel-left, .sb-panel-right {
+    width: calc(100vw - 16px) !important;
+    max-width: 390px !important;
+    top: 106px !important;
+    bottom: 96px !important;
+    border-radius: 18px !important;
+  }
+  .sb-panel-left { left: 8px !important; }
+  .sb-panel-right { right: 8px !important; }
   .sb-dock {
-    padding: 6px 8px calc(6px + env(safe-area-inset-bottom)) !important;
-    gap: 5px !important;
+    margin: 0 8px calc(6px + env(safe-area-inset-bottom)) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(182, 214, 248, 0.18) !important;
+    padding: 7px 9px !important;
+    gap: 6px !important;
     flex-direction: column !important;
     align-items: stretch !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.56), var(--obs-spec) !important;
   }
   .sb-time-controls {
     width: 100% !important;
     flex-wrap: nowrap !important;
     justify-content: space-between !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 5px !important;
     overflow: hidden !important;
   }
   .sb-time-controls button {
     white-space: nowrap !important;
     flex-shrink: 0 !important;
-    padding: 4px 7px !important;
+    padding: 4px 9px !important;
     min-height: 28px !important;
-    font-size: 10px !important;
+    font-size: 10.5px !important;
   }
   .sb-dock-slider { gap: 3px !important; font-size: 10px !important; white-space: nowrap !important; flex: 1 1 0 !important; min-width: 0 !important; }
-  .sb-dock-slider span { white-space: nowrap !important; flex-shrink: 0 !important; }
+  .sb-dock-slider span { white-space: nowrap !important; flex-shrink: 0 !important; color: #9fb4ce !important; }
   .sb-dock-slider input { width: 100% !important; min-width: 34px !important; max-width: 56px !important; }
-  .sb-dock-slider output { min-width: 24px !important; font-size: 9px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
+  .sb-dock-slider output { min-width: 24px !important; font-size: 9.5px !important; white-space: nowrap !important; flex-shrink: 0 !important; color: #f3cfa2 !important; }
   .sb-tools {
     width: 100% !important;
     flex-wrap: nowrap !important;
@@ -2040,9 +2347,10 @@ body[data-layout="mobile"] #right-panel {
   }
   .sb-tools button {
     flex-shrink: 0 !important;
-    padding: 6px 9px !important;
+    padding: 6px 10px !important;
     font-size: 11px !important;
     white-space: nowrap !important;
+    border-radius: 12px !important;
   }
 }
 
@@ -12237,12 +12545,15 @@ function normalizeSandboxUniverse(value) {
       L5:['宇宙纤维网 · 空间的演化','空间膨胀与物质汇聚同时进行。切换物理坐标和共动坐标比较。','简化 ΛCDM 尺度因子与固定共动骨架；节点流动是约束示意，不代表实际观测重建。']
     };
     function safeStorageRead(key){try{return localStorage.getItem(key);}catch{return null;}}
+    let _mobSyncRaf = 0;
     function syncMobileLayoutMetrics() {
       if (document.body.dataset.layout !== 'mobile') {
         document.documentElement.style.removeProperty('--mob-subbar-top');
         return;
       }
-      requestAnimationFrame(() => {
+      if (_mobSyncRaf) cancelAnimationFrame(_mobSyncRaf);
+      _mobSyncRaf = requestAnimationFrame(() => {
+        _mobSyncRaf = 0;
         const hdr = document.getElementById('observatory-header');
         if (!hdr) return;
         const bottom = Math.ceil(hdr.getBoundingClientRect().bottom);
@@ -12474,6 +12785,7 @@ function normalizeSandboxUniverse(value) {
         }
       }
       window.addEventListener('keydown',e=>{if(e.key==='Escape'){togglePanel('left',true);togglePanel('right',true);} });
+      if(window.ResizeObserver){const hdrEl=document.getElementById('observatory-header');if(hdrEl)new ResizeObserver(()=>syncMobileLayoutMetrics()).observe(hdrEl);}
       setLayout(safeStorageRead('cosmic-layout')||(innerWidth<900?'mobile':'desktop'),false);bindMotionUI();bindLabUI();syncDynamicsUI();updateSceneGuide();
     }
     function fittedCameraPosition(pos) {

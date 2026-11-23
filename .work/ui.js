@@ -8,12 +8,15 @@
       L5:['宇宙纤维网 · 深空的骨架','物质沿纤维流向高密度节点，宇宙空洞在其间展开。','程序化密度网与引力流示意。纤维几何固定；粒子受节点引力与纤维约束，不代表实际观测数据。']
     };
     function safeStorageRead(key){try{return localStorage.getItem(key);}catch{return null;}}
+    let _mobSyncRaf = 0;
     function syncMobileLayoutMetrics() {
       if (document.body.dataset.layout !== 'mobile') {
         document.documentElement.style.removeProperty('--mob-subbar-top');
         return;
       }
-      requestAnimationFrame(() => {
+      if (_mobSyncRaf) cancelAnimationFrame(_mobSyncRaf);
+      _mobSyncRaf = requestAnimationFrame(() => {
+        _mobSyncRaf = 0;
         const hdr = document.getElementById('observatory-header');
         if (!hdr) return;
         const bottom = Math.ceil(hdr.getBoundingClientRect().bottom);
@@ -238,6 +241,7 @@
         }
       }
       window.addEventListener('keydown',e=>{if(e.key==='Escape'){togglePanel('left',true);togglePanel('right',true);} });
+      if(window.ResizeObserver){const hdrEl=document.getElementById('observatory-header');if(hdrEl)new ResizeObserver(()=>syncMobileLayoutMetrics()).observe(hdrEl);}
       setLayout(safeStorageRead('cosmic-layout')||(innerWidth<900?'mobile':'desktop'),false);bindMotionUI();bindLabUI();syncDynamicsUI();updateSceneGuide();
     }
     function fittedCameraPosition(pos) {
